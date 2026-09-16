@@ -238,7 +238,7 @@ Install the following:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/mishkat2026/ewu-rag-chatbot.git
+git clone https://github.com/mishkat2025/rag-project-bluebook.git
 ```
 
 Navigate into the project:
