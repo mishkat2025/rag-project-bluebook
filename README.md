@@ -244,7 +244,7 @@ git clone https://github.com/mishkat2025/rag-project-bluebook.git
 Navigate into the project:
 
 ```bash
-cd ewu-rag-chatbot
+cd rag-project-bluebook
 ```
 
 ### 2. Create a Virtual Environment
