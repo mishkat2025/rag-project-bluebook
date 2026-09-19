@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EWU RAG Question Answering System
 
 A Retrieval-Augmented Generation (RAG) chatbot that answers questions about East West University's Undergraduate Bulletin using **FAISS vector retrieval** and a locally running **Ollama LLM**.
@@ -648,3 +649,5 @@ Add an appropriate open-source license before publishing the repository.
 * Ollama — Local LLM runtime
 * Qwen — Language model
 * Python — Project implementation
+=======
+>>>>>>> 67f36a0 (fil)
