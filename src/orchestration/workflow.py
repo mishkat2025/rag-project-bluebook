@@ -62,16 +62,32 @@ class RAGWorkflow:
             elif agent_name == "reranking":
                 self.reranking.rerank(state)
 
+                print("\n[WORKFLOW RERANKING DEBUG]")
+                print("Original query:", state.original_query)
+                print("Rerank query:", state.rerank_query)
+                print("Retrieved chunks:", len(state.retrieved_chunks))
+                print("Reranked chunks:", len(state.reranked_chunks))
+
+                for chunk in state.reranked_chunks[:10]:
+                    metadata = chunk.get("metadata", {})
+                    print(
+                        f"Rank={chunk.get('rerank_rank')} | "
+                        f"Chunk={chunk.get('chunk_id')} | "
+                        f"Page={metadata.get('page')} | "
+                        f"Score={chunk.get('rerank_score')}"
+                    )
+
             elif agent_name == "evidence":
                 self.evidence.assess(state)
 
                 if not state.evidence_status.get("sufficient", False):
                     self._handle_evidence_failure(state)
 
-                    if state.evidence_status.get("sufficient", False):
+                    # If evidence is still insufficient after all retries,
+                    # allow AnswerAgent to produce its controlled
+                    # insufficient-evidence response.
+                    if not state.evidence_status.get("sufficient", False):
                         continue
-
-                    return state
 
             elif agent_name == "answer":
                 self.answer.answer(state)
@@ -91,6 +107,7 @@ class RAGWorkflow:
                 )
 
         return state
+    
     def _handle_verification_failure(self, state: RAGState) -> None:
         """Regenerate the answer once when verification rejects it."""
 

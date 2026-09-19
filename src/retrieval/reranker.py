@@ -19,7 +19,23 @@ class Reranker:
     ):
         self.model_name = model_name
         self.model = CrossEncoder(model_name)
+    @staticmethod
+    def _build_rerank_text(candidate: dict[str, Any]) -> str:
+        metadata = candidate.get("metadata", {})
 
+        section = metadata.get("section") or ""
+        heading = metadata.get("heading") or ""
+        program = metadata.get("program") or ""
+        content_type = metadata.get("content_type") or ""
+        text = candidate.get("text", "").strip()
+
+        return (
+            f"Section: {section}\n"
+            f"Heading: {heading}\n"
+            f"Program: {program}\n"
+            f"Content type: {content_type}\n"
+            f"Text:\n{text}"
+        )
     def rerank(
         self,
         query: str,
@@ -39,7 +55,7 @@ class Reranker:
         pairs = [
             (
                 query,
-                candidate["text"],
+                self._build_rerank_text(candidate),
             )
             for candidate in candidates
         ]

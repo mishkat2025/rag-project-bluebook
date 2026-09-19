@@ -84,9 +84,24 @@ IMPORTANT RULES:
 - Select a candidate only when its content directly supports the answer.
 - Different candidates may provide different parts of the answer when
   those parts are actually required by the question.
+- If one or more candidates directly contain information that answers
+  the user's question, mark the evidence as sufficient and select those
+  candidates.
+- Do NOT require the candidates to contain every possible fact about
+  the topic unless the user explicitly asks for a complete or exhaustive
+  list.
+- For a general question, sufficient means the retrieved evidence contains
+  enough directly relevant information to provide a grounded answer.
 - Prefer the smallest set of directly supporting passages.
 - Do not select a candidate merely because it is topically related.
 - Prefer direct evidence over related background information.
+- For a question asking about admission requirements for a specific
+  program, select the program-specific admission requirement passages
+  when they directly state the program's eligibility criteria.
+- If multiple consecutive passages contain complementary parts of the
+  same admission requirements, select the relevant passages together.
+- Do not reject otherwise sufficient evidence simply because another
+  possible admission detail is not present in the selected passage.
 - For admission questions, prioritize actual admission criteria,
   qualifications, required subjects, GPA requirements, admission tests,
   and admission procedures.
@@ -139,7 +154,7 @@ When the candidate evidence directly supports the question:
 }}
 
 When the candidate evidence does NOT contain enough directly relevant
-information to answer the question:
+information to provide a grounded answer to the user's actual question:
 
 {{
   "sufficient": false,

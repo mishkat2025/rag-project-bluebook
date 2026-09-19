@@ -22,24 +22,14 @@ def main() -> None:
         metadata = result.get("metadata", {})
 
         print("-" * 80)
-        print(
-            f"RRF rank : {result.get('rank')}"
-        )
-        print(
-            f"Page     : {metadata.get('page')}"
-        )
-        print(
-            f"Section  : {metadata.get('section')}"
-        )
-        print(
-            f"Heading  : {metadata.get('heading')}"
-        )
-        print(
-            f"Chunk ID  : {result.get('chunk_id')}"
-        )
-        print(
-            f"RRF score: {result.get('rrf_score')}"
-        )
+        print(f"RRF rank : {result.get('rank')}")
+        print(f"Page     : {metadata.get('page')}")
+        print(f"Section  : {metadata.get('section')}")
+        print(f"Heading  : {metadata.get('heading')}")
+        print(f"Chunk ID  : {result.get('chunk_id')}")
+        print(f"RRF score: {result.get('rrf_score')}")
+        print("Text:")
+        print(result.get("text", "").strip())
 
 
 if __name__ == "__main__":
