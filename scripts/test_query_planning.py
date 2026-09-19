@@ -10,8 +10,8 @@ def main() -> None:
     agent = QueryPlanningAgent()
 
     query = (
-        "What are the admission requirements, tuition fees, "
-        "and scholarship opportunities for B.Pharm?"
+    "What are the admission requirements, tuition fees, "
+    "and scholarship opportunities for an undergraduate program?"
     )
 
     state = RAGState(original_query=query)

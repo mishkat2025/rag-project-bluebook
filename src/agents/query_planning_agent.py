@@ -83,6 +83,24 @@ IMPORTANT:
   subjects, dates, fees, credits, and other important terminology.
 - Add useful document terminology that helps retrieval.
 - Prefer meaningful concept expansion over simple synonym replacement.
+
+- Identify the specific subject, program, department, or entity being asked about.
+- Expand the query with terminology that is likely to appear in the
+  official bulletin for that subject.
+- For admission questions, include relevant terminology such as
+  admission requirements, minimum qualifications, eligibility,
+  academic qualifications, admission test, and required subjects
+  when applicable.
+- Identify specific required subjects from the user's query or
+  available context; do not assume or invent particular subjects.
+- For graduation or degree-completion questions, include terminology such as
+  degree requirements, total credits, curriculum, and required credits
+  when applicable.
+- For course questions, preserve the exact course code/name and include
+  relevant course-title or course-description terminology.
+- Do not add requirements, numbers, subjects, or other facts that are not
+  supported by the user's request or conversation context.
+- Do not add terminology from a different program or subject.
 - Do not introduce unrelated concepts.
 - Resolve follow-up references using conversation history when possible.
 - Produce at most {settings.max_subqueries} information needs.
@@ -93,17 +111,23 @@ User request:
 "What are the admission requirements for B.Pharm and how many total
 credits does the program require?"
 
+Example of correct decomposition:
+
+User request:
+"What are the admission requirements for a program and how many total
+credits does the program require?"
+
 Information need 1:
-B.Pharm admission requirements
+Program admission requirements
 
 Query:
-B.Pharm admission requirements minimum GPA SSC HSC Chemistry Biology Mathematics
+program admission requirements minimum qualifications eligibility admission test
 
 Information need 2:
-B.Pharm total program credits
+Program total credits
 
 Query:
-B.Pharm total credits program curriculum credit requirement
+program total credits degree requirements curriculum credit requirement
 
 These are TWO different information needs and therefore require TWO
 different retrieval queries.

@@ -22,6 +22,7 @@ def main() -> None:
 
     assert simple_workflow == [
         "supervisor",
+        "query_planning",
         "retrieval",
         "reranking",
         "evidence",

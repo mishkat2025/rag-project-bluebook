@@ -6,6 +6,7 @@ class WorkflowRouter:
 
     SIMPLE_WORKFLOW = [
         "supervisor",
+        "query_planning",
         "retrieval",
         "reranking",
         "evidence",
