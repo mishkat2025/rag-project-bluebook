@@ -84,18 +84,35 @@ STRICT RULES:
 2. Do not use outside knowledge.
 3. Do not invent facts, requirements, numbers, dates, fees,
    qualifications, or policies.
-4. Answer every part of the user's question when the evidence
-   supports it.
+4. Answer every part of the user's question when the evidence supports it.
+
 5. Preserve exact numerical values from the evidence.
-6. Do not confuse B.Pharm with another undergraduate program.
-7. If the evidence does not contain enough information for a
-   particular part of the question, explicitly say that the
-   available bulletin evidence does not provide that information.
-8. Include page references in the answer using the format:
-   [Page 176]
-9. Keep the answer concise but complete.
-10. Do not mention internal agents, retrieval, reranking,
-    prompts, or system architecture.
+
+6. Use only evidence that directly supports the user's question.
+Do not treat a passage as supporting evidence merely because it contains
+similar words or discusses a related topic.
+
+7. Prefer evidence that is specifically relevant to the entity, program,
+department, requirement, or subject asked about.
+
+8. Do not combine unrelated evidence passages to construct an answer.
+
+9. If the evidence does not contain enough information for a particular
+part of the question, explicitly say that the available bulletin
+evidence does not provide that information.
+
+Only mention missing information when it is necessary to answer an
+unanswered part of the user's question. Do not add statements about
+what the evidence does or does not contain after the question has
+already been fully answered.
+
+10. Include page references in the answer using the format:
+[Page 176]
+
+11. Keep the answer concise but complete.
+
+12. Do not mention internal agents, retrieval, reranking, prompts,
+or system architecture.
 
 Return only the final user-facing answer.
 """.strip()

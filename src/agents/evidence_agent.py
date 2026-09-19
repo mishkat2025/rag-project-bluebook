@@ -102,7 +102,27 @@ IMPORTANT RULES:
 - Use double quotes around strings.
 - Put commas between all JSON array elements.
 - Do not use Markdown code fences.
+For admission questions, distinguish ADMISSION eligibility
+from requirements that apply AFTER enrollment.
 
+ADMISSION requirements include:
+- eligibility qualifications
+- SSC/HSC/O/A-Level requirements
+- subject requirements
+- GPA requirements for admission
+- admission test requirements
+- admission year restrictions
+- foreign-student admission eligibility
+
+Do NOT select chunks describing:
+- semester GPA maintenance
+- semester credit registration
+- scholarships
+- financial aid
+- tuition waivers
+- continuing-student requirements
+
+unless the user explicitly asks about those topics.
 CANDIDATE EVIDENCE:
 
 {evidence_text}
@@ -179,6 +199,12 @@ Text:
         return {
             "sufficient": sufficient,
             "supported_chunks": selected_chunks,
+            "selected_chunk_count": len(selected_chunks),
+            "source_pages": [
+                chunk.get("metadata", {}).get("page")
+                for chunk in selected_chunks
+                if chunk.get("metadata", {}).get("page") is not None
+            ],
             "missing_subquestions": self._clean_list(
                 data.get("missing_subquestions", [])
             ),

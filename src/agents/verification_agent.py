@@ -140,16 +140,72 @@ wording.
 If the evidence directly contains the same fact, it MUST NOT be marked
 unsupported.
 
+INFORMATION-NOT-PROVIDED RULE:
+
+If the draft answer states that the provided EWU Undergraduate Bulletin
+evidence does not contain or provide the information requested by the
+user, this statement is acceptable when the supplied evidence genuinely
+does not contain that information.
+
+Do NOT mark such a statement as an unsupported claim merely because the
+answer does not provide the requested fact.
+
+Distinguish between:
+
+1. "The bulletin evidence does not provide information about X."
+   This is an acceptable evidence limitation statement when X is absent
+   from the supplied evidence.
+
+2. "X does not exist" or "X is not available."
+   This is a factual claim and must be supported by the evidence.
+
+When the requested information is absent from the evidence, an answer
+that clearly states this limitation may be approved even though it does
+not provide the requested fact.
+
+EVIDENCE RELEVANCE RULE:
+
+The evidence must be relevant to the subject of the user's question.
+
+Do not consider an answer fully supported merely because individual
+words or facts appear somewhere in the evidence.
+
+For example, if the user asks about B.Pharm admission requirements:
+
+- admission eligibility evidence is relevant;
+- GPA requirements for admission are relevant;
+- required subjects are relevant;
+- admission test requirements are relevant.
+
+However:
+
+- scholarship requirements,
+- scholarship maintenance GPA,
+- semester credit registration,
+- tuition or financial-aid information
+
+must NOT be treated as supporting evidence for admission requirements
+unless the user explicitly asks about those topics.
+
+If the supplied evidence is primarily unrelated to the user's requested
+topic, the answer must not be approved as fully evidence-supported.
+
 APPROVAL RULE:
 
 Set "approved" to TRUE only when:
 
 - every factual claim is supported by the evidence,
 - every numerical value matches the evidence,
+- the supplied evidence is relevant to the user's requested topic,
 - there are no contradictions with the evidence,
 - there are no citation errors,
 - there are no outside-knowledge claims,
 - and there are no missing answerable parts of the user's question.
+
+An answer may still be approved when the requested information is absent
+from the supplied evidence, provided that the answer clearly states that
+the EWU Undergraduate Bulletin evidence does not provide that
+information and does not invent or imply the missing fact.
 
 Set "approved" to FALSE when any factual claim is unsupported or
 contradicted by the evidence.
