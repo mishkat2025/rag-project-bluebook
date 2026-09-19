@@ -127,14 +127,24 @@ CANDIDATE EVIDENCE:
 
 {evidence_text}
 
-Return exactly:
+Return exactly one of these JSON structures.
 
-{
+When the candidate evidence directly supports the question:
+
+{{
   "sufficient": true,
   "selected_chunk_ids": [
     "exact-chunk-id"
   ]
-}
+}}
+
+When the candidate evidence does NOT contain enough directly relevant
+information to answer the question:
+
+{{
+  "sufficient": false,
+  "selected_chunk_ids": []
+}}
 """.strip()
 
     @staticmethod
