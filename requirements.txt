@@ -1,0 +1,10 @@
+pymupdf
+sentence-transformers
+chromadb
+rank-bm25
+pydantic
+pydantic-settings
+requests
+numpy
+scikit-learn
+python-dotenv
