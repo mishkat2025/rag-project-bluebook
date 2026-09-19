@@ -129,11 +129,12 @@ CANDIDATE EVIDENCE:
 
 Return exactly:
 
-{{
+{
+  "sufficient": true,
   "selected_chunk_ids": [
     "exact-chunk-id"
   ]
-}}
+}
 """.strip()
 
     @staticmethod
@@ -169,6 +170,11 @@ Text:
         if not isinstance(data, dict):
             raise ValueError("Evidence Agent response must be a JSON object.")
 
+        sufficient = data.get("sufficient", False)
+
+        if not isinstance(sufficient, bool):
+            raise ValueError("'sufficient' must be a boolean.")
+
         selected_ids = data.get("selected_chunk_ids", [])
 
         if not isinstance(selected_ids, list):
@@ -191,11 +197,8 @@ Text:
             for chunk in candidates
             if chunk.get("chunk_id") in selected_ids
         ]
-
-        # Evidence selection is handled by the LLM.
-        # Evidence sufficiency will be determined separately.
-        sufficient = bool(selected_chunks)
-
+        if sufficient and not selected_chunks:
+            sufficient = False
         return {
             "sufficient": sufficient,
             "supported_chunks": selected_chunks,
