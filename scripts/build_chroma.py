@@ -1,6 +1,7 @@
 import json
 
 from src.config.settings import settings
+from src.ingestion.metadata_builder import index_metadata
 from src.storage.chroma_store import ChromaVectorStore
 
 
@@ -42,15 +43,7 @@ def main() -> None:
     ]
 
     metadatas = [
-        {
-            "page": record["page"],
-            "source": record["source"],
-            "section": record["section"] or "",
-            "heading": record["heading"] or "",
-            "program": record["program"] or "",
-            "content_type": record["content_type"],
-            "chunk_position": record["chunk_position"],
-        }
+        index_metadata(record)
         for record in metadata_records
     ]
 

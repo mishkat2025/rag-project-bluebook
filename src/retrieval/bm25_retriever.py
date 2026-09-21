@@ -6,6 +6,7 @@ from typing import Any
 from rank_bm25 import BM25Okapi
 
 from src.config.settings import settings
+from src.ingestion.metadata_builder import index_metadata
 
 
 class BM25Retriever:
@@ -95,17 +96,7 @@ class BM25Retriever:
                 {
                     "chunk_id": record["chunk_id"],
                     "text": record["text"],
-                    "metadata": {
-                        "page": record["page"],
-                        "source": record["source"],
-                        "section": record["section"] or "",
-                        "heading": record["heading"] or "",
-                        "program": record["program"] or "",
-                        "content_type": record["content_type"],
-                        "chunk_position": record[
-                            "chunk_position"
-                        ],
-                    },
+                    "metadata": index_metadata(record),
                     "score": float(scores[index]),
                     "rank": rank,
                 }

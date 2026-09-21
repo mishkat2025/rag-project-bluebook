@@ -45,6 +45,38 @@ def ndcg_at_k(
     return dcg / idcg if idcg else 0.0
 
 
+def distinct_pages(ranked_pages: list[int]) -> list[int]:
+    """The ranked pages with repeats removed, keeping each page's best rank."""
+    seen: set[int] = set()
+    ordered: list[int] = []
+    for page in ranked_pages:
+        if page not in seen:
+            seen.add(page)
+            ordered.append(page)
+    return ordered
+
+
+def evaluate_ranking_by_page(
+    ranked_pages: list[int],
+    gold_pages: set[int],
+    recall_ks: tuple[int, ...] = (5, 10, 20, 50),
+) -> dict[str, float]:
+    """Metrics over DISTINCT pages, so they do not move when chunk size does.
+
+    The chunk-level metrics above divide by how many chunks happen to sit on a
+    gold page, so re-chunking the corpus shifts every score even when the
+    ranking is identical. Collapsing the ranking to distinct pages first makes
+    "page 112 was reached third" mean the same thing before and after a
+    re-chunk, which is what phase-over-phase comparison needs.
+    """
+    pages = distinct_pages(ranked_pages)
+    scores = {f"page-recall@{k}": recall_at_k(pages, gold_pages, k) for k in recall_ks}
+    scores["page-ndcg@10"] = ndcg_at_k(pages, gold_pages, 10, len(gold_pages))
+    scores["page-mrr@10"] = mrr_at_k(pages, gold_pages, 10)
+    scores["page-p@5"] = precision_at_k(pages, gold_pages, 5)
+    return scores
+
+
 def evaluate_ranking(
     ranked_pages: list[int],
     gold_pages: set[int],

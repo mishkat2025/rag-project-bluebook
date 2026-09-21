@@ -26,6 +26,8 @@ class Settings(BaseSettings):
 
     chunks_path: Path = processed_data_dir / "chunks.json"
     metadata_path: Path = processed_data_dir / "metadata.json"
+    parents_path: Path = processed_data_dir / "parents.json"
+    tree_path: Path = processed_data_dir / "section_tree.json"
 
     chroma_dir: Path = indexes_dir / "chroma"
     bm25_dir: Path = indexes_dir / "bm25"
@@ -36,6 +38,21 @@ class Settings(BaseSettings):
     # Embedding
     # ---------------------------------------------------------
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+
+    # ---------------------------------------------------------
+    # Chunking
+    # ---------------------------------------------------------
+    chunk_tokenizer: str = "BAAI/bge-m3"
+    child_target_tokens: int = 250
+    child_overlap_tokens: int = 40
+    min_parent_chars: int = 400
+    max_parent_chars: int = 6000
+
+    # ---------------------------------------------------------
+    # Ingestion validation
+    # ---------------------------------------------------------
+    min_chunk_chars: int = 50
+    near_duplicate_threshold: float = 0.9
 
     # ---------------------------------------------------------
     # Retrieval

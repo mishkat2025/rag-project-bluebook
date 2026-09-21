@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 2 — Ingestion rebuild (Phases 0–1 done)**
+**Current phase: 3 — Retrieval (Phases 0–2 done)**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -12,7 +12,7 @@ Read HANDOFF.md for the full plan before working.
 |---|---|---|
 | 0 | LM Studio client, error handling, prints, pinning | done (live LM Studio check pending) |
 | 1 | Evaluation harness + gold questions (125) | done (baseline recorded) |
-| 2 | Ingestion rebuild (font hierarchy, tables, parent/child) | not started |
+| 2 | Ingestion rebuild (font hierarchy, tables, parent/child) | done (see caveat on the Recall@20 criterion) |
 | 3 | Retrieval (BGE-M3, persisted BM25, expansion) | not started |
 | 4 | Reranking (bge-reranker-v2-m3, enforce top_k=5) | not started |
 | 5 | Collapse the agent layer | not started |
@@ -23,19 +23,44 @@ Read HANDOFF.md for the full plan before working.
 
 ## Metrics
 
-Baseline = current broken index (MiniLM, old chunks, hybrid RRF, no reranker), `python evalun_eval.py --label baseline`,
-110 answerable questions, chunk-level metrics with gold = PDF page. Per-question results: `eval/results/baseline.json`.
+110 answerable questions, MiniLM + hybrid RRF + no reranker throughout, so the Phase 2 numbers
+are attributable to ingestion alone. Per-question results in `eval/results/`.
 
-| Metric | Baseline | Current | Target |
-|---|---|---|---|
-| Recall@20 | 0.959 | 0.959 | >= 0.90 |
-| Recall@50 | 0.982 | 0.982 | >= 0.95 |
-| nDCG@10 | 0.608 | 0.608 | +0.10 with reranker |
-| Citation accuracy | — | — | >= 0.95 |
-| Number fidelity | — | — | 1.00 |
-| Abstention accuracy | — | — | >= 0.80 |
-| Faithfulness | — | — | >= 0.90 |
-| LLM calls / query | 5–11 | — | 1–2 |
+**Compare phases on page-level metrics, not chunk-level ones.** Chunk-level nDCG/recall divide by
+how many chunks happen to sit on a gold page, so re-chunking moves every score even when the
+ranking is unchanged: chunk-level nDCG@10 "fell" 0.608 -> 0.407 purely because the corpus went
+from 2.1 to 5.4 chunks per page. `evaluate_ranking_by_page` collapses a ranking to distinct pages
+first and is stable across re-chunks. `run_eval.py --rescore LABEL` recomputes metrics from any
+saved run, which is how the Phase 1 baseline was restated below without rebuilding its index.
+
+| Page-level metric | Baseline | Phase 2 (pool 50) | Phase 2 (pool 128) | Target |
+|---|---|---|---|---|
+| page-recall@5 | 0.856 | 0.832 | 0.855 | - |
+| page-recall@10 | 0.950 | 0.918 | 0.942 | - |
+| page-recall@20 | 0.964 | 0.950 | 0.964 | >= 0.90 |
+| page-recall@50 | 0.982 | 0.959 | 0.973 | >= 0.95 |
+| page-nDCG@10 | 0.763 | **0.798** | **0.804** | +0.10 with reranker |
+| page-MRR@10 | 0.718 | **0.777** | 0.772 | - |
+| page-P@5 | 0.195 | 0.187 | 0.193 | - |
+| Citation accuracy | - | - | - | >= 0.95 |
+| Number fidelity | - | - | - | 1.00 |
+| Abstention accuracy | - | - | - | >= 0.80 |
+| Faithfulness | - | - | - | >= 0.90 |
+| LLM calls / query | 5-11 | - | - | 1-2 |
+
+"pool" is the number of chunks fused per query (`--pool`). The default 50 is the configured
+pipeline. 128 = 50 x (2855/1112) is the budget at which both corpora may surface the same number
+of *pages*; it is the apples-to-apples comparison, while pool 50 is the operational number.
+
+| Corpus health | Before | After |
+|---|---|---|
+| Chunks | 1112 | 2855 |
+| Chunks carrying a heading | 14.9% | 100% |
+| Tables indexed | 0 | 338 (every detected table, exactly one chunk each) |
+| Chunks truncated by MiniLM's 256-token limit | 58.2% | 2.1% |
+| Corpus tokens unreachable by dense retrieval | 17.9% | 2.8% |
+| Chunks with an unsupported program label | 116 | 0 (test-enforced) |
+| Chunks starting or ending mid-word | present | 0 (test-enforced) |
 
 ---
 
@@ -73,3 +98,71 @@ _Append one entry per session: what changed, metric deltas, what is next._
   and the table/program categories are where Phase 2–4 gains will show. Consider tightening targets to nDCG/P@5
   or adding chunk-level gold before Phase 3. Not measured: abstention, citation, numbers, faithfulness (Phases 5-7).
 - Next: Phase 2 (rebuild ingestion; keep MiniLM embeddings unchanged so the gain is attributable).
+
+### Session 3 - Phase 2 (ingestion rebuild)
+
+Rewrote `pdf_parser.py`, `structure_analyzer.py`, `chunker.py`, `metadata_builder.py`; added
+`src/ingestion/validator.py`; rewrote `scripts/build_ingestion.py`. 16 new tests in
+`tests/test_ingestion.py`, 32 pass overall.
+
+**What the pipeline does now**
+- `pdf_parser`: `get_text("dict")` -> lines with size/bold/bbox, plus `find_tables()`.
+  338 tables survive (367 detected, minus nested and single-row regions). Lines inside a table
+  bbox are excluded from narrative text so nothing is indexed twice.
+- `structure_analyzer`: no phrase regexes at all. Body style from a char-weighted font histogram
+  (TimesNewRomanPSMT 10pt). Heading candidates = bold or larger, minus table interiors and
+  two-column label/value rows. Wrapped lines merge into one heading. Three things then rank them:
+  (1) the rendered TOC (83 entries), aligned to body headings by **longest increasing
+  subsequence** so the alignment stays monotonic - a per-department "List of Courses" can no
+  longer claim the global entry and strand the 8 departments between; (2) the "EWU Academic
+  Departments" page (p23-24), which supplies the **Faculty > Department** layer the body headings
+  omit; (3) distinct heading sizes ranked largest-first. A heading the outline does not name can
+  never outrank the section it sits in.
+  Result: 2640 nodes, all 14 departments under their correct faculty, `Department of Computer
+  Science and Engineering (CSE)` spanning **pages 111-127** exactly as the diagnosis predicted.
+- `chunker`: parents = sections (deepest ancestor with >= 400 chars, capped at 6000); children =
+  250 BGE-M3 tokens with a `Faculty > Dept > Heading` breadcrumb prefix, split only on line,
+  sentence or word boundaries; tables atomic as Markdown. A table continued across a page break
+  inherits the previous page's header row and caption (the scholarship credit table runs 220->221,
+  and the second half otherwise contains neither "credits" nor "scholarship").
+- `metadata_builder`: `_detect_program` is gone. faculty/department/program are read off ancestor
+  headings only. No forward-carry, so a wrong label cannot propagate.
+- `validator`: drops < 50 chars and near-duplicates (MinHash-style buckets over 5-word shingles,
+  Jaccard >= 0.9, compared on the indexed text so per-course tables are not collapsed), and
+  **raises** on a missing id/page/parent or an unknown parent id. 2855 of 3148 kept.
+
+**Eval harness change.** Chunk-level nDCG/recall are not comparable across a re-chunk (see the
+Metrics section). Added `evaluate_ranking_by_page`, plus `--rescore` (recompute metrics from a
+saved run) and `--pool` to `run_eval.py`, and restated the Phase 1 baseline on the new metrics.
+The old metrics are still computed and printed; nothing recorded earlier was invalidated.
+
+**Result vs the Phase 2 acceptance criterion ("Recall@20 improves substantially"): NOT met.**
+Page-level recall@20 is 0.950 at the configured pool of 50 and 0.964 at a matched page budget,
+against a baseline of 0.964. Recall was already saturated at baseline - exactly the caveat
+Session 2 recorded - so it has no room to improve and is the wrong criterion for this phase.
+The discriminating metrics did improve: page-nDCG@10 0.763 -> 0.798 (+0.035) and page-MRR@10
+0.718 -> 0.777 (+0.059) at pool 50. By category, `program_specific` nDCG 0.717 -> 0.834 and MRR
+0.661 -> 0.833, `single_fact` nDCG 0.836 -> 0.895, `adversarial` 0.823 -> 0.909. The structural
+fixes are in the corpus-health table above and are enforced by tests, not asserted.
+
+**What regressed, and why.** The `table` category lost top-5 accuracy (page-recall@5 0.667 ->
+0.533 at matched budget) while gaining at depth (recall@20 0.800 -> 0.867). The old 1800-char
+windows merged a page of narrative with the table inside it, so a scholarship question dragged
+the credit table along on the narrative's wording. The new table chunks are correct and complete
+- verified by hand on p221: caption, header and the CSE row are all present and it is 219 tokens,
+well inside MiniLM's limit - they are simply ranked below competing pages by a 384-dim uncased
+model. Same cause for q015 ("chairperson of CSE"): the answer chunk on p22 is correct, but the
+breadcrumb prefix repeats the department name on all ~25 CSE chunks and crowds it out. Both are
+ranking problems that Phase 3 (BGE-M3) and Phase 4 (bge-reranker + strip metadata scaffolding
+from the rerank text, enforce top_k=5) exist to fix; neither is an ingestion defect.
+
+**Also changed:** `settings` gained chunking/validation knobs and `parents_path`/`tree_path`;
+`index_metadata()` in `metadata_builder` is the single projection used by both `build_chroma` and
+`bm25_retriever`, so faculty/department/section_path/parent_id now flow through retrieval ready
+for Phase 3's `where=` filtering. Phase 1 artifacts are kept in `data/backup_phase1/`.
+Chroma rebuilt with MiniLM (2855 records) - the embedding swap is Phase 3.
+
+**Next - Phase 3:** swap to BGE-M3 and rebuild; persist BM25 to `data/indexes/bm25`; deterministic
+acronym expansion (CSE <-> Computer Science and Engineering, CGPA <-> GPA); dense 30 || bm25 30 ->
+RRF -> 50; parent expansion using `parents.json`; Chroma `where=` filters. Expect the table and
+q015 regressions to close there; re-check them specifically.
