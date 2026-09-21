@@ -1,5 +1,6 @@
 from src.agents.reranking_agent import RerankingAgent
 from src.agents.retrieval_agent import RetrievalAgent
+from src.config.settings import settings
 from src.orchestration.state import RAGState
 
 
@@ -55,7 +56,7 @@ def main() -> None:
     print(f"Trace: {state.trace.get('reranking')}")
 
     assert len(state.retrieved_chunks) == 30
-    assert len(state.reranked_chunks) == 6
+    assert len(state.reranked_chunks) == settings.rerank_top_k
     assert "reranking" in state.agents_used
     assert "reranking" in state.trace
 

@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 4 — Reranking (Phases 0–3 done)**
+**Current phase: 5 — Collapse the agent layer (Phases 0–4 done)**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -14,8 +14,8 @@ Read HANDOFF.md for the full plan before working.
 | 1 | Evaluation harness + gold questions (125) | done (baseline recorded) |
 | 2 | Ingestion rebuild (font hierarchy, tables, parent/child) | done (see caveat on the Recall@20 criterion) |
 | 3 | Retrieval (BGE-M3, persisted BM25, expansion) | done (acceptance met; see the expansion caveat) |
-| 4 | Reranking (bge-reranker-v2-m3, enforce top_k=5) | next |
-| 5 | Collapse the agent layer | not started |
+| 4 | Reranking (bge-reranker-v2-m3, enforce top_k=5) | done (acceptance NOT met; see below) |
+| 5 | Collapse the agent layer | next |
 | 6 | Grounding + deterministic validation | not started |
 | 7 | Verification, terminal app, observability | not started |
 
@@ -23,10 +23,10 @@ Read HANDOFF.md for the full plan before working.
 
 ## Metrics
 
-110 answerable questions, hybrid RRF, no reranker anywhere yet. Baseline and Phase 2 both ran on
-MiniLM, so the Phase 2 numbers are attributable to ingestion alone; Phase 3 is the first run on
-BGE-M3, so its delta is the embedding swap plus the wider pools. Per-question results in
-`eval/results/`.
+110 answerable questions, hybrid RRF. Baseline and Phase 2 both ran on MiniLM, so the Phase 2
+numbers are attributable to ingestion alone; Phase 3 is the first run on BGE-M3, so its delta is
+the embedding swap plus the wider pools; Phase 4 adds the cross-encoder on top of an otherwise
+unchanged Phase 3 pipeline. Per-question results in `eval/results/`.
 
 **Compare phases on page-level metrics, not chunk-level ones.** Chunk-level nDCG/recall divide by
 how many chunks happen to sit on a gold page, so re-chunking moves every score even when the
@@ -35,23 +35,39 @@ from 2.1 to 5.4 chunks per page. `evaluate_ranking_by_page` collapses a ranking 
 first and is stable across re-chunks. `run_eval.py --rescore LABEL` recomputes metrics from any
 saved run, which is how the Phase 1 baseline was restated below without rebuilding its index.
 
-| Page-level metric | Baseline | Phase 2 (pool 50) | Phase 2 (pool 128) | **Phase 3** | Target |
-|---|---|---|---|---|---|
-| page-recall@5 | 0.856 | 0.832 | 0.855 | 0.885 | - |
-| page-recall@10 | 0.950 | 0.918 | 0.942 | 0.933 | - |
-| page-recall@20 | 0.964 | 0.950 | 0.964 | **0.968** | >= 0.90 |
-| page-recall@50 | 0.982 | 0.959 | 0.973 | **0.986** | >= 0.95 |
-| page-nDCG@10 | 0.763 | 0.798 | 0.804 | 0.802 | +0.10 with reranker |
-| page-MRR@10 | 0.718 | 0.777 | 0.772 | 0.769 | - |
-| page-P@5 | 0.195 | 0.187 | 0.193 | 0.200 | - |
-| Citation accuracy | - | - | - | - | >= 0.95 |
-| Number fidelity | - | - | - | - | 1.00 |
-| Abstention accuracy | - | - | - | - | >= 0.80 |
-| Faithfulness | - | - | - | - | >= 0.90 |
-| LLM calls / query | 5-11 | - | - | - | 1-2 |
+| Page-level metric | Baseline | Phase 2 (pool 50) | Phase 2 (pool 128) | Phase 3 | **Phase 4** | Target |
+|---|---|---|---|---|---|---|
+| page-recall@5 | 0.856 | 0.832 | 0.855 | 0.885 | **0.926** | - |
+| page-recall@10 | 0.950 | 0.918 | 0.942 | 0.933 | **0.983** | - |
+| page-recall@20 | 0.964 | 0.950 | 0.964 | 0.968 | **0.986** | >= 0.90 |
+| page-recall@50 | 0.982 | 0.959 | 0.973 | 0.986 | 0.986 | >= 0.95 |
+| page-nDCG@10 | 0.763 | 0.798 | 0.804 | 0.802 | **0.878** | +0.10 with reranker |
+| page-MRR@10 | 0.718 | 0.777 | 0.772 | 0.769 | **0.855** | - |
+| page-P@5 | 0.195 | 0.187 | 0.193 | 0.200 | 0.209 | - |
+| Citation accuracy | - | - | - | - | - | >= 0.95 |
+| Number fidelity | - | - | - | - | - | 1.00 |
+| Abstention accuracy | - | - | - | - | - | >= 0.80 |
+| Faithfulness | - | - | - | - | - | >= 0.90 |
+| LLM calls / query | 5-11 | - | - | - | - | 1-2 |
 
-Phase 3 is the shipped configuration: BGE-M3, pool 50, acronym expansion on the BM25 side.
-**Both Phase 3 acceptance thresholds are met** (recall@20 0.968 >= 0.90, recall@50 0.986 >= 0.95).
+Phase 4 is the shipped configuration: BGE-M3, pool 50, acronym expansion on the BM25 side,
+bge-reranker-v2-m3 over the fused 50, `top_k=5` enforced.
+**Both Phase 3 acceptance thresholds still hold** (recall@20 0.986 >= 0.90, recall@50 0.986 >= 0.95).
+**The Phase 4 acceptance threshold is NOT met: nDCG@10 gained +0.071, against a +0.10 target.**
+See Session 5 for why, and why it is not worth chasing.
+
+Reranker ablation, one session, one settled index, pool 50 unless stated. "off" was re-measured
+alongside the others rather than reused from Phase 3, so the delta is not confounded:
+
+| rerank config | R@5 | R@10 | R@20 | nDCG@10 | MRR@10 |
+|---|---|---|---|---|---|
+| off (Phase 3 pipeline) | 0.885 | 0.933 | 0.968 | 0.807 | 0.776 |
+| breadcrumb + body -- shipped | 0.926 | **0.983** | 0.986 | **0.878** | **0.855** |
+| body only, breadcrumb stripped | 0.908 | 0.974 | 0.986 | 0.873 | 0.854 |
+| breadcrumb + body, pool 100 | **0.938** | 0.977 | **0.991** | **0.878** | **0.855** |
+
+The Phase 3 run recorded 0.802; re-measured in this session the same config gives 0.807, which is
+the run-to-run noise already documented above. Use 0.807 as Phase 4's honest "off".
 
 Expansion-mode ablation, same index, same pool, all measured after the Chroma HNSW index
 settled (see the session log -- results taken immediately after a build are not comparable):
@@ -250,3 +266,82 @@ on p22 never surfaces.
 **Next - Phase 4:** swap to `bge-reranker-v2-m3`, strip metadata scaffolding from
 `Reranker._build_rerank_text` (bare text plus at most a breadcrumb), enforce `top_k=5`, move
 the model name into settings. Measure nDCG@10 with the reranker on vs off; the target is +0.10.
+
+### Session 5 - Phase 4 (reranking)
+
+Swapped the cross-encoder to `BAAI/bge-reranker-v2-m3`, stripped the metadata scaffolding from
+its input, and made `top_k=5` an enforced cut instead of an advisory setting. 24 new tests in
+`tests/test_reranker.py`; 90 pass overall, 1 xfail (below).
+
+**Files.** Rewritten: `src/retrieval/reranker.py`. Changed: `src/agents/reranking_agent.py`
+(passes `top_k=settings.rerank_top_k`, traces model/top_k/scores), `src/config/settings.py`
+(`reranker_model`, `rerank_max_length`, `rerank_batch_size`, `rerank_include_breadcrumb`;
+`rerank_top_k` 6 -> 5), `eval/run_eval.py` (`--rerank`, `--rerank-top-k`, `--rerank-text`),
+`scripts/test_reranking_agent.py` (asserted a hardcoded 6).
+
+- **The scaffolding is gone.** `_build_rerank_text` used to wrap every chunk in
+  `Section:/Heading:/Program:/Content type:` lines, so the cross-encoder scored five label
+  lines plus the passage -- and when `program` was one of the 116 poisoned labels from
+  diagnosis #2, the reranker was handed the lie and amplified it. It now passes the indexed
+  text through unchanged: a breadcrumb line and prose, no labels. A test pins that
+  "Bachelor of Pharmacy" cannot reach the model from a chunk's metadata.
+- **`top_k` is enforced.** `rerank()` defaults to `settings.rerank_top_k`; `None` must be
+  passed explicitly for the full ranking (the eval harness does, so nDCG@10 has ten results
+  to score). The agent no longer passes `None`. Diagnosis #8 is closed.
+- **The model loads lazily**, so importing the module does not cost 2.2 GB. `torch` here is
+  CPU-only (2.14.0+cpu, no CUDA), so a full eval run is ~5,500 pairs at roughly 25 minutes.
+
+**Acceptance: NOT met. nDCG@10 0.807 -> 0.878, +0.071 against a +0.10 target.** Everything else
+moved the right way: recall@5 0.885 -> 0.926, recall@10 0.933 -> 0.983, MRR 0.776 -> 0.855, and
+questions scoring a perfect page-nDCG@10 went 70 -> 79 of 110. Per question the reranker helped
+25 and hurt 7, and the asymmetry is large: mean +0.357 where it helps, mean -0.162 where it hurts.
+
+**Why the target was missed, and why chasing it is the wrong move.** The +0.10 was written
+against a baseline the plan expected to still be broken at this point. Phases 2 and 3 did that
+work first, so the reranker inherited 0.807 rather than the ~0.6 the roadmap assumed; the
+remaining headroom to a perfect ranking is 0.193 in total, and the reranker took 37% of it. The
+deficit is concentrated in two categories -- `table` (0.687) and `exact_number` (0.799) -- and
+both are ranking-among-near-identical-pages problems, not reranking problems. Chunk-level
+nDCG@10 (0.412 -> 0.439) is not the right reading of this criterion either; see the note at the
+top of Metrics.
+
+**Two configuration questions were measured rather than assumed** (table in Metrics):
+- *Breadcrumb or bare body in the rerank input?* HANDOFF allows either ("bare text plus at most
+  a breadcrumb"). Keeping the breadcrumb scores 0.878 vs 0.873 -- a tie inside the ~0.004 noise
+  -- but wins recall@5 (0.926 vs 0.908) and recall@10, so the breadcrumb stays.
+  `settings.rerank_include_breadcrumb` flips it.
+- *Rerank a deeper pool?* Fusing 100 instead of 50 leaves nDCG@10 identical at 0.878 for double
+  the cross-encoder cost. It does buy recall@5 0.926 -> 0.938 and recall@20 0.986 -> 0.991, so
+  it is worth revisiting only if a later phase turns out to need depth. Pool 50 ships.
+
+**Both cases Phase 3 handed to Phase 4 are closed.**
+- q015 ("chairperson of CSE", gold p22): page-nDCG@10 0.000 -> 0.631. Without reranking the top
+  10 was ten CSE-department pages and p22 never surfaced; p22 is now rank 2. Test-enforced.
+- `table`: nDCG 0.617 -> 0.687, recall@5 0.733 -> 0.800, recall@20 0.933 -> 1.000. Recovered but
+  still the weakest category.
+
+**KNOWN REGRESSION, and it is on the project's signature query.** For "What is the minimum CGPA
+for admission to CSE?" the cross-encoder treats "to CSE" as a hard qualifier that no passage in
+this bulletin satisfies -- admission requirements are stated once, university-wide, on p176-177
+(the Phase 3 finding). Fused retrieval ranks p176 first; the reranker drops it to rank 7 and
+fills the top 5 with CSE curriculum pages (26, 121, 117, 24, 223). This is not a defect in the
+passage or in the input text: scored against "What is the minimum CGPA for admission?" that same
+chunk gets 0.94, and 0.95 with its breadcrumb attached. It is the model being strict about a
+qualifier the corpus cannot honour. Because `top_k=5` is now enforced, the generator never sees
+p176 for this phrasing. `tests/test_reranker.py::test_the_admission_pages_survive_the_top_k_cut`
+is marked `xfail(strict=False)` so it reports XPASS the moment a later phase fixes it; a
+companion test asserts the pages are still present in the full ranking (ranks 7 and 8), so a
+change that loses them entirely would fail. **Phase 5/6 should treat this as the calibration
+case for the abstention gate** -- a query whose qualifier is unsatisfiable is exactly what the
+gate exists to catch, and the fix belongs there, not in a hand-tuned reranker score.
+
+**Not done here:** `final_context_top_k=20` is now dead weight -- it slices a 5-item list -- and
+`EvidenceAgent` still consumes the result; both go in Phase 5. The abstention threshold has not
+been calibrated: rerank scores on this corpus run low (a correct top hit scores ~0.16 on the
+hard-qualifier query above but 0.95 on a clean one), so the threshold must be fitted to the 15
+unanswerable questions, not guessed. LM Studio still has not been exercised live.
+
+**Next - Phase 5:** delete `supervisor_agent.py`, `reranking_agent.py`, `retrieval_agent.py`,
+`evidence_agent.py`, `routing.py` and the retrieval retry loop; make query rewriting conditional;
+replace `EvidenceAgent` with a deterministic score + coverage gate calibrated on the unanswerable
+set. Target: 5-11 LLM calls per query down to 1-2, p95 latency down >= 60%, no quality regression.

@@ -66,8 +66,31 @@ class Settings(BaseSettings):
     dense_top_k: int = 30
     bm25_top_k: int = 30
     fusion_top_k: int = 50
-    rerank_top_k: int = 6
     final_context_top_k: int = 20
+
+    # ---------------------------------------------------------
+    # Reranking
+    # ---------------------------------------------------------
+    #: bge-reranker-v2-m3 shares BGE-M3's XLM-RoBERTa tokenizer, so the
+    #: reranker sees the same text the embedder did. It replaces
+    #: cross-encoder/ms-marco-MiniLM-L-6-v2, which was English-uncased with a
+    #: 512-token window and scored metadata scaffolding rather than prose.
+    reranker_model: str = "BAAI/bge-reranker-v2-m3"
+
+    #: Truncation budget for one (query, chunk) pair. Children are budgeted at
+    #: 250 tokens and the largest table chunk is well under this.
+    rerank_max_length: int = 1024
+    rerank_batch_size: int = 8
+
+    #: Whether the cross-encoder sees the chunk's breadcrumb line or only its
+    #: body. Never the old Section:/Heading:/Program:/Content type: block --
+    #: that scaffolding is gone either way.
+    rerank_include_breadcrumb: bool = True
+
+    #: ENFORCED, not advisory. The agent used to call rerank(top_k=None), so
+    #: the reranker reordered 50 candidates and truncated none of them
+    #: (diagnosis #8).
+    rerank_top_k: int = 5
 
     #: Deterministic acronym expansion (CSE <-> Computer Science and
     #: Engineering, CGPA <-> GPA). No LLM involved.

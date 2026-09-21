@@ -70,7 +70,19 @@ def main() -> None:
     parser.add_argument("--expansion", choices=("lexical", "both", "none"), default=None,
                         help="which retrievers see the acronym-expanded query "
                              "(default: settings.query_expansion_mode)")
+    parser.add_argument("--rerank", action="store_true",
+                        help="reorder the fused pool with the cross-encoder before scoring")
+    parser.add_argument("--rerank-top-k", type=int, default=None,
+                        help="truncate the reranked list (default: keep all, so nDCG@10 "
+                             "still has ten results to score; the pipeline itself "
+                             "enforces settings.rerank_top_k)")
+    parser.add_argument("--rerank-text", choices=("breadcrumb", "body"), default=None,
+                        help="what the cross-encoder scores: the indexed text with its "
+                             "breadcrumb line (default) or the body alone")
     args = parser.parse_args()
+
+    if args.rescore and args.rerank:
+        parser.error("--rescore replays saved page rankings; it cannot rerank.")
 
     rows = load_dataset(args.limit)
 
@@ -87,6 +99,18 @@ def main() -> None:
         rankings = None
         counts = page_chunk_counts()
 
+    reranker = None
+    if args.rerank:
+        from src.retrieval.reranker import Reranker
+
+        reranker = Reranker(
+            include_breadcrumb=None if args.rerank_text is None
+            else args.rerank_text == "breadcrumb"
+        )
+        print(f"reranking with {reranker.model_name} "
+              f"(top_k={args.rerank_top_k or 'all'}, "
+              f"breadcrumb={reranker.include_breadcrumb}) ...", flush=True)
+
     per_question = []
     for row in rows:
         if rankings is not None:
@@ -95,8 +119,14 @@ def main() -> None:
             ranked = rankings[row["qid"]]
             n_results = len(ranked)
         else:
-            results = retriever.search(build_query(row), dense_top_k=args.pool,
+            query = build_query(row)
+            results = retriever.search(query, dense_top_k=args.pool,
                                        bm25_top_k=args.pool, fusion_top_k=args.pool)
+            if reranker is not None:
+                # Rerank the query as asked, not the expanded form: the
+                # cross-encoder reads natural language, and expansion exists
+                # only to give BM25 tokens it would otherwise lack.
+                results = reranker.rerank(query, results, top_k=args.rerank_top_k)
             ranked = [p for p in (chunk_page(r) for r in results) if p is not None]
             n_results = len(results)
         entry = {

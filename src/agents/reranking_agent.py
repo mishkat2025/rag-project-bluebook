@@ -26,10 +26,13 @@ class RerankingAgent:
             else state.original_query
         )
 
+        # top_k is ENFORCED here. This call passed top_k=None until Phase 4,
+        # so 50 fused candidates reached EvidenceAgent reordered but uncut
+        # (diagnosis #8).
         reranked = self.reranker.rerank(
             query=rerank_query,
             candidates=state.retrieved_chunks,
-            top_k=None,
+            top_k=settings.rerank_top_k,
         )
 
         state.reranked_chunks = reranked
@@ -51,8 +54,14 @@ class RerankingAgent:
 
         state.trace["reranking"] = {
             "query": rerank_query,
+            "model": settings.reranker_model,
+            "top_k": settings.rerank_top_k,
             "input_candidate_count": len(state.retrieved_chunks),
             "output_candidate_count": len(reranked),
+            "scores": [
+                result.get("rerank_score")
+                for result in reranked
+            ],
             "source_pages": [
                 result.get("metadata", {}).get("page")
                 for result in reranked
