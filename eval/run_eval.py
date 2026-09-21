@@ -67,6 +67,9 @@ def main() -> None:
     parser.add_argument("--pool", type=int, default=50,
                         help="chunks fused per query; raise it to compare corpora "
                              "with different chunk sizes at an equal PAGE budget")
+    parser.add_argument("--expansion", choices=("lexical", "both", "none"), default=None,
+                        help="which retrievers see the acronym-expanded query "
+                             "(default: settings.query_expansion_mode)")
     args = parser.parse_args()
 
     rows = load_dataset(args.limit)
@@ -80,7 +83,7 @@ def main() -> None:
     else:
         from src.retrieval.hybrid_retriever import HybridRetriever
 
-        retriever = HybridRetriever()
+        retriever = HybridRetriever(expansion_mode=args.expansion)
         rankings = None
         counts = page_chunk_counts()
 

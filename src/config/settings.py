@@ -37,7 +37,13 @@ class Settings(BaseSettings):
     # ---------------------------------------------------------
     # Embedding
     # ---------------------------------------------------------
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    # BGE-M3: 8192-token window, so nothing in this corpus is truncated.
+    # all-MiniLM-L6-v2 capped at 256 tokens and silently dropped 58.6% of
+    # chunks' tails (diagnosis #1).
+    embedding_model: str = "BAAI/bge-m3"
+    embedding_max_seq_length: int = 8192
+    embedding_batch_size: int = 256      # records upserted per Chroma write
+    embedding_encode_batch_size: int = 8  # sequences per forward pass (CPU)
 
     # ---------------------------------------------------------
     # Chunking
@@ -57,11 +63,24 @@ class Settings(BaseSettings):
     # ---------------------------------------------------------
     # Retrieval
     # ---------------------------------------------------------
-    dense_top_k: int = 20
-    bm25_top_k: int = 20
-    fusion_top_k: int = 30
+    dense_top_k: int = 30
+    bm25_top_k: int = 30
+    fusion_top_k: int = 50
     rerank_top_k: int = 6
     final_context_top_k: int = 20
+
+    #: Deterministic acronym expansion (CSE <-> Computer Science and
+    #: Engineering, CGPA <-> GPA). No LLM involved.
+    #: "lexical" expands the BM25 query only, "both" also expands the dense
+    #: query, "none" disables it. Measured on the eval set: lexical is the
+    #: best of the three; "both" costs page-nDCG@10 0.809 -> 0.723 because a
+    #: bi-encoder does not need the synonyms and is diluted by them.
+    query_expansion_mode: str = "lexical"
+
+    #: Small-to-big: return each hit's parent section instead of the child.
+    #: Off during retrieval eval -- it changes the text, not the ranking.
+    parent_expansion_enabled: bool = False
+    max_context_units: int = 8
 
     # ---------------------------------------------------------
     # RRF

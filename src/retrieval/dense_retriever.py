@@ -13,6 +13,7 @@ class DenseRetriever:
         self,
         query: str,
         top_k: int = 20,
+        where: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
         """Retrieve the most semantically similar chunks."""
         if not query.strip():
@@ -21,6 +22,7 @@ class DenseRetriever:
         results = self.vector_store.search(
             query=query,
             top_k=top_k,
+            where=where,
         )
 
         for result in results:

@@ -33,3 +33,4 @@ data/traces/*
 *.log
 # Phase 1 corpus snapshot (regenerate with scripts/build_ingestion.py)
 data/backup_phase1/
+data/backup_phase2_chroma_minilm/
