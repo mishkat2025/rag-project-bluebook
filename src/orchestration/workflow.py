@@ -1,145 +1,72 @@
+"""Thin entry point over :mod:`src.orchestration.pipeline`.
+
+This used to be the agent orchestrator: a supervisor LLM call, a router over
+two identical workflow lists, a dispatch loop matching agent names to method
+calls, a retrieval retry loop and a regeneration loop. Phase 5 replaced all of
+it with plain functions; what survives here is the object the terminal app
+constructs once and calls per query, so the models load a single time.
+
+The class exists for that lifetime management and for dependency injection in
+tests. The control flow lives in ``pipeline.run``.
+"""
+from __future__ import annotations
+
 from src.agents.answer_agent import AnswerAgent
-from src.agents.evidence_agent import EvidenceAgent
-from src.agents.query_planning_agent import QueryPlanningAgent
-from src.agents.retrieval_agent import RetrievalAgent
-from src.agents.reranking_agent import RerankingAgent
-from src.agents.supervisor_agent import SupervisorAgent
 from src.agents.verification_agent import VerificationAgent
 from src.config.settings import settings
-from src.orchestration.routing import WorkflowRouter
+from src.orchestration import pipeline
 from src.orchestration.state import RAGState
+from src.retrieval.hybrid_retriever import HybridRetriever
+from src.retrieval.query_rewriter import QueryRewriter
+from src.retrieval.reranker import Reranker
 
 
 class RAGWorkflow:
-    """Execute the EWU RAG agent workflow."""
+    """Answer questions about the EWU Undergraduate Bulletin."""
 
     def __init__(
         self,
-        supervisor: SupervisorAgent | None = None,
-        query_planning: QueryPlanningAgent | None = None,
-        retrieval: RetrievalAgent | None = None,
-        reranking: RerankingAgent | None = None,
-        evidence: EvidenceAgent | None = None,
-        answer: AnswerAgent | None = None,
-        verification: VerificationAgent | None = None,
-        router: WorkflowRouter | None = None,
+        retriever: HybridRetriever | None = None,
+        reranker: Reranker | None = None,
+        rewriter: QueryRewriter | None = None,
+        generator: AnswerAgent | None = None,
+        verifier: VerificationAgent | None = None,
     ):
-        self.supervisor = supervisor or SupervisorAgent()
-        self.query_planning = query_planning or QueryPlanningAgent()
-        self.retrieval = retrieval or RetrievalAgent()
-        self.reranking = reranking or RerankingAgent()
-        self.evidence = evidence or EvidenceAgent()
-        self.answer = answer or AnswerAgent()
-        self.verification = verification or VerificationAgent()
+        self.retriever = retriever or HybridRetriever()
+        self.reranker = reranker or Reranker()
+        self.rewriter = rewriter or QueryRewriter()
+        self.generator = generator or AnswerAgent()
 
-        self.router = router or WorkflowRouter()
+        # Off unless settings.llm_verification_enabled; built only if wanted,
+        # so the default path never constructs a client it will not use.
+        if verifier is not None:
+            self.verifier = verifier
+        elif settings.llm_verification_enabled:
+            self.verifier = VerificationAgent()
+        else:
+            self.verifier = None
 
     def run(self, state: RAGState) -> RAGState:
-        """Execute the workflow and return the updated shared state."""
-
-        if not state.original_query.strip():
-            raise ValueError("Original query cannot be empty.")
-
-        self.supervisor.decide(state)
-
-        workflow = self.router.get_workflow(state)
-
-        state.trace["workflow"] = {
-            "type": state.workflow_type,
-            "agents": workflow,
-        }
-
-        for agent_name in workflow:
-            if agent_name == "supervisor":
-                continue
-
-            if agent_name == "query_planning":
-                self.query_planning.plan(state)
-
-            elif agent_name == "retrieval":
-                self.retrieval.retrieve(state)
-
-            elif agent_name == "reranking":
-                self.reranking.rerank(state)
-
-            elif agent_name == "evidence":
-                self.evidence.assess(state)
-
-                if not state.evidence_status.get("sufficient", False):
-                    self._handle_evidence_failure(state)
-
-                    # If evidence is still insufficient after all retries,
-                    # allow AnswerAgent to produce its controlled
-                    # insufficient-evidence response.
-                    if not state.evidence_status.get("sufficient", False):
-                        continue
-
-            elif agent_name == "answer":
-                self.answer.answer(state)
-
-            elif agent_name == "verification":
-                verification_result = self.verification.verify(state)
-
-                if not verification_result.get("approved", False):
-                    self._handle_verification_failure(state)
-
-                    if not state.verification_result.get("approved", False):
-                        return state
-
-            else:
-                raise ValueError(
-                    f"Unknown workflow agent: {agent_name!r}"
-                )
-
-        return state
-    
-    def _handle_verification_failure(self, state: RAGState) -> None:
-        """Regenerate the answer once when verification rejects it."""
-
-        if settings.max_answer_regenerations <= 0:
-            return
-
-        state.trace["answer_regeneration"] = {
-            "attempted": True,
-            "max_regenerations": settings.max_answer_regenerations,
-        }
-
-        self.answer.answer(state)
-
-        verification_result = self.verification.verify(state)
-
-        state.trace["answer_regeneration"]["approved_after_regeneration"] = (
-            verification_result.get("approved", False)
+        """Execute the pipeline and return the updated shared state."""
+        return pipeline.run(
+            state,
+            retriever=self.retriever,
+            reranker=self.reranker,
+            rewriter=self.rewriter,
+            generator=self.generator,
+            verifier=self.verifier,
         )
 
-        state.verification_result = verification_result
+    def warm_up(self) -> dict[str, str]:
+        """Load the local models now and report where they ended up.
 
-    def _handle_evidence_failure(self, state: RAGState) -> None:
-        """Retry retrieval when the available evidence is insufficient."""
+        The terminal app calls this at startup so the first question does not
+        pay a 25-second model load, and so a CPU regression is visible in the
+        banner rather than felt later as unexplained slowness.
+        """
+        _ = self.reranker.model
 
-        while (
-            not state.evidence_status.get("sufficient", False)
-            and state.retry_count < settings.max_retrieval_retries
-        ):
-            state.retry_count += 1
-
-            # Generate better retrieval queries using the Query Planning Agent.
-            self.query_planning.plan(state)
-
-            # Retrieve using the new queries.
-            self.retrieval.retrieve(state)
-
-            # Re-rank the new candidate set.
-            self.reranking.rerank(state)
-
-            # Re-evaluate the evidence.
-            self.evidence.assess(state)
-
-        state.trace["retrieval_retry"] = {
-            "retry_count": state.retry_count,
-            "max_retries": settings.max_retrieval_retries,
-            "sufficient": state.evidence_status.get(
-                "sufficient",
-                False,
-            ),
+        return {
+            "embedder": self.retriever.dense_retriever.vector_store.device_description,
+            "reranker": self.reranker.device_description,
         }

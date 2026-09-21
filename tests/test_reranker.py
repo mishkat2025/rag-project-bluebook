@@ -2,7 +2,7 @@
 
 Three defects are pinned here, all from the diagnosis:
 
-* ``top_k`` was advisory. ``RerankingAgent`` passed ``top_k=None`` and
+* ``top_k`` was advisory. The reranking agent passed ``top_k=None`` and
   ``settings.rerank_top_k`` was read by nothing outside a smoke script, so the
   reranker reordered 50 candidates and truncated none (diagnosis #8).
 * the cross-encoder scored metadata scaffolding -- ``Section:``, ``Heading:``,
@@ -16,7 +16,7 @@ the real index; they skip rather than fail when either is missing.
 """
 import pytest
 
-from src.agents.reranking_agent import RerankingAgent
+from src.orchestration import pipeline
 from src.config.settings import settings
 from src.orchestration.state import RAGState
 from src.retrieval.reranker import Reranker
@@ -92,11 +92,13 @@ def test_explicit_top_k_truncates(reranker):
     assert len(results) == 2
 
 
-def test_the_agent_enforces_top_k(stub):
+def test_the_pipeline_enforces_top_k(stub):
+    """Phase 4 asserted this of RerankingAgent; Phase 5 deleted the agent and
+    moved the call into pipeline.rerank, so the guarantee moves with it."""
     state = RAGState(original_query="What is the minimum CGPA for admission?")
     state.retrieved_chunks = list(CANDIDATES)
 
-    reranked = RerankingAgent(Reranker(model=stub)).rerank(state)
+    reranked = pipeline.rerank(state, Reranker(model=stub))
 
     assert len(reranked) == settings.rerank_top_k
     assert len(state.reranked_chunks) == settings.rerank_top_k

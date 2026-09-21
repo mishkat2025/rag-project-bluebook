@@ -25,6 +25,7 @@ not cost 2.2 GB of weights.
 """
 from typing import Any
 
+from src.config.device import describe_device, resolve_device
 from src.config.settings import settings
 
 
@@ -41,6 +42,7 @@ class Reranker:
         batch_size: int | None = None,
         include_breadcrumb: bool | None = None,
         model: Any | None = None,
+        device: str | None = None,
     ):
         self.model_name = model_name or settings.reranker_model
         self.max_length = max_length or settings.rerank_max_length
@@ -52,7 +54,18 @@ class Reranker:
             else settings.rerank_include_breadcrumb
         )
 
+        # Resolved eagerly so a missing GPU fails at construction, not tens
+        # of minutes into an eval. An injected model keeps its own device.
+        self.device = resolve_device(device) if model is None else "injected"
+
         self._model = model
+
+    @property
+    def device_description(self) -> str:
+        if self.device == "injected":
+            return "injected model"
+
+        return describe_device(self.device)
 
     @property
     def model(self) -> Any:
@@ -60,9 +73,12 @@ class Reranker:
         if self._model is None:
             from sentence_transformers import CrossEncoder
 
+            # Explicit device. Constructed without it, this is the other half
+            # of the Phase 1-4 CPU regression (see src/config/device.py).
             self._model = CrossEncoder(
                 self.model_name,
                 max_length=self.max_length,
+                device=self.device,
             )
 
         return self._model

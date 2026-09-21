@@ -126,6 +126,9 @@ Return only the final user-facing answer.
     def _format_evidence(chunks: list[dict]) -> str:
         formatted = []
 
+        # context_text is the parent section when parent expansion is on and
+        # the child otherwise, so the generator reads the section that answers
+        # the question rather than the 250-token window that ranked for it.
         for index, chunk in enumerate(chunks, start=1):
             metadata = chunk.get("metadata", {})
 
@@ -143,7 +146,7 @@ Heading: {heading}
 Program: {program}
 
 Text:
-{chunk.get("text", "").strip()}
+{(chunk.get("context_text") or chunk.get("text") or "").strip()}
 """.strip()
             )
 

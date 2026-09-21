@@ -53,11 +53,6 @@ class RAGState:
     )
 
     # ---------------------------------------------------------
-    # Retry control
-    # ---------------------------------------------------------
-    retry_count: int = 0
-
-    # ---------------------------------------------------------
     # Answer generation
     # ---------------------------------------------------------
     draft_answer: str = ""
@@ -70,13 +65,11 @@ class RAGState:
     )
 
     # ---------------------------------------------------------
-    # Workflow information
+    # Trace
     # ---------------------------------------------------------
-    workflow_type: str = "simple"
-
+    #: Which components ran. ``workflow_type`` and the router that read it are
+    #: gone: SIMPLE_WORKFLOW and COMPLEX_WORKFLOW were identical lists, and
+    #: choosing between them cost an LLM call (diagnosis #7).
     agents_used: list[str] = field(default_factory=list)
 
-    # ---------------------------------------------------------
-    # Retrieval trace
-    # ---------------------------------------------------------
     trace: dict[str, Any] = field(default_factory=dict)

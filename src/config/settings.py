@@ -35,6 +35,24 @@ class Settings(BaseSettings):
     trace_dir: Path = data_dir / "traces"
 
     # ---------------------------------------------------------
+    # Device
+    # ---------------------------------------------------------
+    #: Which device the local models (BGE-M3 embedder, bge-reranker-v2-m3
+    #: cross-encoder) run on. "cuda" | "cpu" | "auto".
+    #:
+    #: Phases 1-4 ran entirely on the CPU because both models were constructed
+    #: with no device argument and torch was the "+cpu" wheel. Auto-detection
+    #: cannot tell "no GPU" from "wrong wheel", so it silently chose the CPU
+    #: and a rerank eval took 30-50 minutes instead of under a minute.
+    #: src/config/device.py resolves this once and refuses to fall back
+    #: quietly. This applies to the shipped chatbot, not just eval.
+    device: str = "cuda"
+
+    #: Refuse to silently fall back to the CPU when device="cuda" and torch
+    #: sees no GPU. Set False (or device="auto") to run on the CPU on purpose.
+    require_gpu: bool = True
+
+    # ---------------------------------------------------------
     # Embedding
     # ---------------------------------------------------------
     # BGE-M3: 8192-token window, so nothing in this corpus is truncated.
@@ -43,7 +61,9 @@ class Settings(BaseSettings):
     embedding_model: str = "BAAI/bge-m3"
     embedding_max_seq_length: int = 8192
     embedding_batch_size: int = 256      # records upserted per Chroma write
-    embedding_encode_batch_size: int = 8  # sequences per forward pass (CPU)
+    #: Sequences per forward pass. Was 8, tuned for the CPU; the 16GB card
+    #: takes 64 comfortably alongside the reranker and LM Studio.
+    embedding_encode_batch_size: int = 64
 
     # ---------------------------------------------------------
     # Chunking
@@ -66,7 +86,6 @@ class Settings(BaseSettings):
     dense_top_k: int = 30
     bm25_top_k: int = 30
     fusion_top_k: int = 50
-    final_context_top_k: int = 20
 
     # ---------------------------------------------------------
     # Reranking
@@ -80,7 +99,8 @@ class Settings(BaseSettings):
     #: Truncation budget for one (query, chunk) pair. Children are budgeted at
     #: 250 tokens and the largest table chunk is well under this.
     rerank_max_length: int = 1024
-    rerank_batch_size: int = 8
+    #: (query, chunk) pairs per forward pass. Was 8 for the CPU.
+    rerank_batch_size: int = 32
 
     #: Whether the cross-encoder sees the chunk's breadcrumb line or only its
     #: body. Never the old Section:/Heading:/Program:/Content type: block --
@@ -106,6 +126,65 @@ class Settings(BaseSettings):
     max_context_units: int = 8
 
     # ---------------------------------------------------------
+    # Abstention gate (replaces EvidenceAgent)
+    # ---------------------------------------------------------
+    #: Minimum top rerank score for the retrieved set to count as an answer.
+    #: Below this the chatbot says the bulletin does not cover the question
+    #: instead of generating from the five least-bad passages.
+    #:
+    #: CALIBRATED on the eval set by eval/calibrate_abstention.py, not guessed.
+    #: Guessing would be unusually bad here: scores are not uniformly high on
+    #: answerable questions (the "minimum CGPA for admission to CSE" case
+    #: scores its correct top hit ~0.16, because the cross-encoder reads
+    #: "to CSE" as a qualifier no passage in this bulletin satisfies).
+    #: SHIPPED VALUE: 0.02. This is NOT the value that maximises abstention
+    #: accuracy on eval/dataset.jsonl -- 0.40 does, at 0.933 against the 0.80
+    #: target. It is the value that survives real phrasing.
+    #:
+    #: The cross-encoder's absolute score is conditioned on wording, not just
+    #: on relevance. The same correct chunk (p216, Grading System) scores
+    #: 0.9913 for "grading system letter grades grade points" and 0.0652 for
+    #: "What is the grading scale?". dataset.jsonl was generated FROM the PDF,
+    #: so its questions share the bulletin's vocabulary and score near 1.0 --
+    #: which makes it a sound retrieval benchmark and a biased calibration set
+    #: for abstention.
+    #:
+    #: Measured on eval/paraphrase_probe.py (naturally-worded questions):
+    #:     threshold 0.02 -> keeps 11/12 answerable, catches 7/8 unanswerable
+    #:     threshold 0.40 -> keeps  2/12 answerable, catches 7/8 unanswerable
+    #: Everything above ~0.01 buys ZERO additional refusals and costs
+    #: answerable questions steeply. On dataset.jsonl, 0.02 still gives 0
+    #: false abstentions out of 110.
+    #:
+    #: Consequence, recorded honestly: abstention accuracy is 0.600 (9/15) at
+    #: this threshold, below the >= 0.80 Phase 6 criterion. Reaching 0.80 by
+    #: raising the threshold would make the chatbot refuse most real
+    #: questions, so the gap belongs to Phase 6's grounding work, not to
+    #: threshold tuning. See PROGRESS.md.
+    #:
+    #: Re-run BOTH eval/calibrate_abstention.py and eval/paraphrase_probe.py
+    #: before changing this number.
+    abstention_threshold: float = 0.02
+
+    #: Fraction of the query's content terms that must appear in the selected
+    #: chunks. 0.0 disables the check. MEASURED, not assumed: no coverage
+    #: floor catches even one additional unanswerable question, and anything
+    #: above 0.5 only costs answerable ones (0.6 -> 9 false abstentions,
+    #: 0.7 -> 18). A top-vs-runner-up score margin was tested as a second
+    #: signal too and separates no better (answerable median 1.40x,
+    #: unanswerable 1.32x -- overlapping). The mechanism stays because it is
+    #: where a later phase would tighten the gate.
+    gate_min_coverage: float = 0.0
+
+    #: Whether to spend an LLM call verifying the answer. Off for Phase 5:
+    #: the phase exists to cut LLM calls per query to 1-2, and the verifier
+    #: was structurally unable to catch the dominant failure mode anyway --
+    #: it judged the answer against the same chunks that produced it
+    #: (diagnosis #11). Deterministic citation and number validation arrives
+    #: in Phase 6; Phase 7 decides what, if anything, the LLM verifier becomes.
+    llm_verification_enabled: bool = False
+
+    # ---------------------------------------------------------
     # RRF
     # ---------------------------------------------------------
     rrf_k: int = 60
@@ -114,7 +193,6 @@ class Settings(BaseSettings):
     # Workflow limits
     # ---------------------------------------------------------
     max_subqueries: int = 5
-    max_retrieval_retries: int = 2
     max_answer_regenerations: int = 1
     max_conversation_exchanges: int = 6
 

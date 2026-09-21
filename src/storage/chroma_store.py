@@ -4,6 +4,7 @@ from typing import Any
 import chromadb
 from sentence_transformers import SentenceTransformer
 
+from src.config.device import describe_device, resolve_device
 from src.config.settings import settings
 from src.storage.vector_store import VectorStore
 
@@ -17,6 +18,7 @@ class ChromaVectorStore(VectorStore):
         self,
         persist_directory: Path | None = None,
         embedding_model: str | None = None,
+        device: str | None = None,
     ):
         self.persist_directory = Path(
             persist_directory or settings.chroma_dir
@@ -32,8 +34,15 @@ class ChromaVectorStore(VectorStore):
             or settings.embedding_model
         )
 
+        # Explicit, never auto-detected. Constructed without this argument,
+        # SentenceTransformer silently picked the CPU for all of Phases 1-4
+        # because torch was the "+cpu" wheel. resolve_device() raises instead
+        # of falling back when settings.require_gpu is set.
+        self.device = resolve_device(device)
+
         self.embedding_model = SentenceTransformer(
-            model_name
+            model_name,
+            device=self.device,
         )
 
         # BGE-M3 ships an 8192-token window. Chunks are ~250 tokens, but a
@@ -43,6 +52,8 @@ class ChromaVectorStore(VectorStore):
         self.embedding_model.max_seq_length = (
             settings.embedding_max_seq_length
         )
+
+        self.device_description = describe_device(self.device)
 
         self.client = chromadb.PersistentClient(
             path=str(self.persist_directory)

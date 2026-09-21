@@ -1,0 +1,3238 @@
+[
+ {
+  "qid": "q001",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the minimum attendance required in lectures, tutorials and practical classes?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.993229866027832,
+  "scores": [
+   0.993229866027832,
+   0.06823886185884476,
+   0.03422027826309204,
+   0.021202199161052704,
+   0.01869792863726616
+  ],
+  "coverage": 1.0,
+  "pages": [
+   179,
+   178,
+   215,
+   93,
+   92
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q002",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "How much do I pay to fill in the online admission form?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9671450257301331,
+  "scores": [
+   0.9671450257301331,
+   0.9578879475593567,
+   0.0076638516038656235,
+   0.005755671299993992,
+   0.0037673981860280037
+  ],
+  "coverage": 1.0,
+  "pages": [
+   178,
+   176,
+   179,
+   214,
+   228
+  ],
+  "gold_pages": [
+   176
+  ]
+ },
+ {
+  "qid": "q003",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the one-time admission fee?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8858585953712463,
+  "scores": [
+   0.8858585953712463,
+   0.09610056132078171,
+   0.07866427302360535,
+   0.07236892729997635,
+   0.059080787003040314
+  ],
+  "coverage": 1.0,
+  "pages": [
+   179,
+   176,
+   179,
+   180,
+   178
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q004",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the admission fee for non-degree students?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9934927821159363,
+  "scores": [
+   0.9934927821159363,
+   0.45293304324150085,
+   0.3235357999801636,
+   0.22152723371982574,
+   0.1304900050163269
+  ],
+  "coverage": 1.0,
+  "pages": [
+   179,
+   178,
+   176,
+   179,
+   179
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q005",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the re-admission fee if I change my degree program?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9829067587852478,
+  "scores": [
+   0.9829067587852478,
+   0.03451675549149513,
+   0.017682986333966255,
+   0.017622724175453186,
+   0.015752606093883514
+  ],
+  "coverage": 1.0,
+  "pages": [
+   179,
+   218,
+   180,
+   181,
+   179
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q006",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the late registration fee?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.98045414686203,
+  "scores": [
+   0.98045414686203,
+   0.9644959568977356,
+   0.6443262100219727,
+   0.04156285524368286,
+   0.036465324461460114
+  ],
+  "coverage": 1.0,
+  "pages": [
+   215,
+   181,
+   214,
+   215,
+   215
+  ],
+  "gold_pages": [
+   181,
+   215
+  ]
+ },
+ {
+  "qid": "q007",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the maximum time allowed to complete an undergraduate degree on compassionate ground?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9815670847892761,
+  "scores": [
+   0.9815670847892761,
+   0.39504870772361755,
+   0.15281784534454346,
+   0.03265445679426193,
+   0.018680434674024582
+  ],
+  "coverage": 1.0,
+  "pages": [
+   25,
+   218,
+   218,
+   218,
+   219
+  ],
+  "gold_pages": [
+   25
+  ]
+ },
+ {
+  "qid": "q008",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What share of courses must be completed at EWU under the residency requirement?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9902364611625671,
+  "scores": [
+   0.9902364611625671,
+   0.678705096244812,
+   0.5343322157859802,
+   0.3370421528816223,
+   0.25169146060943604
+  ],
+  "coverage": 0.8333333333333334,
+  "pages": [
+   25,
+   214,
+   29,
+   223,
+   70
+  ],
+  "gold_pages": [
+   25
+  ]
+ },
+ {
+  "qid": "q009",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What percentage of credit hours can be accepted through credit transfer?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9937049746513367,
+  "scores": [
+   0.9937049746513367,
+   0.009780550375580788,
+   0.004928732290863991,
+   0.003013934940099716,
+   0.0020106129813939333
+  ],
+  "coverage": 0.8333333333333334,
+  "pages": [
+   214,
+   214,
+   214,
+   276,
+   168
+  ],
+  "gold_pages": [
+   214
+  ]
+ },
+ {
+  "qid": "q010",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "How much is the re-scrutiny fee for one final exam script?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9575842022895813,
+  "scores": [
+   0.9575842022895813,
+   0.005494188982993364,
+   0.0046225907281041145,
+   0.0025179043877869844,
+   0.0017257279250770807
+  ],
+  "coverage": 1.0,
+  "pages": [
+   216,
+   179,
+   181,
+   183,
+   180
+  ],
+  "gold_pages": [
+   216
+  ]
+ },
+ {
+  "qid": "q011",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "When is the library open on Sunday to Thursday?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9872806668281555,
+  "scores": [
+   0.9872806668281555,
+   0.0223526731133461,
+   0.017137285321950912,
+   0.015306461602449417,
+   0.014592504128813744
+  ],
+  "coverage": 1.0,
+  "pages": [
+   208,
+   208,
+   17,
+   17,
+   211
+  ],
+  "gold_pages": [
+   208
+  ]
+ },
+ {
+  "qid": "q012",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "How many clubs does EWU have?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9991897940635681,
+  "scores": [
+   0.9991897940635681,
+   0.9961355924606323,
+   0.9421237707138062,
+   0.4143149256706238,
+   0.18935593962669373
+  ],
+  "coverage": 1.0,
+  "pages": [
+   212,
+   212,
+   213,
+   83,
+   15
+  ],
+  "gold_pages": [
+   212
+  ]
+ },
+ {
+  "qid": "q013",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "How many credits are required for the BBA degree?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9893607497215271,
+  "scores": [
+   0.9893607497215271,
+   0.9893513321876526,
+   0.9888683557510376,
+   0.9885308742523193,
+   0.9879823923110962
+  ],
+  "coverage": 0.8333333333333334,
+  "pages": [
+   31,
+   34,
+   34,
+   32,
+   31
+  ],
+  "gold_pages": [
+   23,
+   24
+  ]
+ },
+ {
+  "qid": "q014",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What fee is charged for the remedial English course?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9792019724845886,
+  "scores": [
+   0.9792019724845886,
+   0.029039621353149414,
+   0.023350883275270462,
+   0.01253277063369751,
+   0.008861423470079899
+  ],
+  "coverage": 1.0,
+  "pages": [
+   180,
+   373,
+   179,
+   181,
+   217
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q015",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "Who is the chairperson of the Department of Computer Science and Engineering?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9843117594718933,
+  "scores": [
+   0.9843117594718933,
+   0.9754018187522888,
+   0.24220703542232513,
+   0.23552420735359192,
+   0.2281448245048523
+  ],
+  "coverage": 1.0,
+  "pages": [
+   13,
+   22,
+   124,
+   126,
+   123
+  ],
+  "gold_pages": [
+   22
+  ]
+ },
+ {
+  "qid": "q016",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "Who is the Dean of the Faculty of Sciences and Engineering?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9992048144340515,
+  "scores": [
+   0.9992048144340515,
+   0.897786557674408,
+   0.19640764594078064,
+   0.1644515097141266,
+   0.1618233174085617
+  ],
+  "coverage": 1.0,
+  "pages": [
+   22,
+   12,
+   139,
+   97,
+   140
+  ],
+  "gold_pages": [
+   22
+  ]
+ },
+ {
+  "qid": "q017",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the fee for verifying each academic document?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9933868050575256,
+  "scores": [
+   0.9933868050575256,
+   0.8403924107551575,
+   0.5104061365127563,
+   0.0209969449788332,
+   0.016945485025644302
+  ],
+  "coverage": 0.75,
+  "pages": [
+   177,
+   180,
+   180,
+   181,
+   216
+  ],
+  "gold_pages": [
+   177
+  ]
+ },
+ {
+  "qid": "q018",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What SAT score qualifies for an admission test waiver?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9981606602668762,
+  "scores": [
+   0.9981606602668762,
+   0.7907673120498657,
+   0.146318256855011,
+   0.1109115406870842,
+   0.08407124876976013
+  ],
+  "coverage": 0.8333333333333334,
+  "pages": [
+   177,
+   177,
+   177,
+   220,
+   219
+  ],
+  "gold_pages": [
+   177
+  ]
+ },
+ {
+  "qid": "q019",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the fee for an urgent official transcript?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9174298644065857,
+  "scores": [
+   0.9174298644065857,
+   0.025070343166589737,
+   0.005508936941623688,
+   0.004401500336825848,
+   0.0036264616064727306
+  ],
+  "coverage": 1.0,
+  "pages": [
+   181,
+   214,
+   179,
+   178,
+   176
+  ],
+  "gold_pages": [
+   181
+  ]
+ },
+ {
+  "qid": "q020",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is EWU's policy on cheating?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.5961350798606873,
+  "scores": [
+   0.5961350798606873,
+   0.2521876096725464,
+   0.13845501840114594,
+   0.04980699345469475,
+   0.04584140330553055
+  ],
+  "coverage": 1.0,
+  "pages": [
+   218,
+   205,
+   15,
+   185,
+   206
+  ],
+  "gold_pages": [
+   218
+  ]
+ },
+ {
+  "qid": "q021",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "For how long can a leave of absence be granted?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9851415157318115,
+  "scores": [
+   0.9851415157318115,
+   0.818418562412262,
+   0.5972219705581665,
+   0.20337864756584167,
+   0.12642449140548706
+  ],
+  "coverage": 1.0,
+  "pages": [
+   218,
+   218,
+   218,
+   215,
+   217
+  ],
+  "gold_pages": [
+   218
+  ]
+ },
+ {
+  "qid": "q022",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What does a duplicate degree certificate cost?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.7519683241844177,
+  "scores": [
+   0.7519683241844177,
+   0.005781844258308411,
+   0.005214740056544542,
+   0.0029548443853855133,
+   0.0026782178319990635
+  ],
+  "coverage": 0.75,
+  "pages": [
+   181,
+   177,
+   226,
+   179,
+   180
+  ],
+  "gold_pages": [
+   181
+  ]
+ },
+ {
+  "qid": "q023",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the student activity fee per semester?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.949551522731781,
+  "scores": [
+   0.949551522731781,
+   0.055807925760746,
+   0.04870716482400894,
+   0.03710997477173805,
+   0.031452614814043045
+  ],
+  "coverage": 1.0,
+  "pages": [
+   180,
+   181,
+   180,
+   179,
+   218
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q024",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "How much is the admission form fee for foreign students?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9980822801589966,
+  "scores": [
+   0.9980822801589966,
+   0.9933773875236511,
+   0.1149907186627388,
+   0.059876538813114166,
+   0.036022793501615524
+  ],
+  "coverage": 1.0,
+  "pages": [
+   178,
+   176,
+   179,
+   177,
+   179
+  ],
+  "gold_pages": [
+   176
+  ]
+ },
+ {
+  "qid": "q025",
+  "category": "single_fact",
+  "answerable": true,
+  "query": "What is the minimum number of credits an undergraduate must register each semester?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9896981120109558,
+  "scores": [
+   0.9896981120109558,
+   0.9895444512367249,
+   0.9855330586433411,
+   0.9670061469078064,
+   0.9623335599899292
+  ],
+  "coverage": 0.8,
+  "pages": [
+   177,
+   178,
+   215,
+   177,
+   219
+  ],
+  "gold_pages": [
+   215
+  ]
+ },
+ {
+  "qid": "q026",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "What is the tuition fee per credit for the BBA program?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9305794835090637,
+  "scores": [
+   0.9305794835090637,
+   0.4808669090270996,
+   0.054629191756248474,
+   0.0481606125831604,
+   0.042896270751953125
+  ],
+  "coverage": 1.0,
+  "pages": [
+   179,
+   180,
+   34,
+   23,
+   33
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q027",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "What is the tuition fee per credit for B.Sc. in CSE?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9488011598587036,
+  "scores": [
+   0.9488011598587036,
+   0.7368629574775696,
+   0.23576690256595612,
+   0.17249146103858948,
+   0.1315021812915802
+  ],
+  "coverage": 0.9,
+  "pages": [
+   179,
+   180,
+   121,
+   24,
+   162
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q028",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "What is the per-credit tuition for BA in English?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9049059152603149,
+  "scores": [
+   0.9049059152603149,
+   0.31493619084358215,
+   0.3140820264816284,
+   0.2986704111099243,
+   0.28732192516326904
+  ],
+  "coverage": 1.0,
+  "pages": [
+   179,
+   62,
+   62,
+   61,
+   61
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q029",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "What is the per-credit tuition for B.Pharm?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.6580610275268555,
+  "scores": [
+   0.6580610275268555,
+   0.5975298881530762,
+   0.5661022067070007,
+   0.5137439966201782,
+   0.4286734163761139
+  ],
+  "coverage": 1.0,
+  "pages": [
+   220,
+   219,
+   220,
+   177,
+   180
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q030",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "How much is the lab fee for B.Sc. in Civil Engineering per semester?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9883126616477966,
+  "scores": [
+   0.9883126616477966,
+   0.0633654072880745,
+   0.03678805008530617,
+   0.02964460290968418,
+   0.017106037586927414
+  ],
+  "coverage": 0.8888888888888888,
+  "pages": [
+   180,
+   179,
+   162,
+   156,
+   161
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q031",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "How much is the lab fee for Bachelor of Pharmacy per semester?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9841117858886719,
+  "scores": [
+   0.9841117858886719,
+   0.2560826241970062,
+   0.10216645151376724,
+   0.09978828579187393,
+   0.08933304995298386
+  ],
+  "coverage": 1.0,
+  "pages": [
+   180,
+   180,
+   180,
+   220,
+   215
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q032",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "How many total credits does the B.Sc. in Civil Engineering need?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9773604869842529,
+  "scores": [
+   0.9773604869842529,
+   0.9091747403144836,
+   0.8883136510848999,
+   0.8821603059768677,
+   0.8787444829940796
+  ],
+  "coverage": 0.875,
+  "pages": [
+   157,
+   24,
+   161,
+   162,
+   156
+  ],
+  "gold_pages": [
+   24
+  ]
+ },
+ {
+  "qid": "q033",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "How many credits is the Bachelor of Pharmacy program?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9955332279205322,
+  "scores": [
+   0.9955332279205322,
+   0.9885278940200806,
+   0.9850399494171143,
+   0.9832395911216736,
+   0.9804120063781738
+  ],
+  "coverage": 1.0,
+  "pages": [
+   142,
+   144,
+   144,
+   144,
+   145
+  ],
+  "gold_pages": [
+   24
+  ]
+ },
+ {
+  "qid": "q034",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "How many credits does the LL.B (Hons.) require?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9886199235916138,
+  "scores": [
+   0.9886199235916138,
+   0.9884831309318542,
+   0.9879485368728638,
+   0.9839521050453186,
+   0.9365814328193665
+  ],
+  "coverage": 0.6666666666666666,
+  "pages": [
+   92,
+   91,
+   93,
+   94,
+   90
+  ],
+  "gold_pages": [
+   23
+  ]
+ },
+ {
+  "qid": "q035",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "What is the fee for correction of name?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.7548689246177673,
+  "scores": [
+   0.7548689246177673,
+   0.0032093722838908434,
+   0.0026511475443840027,
+   0.0026207652408629656,
+   0.0025009247474372387
+  ],
+  "coverage": 1.0,
+  "pages": [
+   181,
+   177,
+   179,
+   216,
+   181
+  ],
+  "gold_pages": [
+   181
+  ]
+ },
+ {
+  "qid": "q036",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "What is the credit transfer or waiver fee per credit?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9354017376899719,
+  "scores": [
+   0.9354017376899719,
+   0.9259635806083679,
+   0.09719427675008774,
+   0.032302286475896835,
+   0.03131523355841637
+  ],
+  "coverage": 1.0,
+  "pages": [
+   214,
+   181,
+   222,
+   220,
+   26
+  ],
+  "gold_pages": [
+   181
+  ]
+ },
+ {
+  "qid": "q037",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "How many credits of tuition waiver can a Trustee member award each semester?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9996857643127441,
+  "scores": [
+   0.9996857643127441,
+   0.3556124269962311,
+   0.1627393662929535,
+   0.14557704329490662,
+   0.046403415501117706
+  ],
+  "coverage": 1.0,
+  "pages": [
+   222,
+   220,
+   223,
+   220,
+   219
+  ],
+  "gold_pages": [
+   222
+  ]
+ },
+ {
+  "qid": "q038",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "What minimum CGPA keeps the District Quota scholarship?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9775656461715698,
+  "scores": [
+   0.9775656461715698,
+   0.3686608076095581,
+   0.26674628257751465,
+   0.19583843648433685,
+   0.18790274858474731
+  ],
+  "coverage": 0.6,
+  "pages": [
+   220,
+   223,
+   219,
+   223,
+   222
+  ],
+  "gold_pages": [
+   220
+  ]
+ },
+ {
+  "qid": "q039",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "How many students received scholarships in 2018-2019?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9305761456489563,
+  "scores": [
+   0.9305761456489563,
+   0.2345326542854309,
+   0.07768836617469788,
+   0.0466935969889164,
+   0.027822062373161316
+  ],
+  "coverage": 0.8,
+  "pages": [
+   219,
+   227,
+   228,
+   220,
+   226
+  ],
+  "gold_pages": [
+   219
+  ]
+ },
+ {
+  "qid": "q040",
+  "category": "exact_number",
+  "answerable": true,
+  "query": "What is the registration fee for the Pharmacy Council?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8556161522865295,
+  "scores": [
+   0.8556161522865295,
+   0.03383296728134155,
+   0.005295661743730307,
+   0.004284943453967571,
+   0.0036271491553634405
+  ],
+  "coverage": 1.0,
+  "pages": [
+   180,
+   180,
+   181,
+   215,
+   496
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q041",
+  "category": "table",
+  "answerable": true,
+  "query": "What grade point does an A- carry?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.20070049166679382,
+  "scores": [
+   0.20070049166679382,
+   0.19307692348957062,
+   0.00839062687009573,
+   0.0068178558722138405,
+   0.006348687689751387
+  ],
+  "coverage": 0.6666666666666666,
+  "pages": [
+   217,
+   216,
+   216,
+   138,
+   219
+  ],
+  "gold_pages": [
+   216
+  ]
+ },
+ {
+  "qid": "q042",
+  "category": "table",
+  "answerable": true,
+  "query": "What numerical score range earns a B+?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.670118510723114,
+  "scores": [
+   0.670118510723114,
+   0.2830652594566345,
+   0.036001015454530716,
+   0.013505409471690655,
+   0.013194157741963863
+  ],
+  "coverage": 0.5,
+  "pages": [
+   216,
+   217,
+   176,
+   221,
+   177
+  ],
+  "gold_pages": [
+   216
+  ]
+ },
+ {
+  "qid": "q043",
+  "category": "table",
+  "answerable": true,
+  "query": "What grade point is a D worth?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.1880616396665573,
+  "scores": [
+   0.1880616396665573,
+   0.0857938602566719,
+   0.008881179615855217,
+   0.007843159139156342,
+   0.0056404052302241325
+  ],
+  "coverage": 0.6666666666666666,
+  "pages": [
+   216,
+   217,
+   219,
+   177,
+   216
+  ],
+  "gold_pages": [
+   216
+  ]
+ },
+ {
+  "qid": "q044",
+  "category": "table",
+  "answerable": true,
+  "query": "What grade point does a C+ have?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.720207154750824,
+  "scores": [
+   0.720207154750824,
+   0.15983496606349945,
+   0.021967587992548943,
+   0.01926669478416443,
+   0.013565530069172382
+  ],
+  "coverage": 1.0,
+  "pages": [
+   216,
+   217,
+   121,
+   219,
+   177
+  ],
+  "gold_pages": [
+   216
+  ]
+ },
+ {
+  "qid": "q045",
+  "category": "table",
+  "answerable": true,
+  "query": "Which letter grades are passing grades?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9852511882781982,
+  "scores": [
+   0.9852511882781982,
+   0.2715579569339752,
+   0.020195841789245605,
+   0.015307274647057056,
+   0.008721189573407173
+  ],
+  "coverage": 1.0,
+  "pages": [
+   216,
+   216,
+   217,
+   218,
+   177
+  ],
+  "gold_pages": [
+   216
+  ]
+ },
+ {
+  "qid": "q046",
+  "category": "table",
+  "answerable": true,
+  "query": "How many credits must a CSE undergraduate complete in the last year to be eligible for merit scholarship?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.7268477082252502,
+  "scores": [
+   0.7268477082252502,
+   0.5802656412124634,
+   0.5782212018966675,
+   0.5267371535301208,
+   0.47612422704696655
+  ],
+  "coverage": 0.9090909090909091,
+  "pages": [
+   222,
+   220,
+   220,
+   220,
+   24
+  ],
+  "gold_pages": [
+   221
+  ]
+ },
+ {
+  "qid": "q047",
+  "category": "table",
+  "answerable": true,
+  "query": "How many credits must a B.Pharm student earn to be eligible for merit scholarship?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.997032880783081,
+  "scores": [
+   0.997032880783081,
+   0.9852690100669861,
+   0.9844210147857666,
+   0.983700692653656,
+   0.9818042516708374
+  ],
+  "coverage": 0.6,
+  "pages": [
+   220,
+   219,
+   177,
+   220,
+   220
+  ],
+  "gold_pages": [
+   221
+  ]
+ },
+ {
+  "qid": "q048",
+  "category": "table",
+  "answerable": true,
+  "query": "How many credits must an MS in CSE student have completed in two semesters for scholarship eligibility?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9301455616950989,
+  "scores": [
+   0.9301455616950989,
+   0.6207802295684814,
+   0.2919269800186157,
+   0.276496946811676,
+   0.20317023992538452
+  ],
+  "coverage": 0.9090909090909091,
+  "pages": [
+   222,
+   24,
+   221,
+   220,
+   117
+  ],
+  "gold_pages": [
+   222
+  ]
+ },
+ {
+  "qid": "q049",
+  "category": "table",
+  "answerable": true,
+  "query": "What are the prerequisites of Data Structures (CSE207)?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8813954591751099,
+  "scores": [
+   0.8813954591751099,
+   0.8746293187141418,
+   0.7156209945678711,
+   0.6315922737121582,
+   0.5650817155838013
+  ],
+  "coverage": 0.75,
+  "pages": [
+   274,
+   121,
+   433,
+   273,
+   435
+  ],
+  "gold_pages": [
+   116
+  ]
+ },
+ {
+  "qid": "q050",
+  "category": "table",
+  "answerable": true,
+  "query": "What is the prerequisite of the Algorithms course CSE326?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9954273700714111,
+  "scores": [
+   0.9954273700714111,
+   0.9949151277542114,
+   0.955562174320221,
+   0.9527235627174377,
+   0.940635085105896
+  ],
+  "coverage": 1.0,
+  "pages": [
+   297,
+   277,
+   121,
+   119,
+   274
+  ],
+  "gold_pages": [
+   116
+  ]
+ },
+ {
+  "qid": "q051",
+  "category": "table",
+  "answerable": true,
+  "query": "How many credits is Object Oriented Programming in the CSE curriculum?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9620105624198914,
+  "scores": [
+   0.9620105624198914,
+   0.8499650955200195,
+   0.7581059336662292,
+   0.6992489099502563,
+   0.5421139001846313
+  ],
+  "coverage": 0.8888888888888888,
+  "pages": [
+   273,
+   272,
+   116,
+   284,
+   488
+  ],
+  "gold_pages": [
+   116
+  ]
+ },
+ {
+  "qid": "q052",
+  "category": "table",
+  "answerable": true,
+  "query": "How many credit hours must a CSE student complete before starting the Capstone Project?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9949931502342224,
+  "scores": [
+   0.9949931502342224,
+   0.9839785695075989,
+   0.9623507261276245,
+   0.9449096918106079,
+   0.911342442035675
+  ],
+  "coverage": 0.8333333333333334,
+  "pages": [
+   287,
+   117,
+   456,
+   415,
+   287
+  ],
+  "gold_pages": [
+   117
+  ]
+ },
+ {
+  "qid": "q053",
+  "category": "table",
+  "answerable": true,
+  "query": "How many credits do the core mathematics and statistics courses total for CSE?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9815648198127747,
+  "scores": [
+   0.9815648198127747,
+   0.9705506563186646,
+   0.942779004573822,
+   0.9288095831871033,
+   0.8862473964691162
+  ],
+  "coverage": 1.0,
+  "pages": [
+   116,
+   113,
+   115,
+   157,
+   160
+  ],
+  "gold_pages": [
+   115
+  ]
+ },
+ {
+  "qid": "q054",
+  "category": "table",
+  "answerable": true,
+  "query": "How many credits do Core Natural Science courses total in the CSE program?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8796814680099487,
+  "scores": [
+   0.8796814680099487,
+   0.3161630630493164,
+   0.26040682196617126,
+   0.24424442648887634,
+   0.2361655831336975
+  ],
+  "coverage": 1.0,
+  "pages": [
+   115,
+   270,
+   117,
+   121,
+   113
+  ],
+  "gold_pages": [
+   115
+  ]
+ },
+ {
+  "qid": "q055",
+  "category": "table",
+  "answerable": true,
+  "query": "What is the semester credit requirement for MBA students to qualify for the merit scholarship?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8897184133529663,
+  "scores": [
+   0.8897184133529663,
+   0.8091574907302856,
+   0.7468038201332092,
+   0.7057793140411377,
+   0.6969373226165771
+  ],
+  "coverage": 0.8181818181818182,
+  "pages": [
+   220,
+   221,
+   222,
+   219,
+   177
+  ],
+  "gold_pages": [
+   221
+  ]
+ },
+ {
+  "qid": "q056",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "How many credits does the B.Sc. in CSE require?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9770432710647583,
+  "scores": [
+   0.9770432710647583,
+   0.8678520917892456,
+   0.8107895851135254,
+   0.7078530788421631,
+   0.6233859658241272
+  ],
+  "coverage": 0.875,
+  "pages": [
+   24,
+   162,
+   58,
+   24,
+   157
+  ],
+  "gold_pages": [
+   24,
+   114
+  ]
+ },
+ {
+  "qid": "q057",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "How many credits is the B.Sc. in EEE program?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9977153539657593,
+  "scores": [
+   0.9977153539657593,
+   0.9961931705474854,
+   0.9952347874641418,
+   0.9928931593894958,
+   0.9900850057601929
+  ],
+  "coverage": 0.9,
+  "pages": [
+   131,
+   24,
+   132,
+   131,
+   132
+  ],
+  "gold_pages": [
+   24
+  ]
+ },
+ {
+  "qid": "q058",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "How many credits is the B.Sc. in Genetic Engineering and Biotechnology?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9978809952735901,
+  "scores": [
+   0.9978809952735901,
+   0.9975484013557434,
+   0.9970856308937073,
+   0.9966772794723511,
+   0.9966521859169006
+  ],
+  "coverage": 0.7777777777777778,
+  "pages": [
+   152,
+   150,
+   152,
+   153,
+   152
+  ],
+  "gold_pages": [
+   24
+  ]
+ },
+ {
+  "qid": "q059",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "How many credits is the BS in Applied Statistics?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.995169460773468,
+  "scores": [
+   0.995169460773468,
+   0.987184464931488,
+   0.8855582475662231,
+   0.8512219190597534,
+   0.7262064218521118
+  ],
+  "coverage": 1.0,
+  "pages": [
+   24,
+   168,
+   168,
+   221,
+   170
+  ],
+  "gold_pages": [
+   24
+  ]
+ },
+ {
+  "qid": "q060",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "Which courses are in Group B of the minor in Computer Science and Engineering?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9833943843841553,
+  "scores": [
+   0.9833943843841553,
+   0.29613685607910156,
+   0.2850760817527771,
+   0.22549812495708466,
+   0.21406273543834686
+  ],
+  "coverage": 0.8571428571428571,
+  "pages": [
+   26,
+   26,
+   26,
+   25,
+   116
+  ],
+  "gold_pages": [
+   26
+  ]
+ },
+ {
+  "qid": "q061",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "Which courses can be chosen for Group A of the CSE minor?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9626908302307129,
+  "scores": [
+   0.9626908302307129,
+   0.5736663341522217,
+   0.5105542540550232,
+   0.36892226338386536,
+   0.17316626012325287
+  ],
+  "coverage": 0.75,
+  "pages": [
+   26,
+   25,
+   26,
+   25,
+   121
+  ],
+  "gold_pages": [
+   26
+  ]
+ },
+ {
+  "qid": "q062",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "Which courses are in Group B of the EEE minor?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9722537398338318,
+  "scores": [
+   0.9722537398338318,
+   0.9713200926780701,
+   0.964001476764679,
+   0.5862336754798889,
+   0.5498103499412537
+  ],
+  "coverage": 0.8571428571428571,
+  "pages": [
+   26,
+   133,
+   26,
+   103,
+   102
+  ],
+  "gold_pages": [
+   26
+  ]
+ },
+ {
+  "qid": "q063",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "Which courses are in Group B of the ETE minor?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9843975901603699,
+  "scores": [
+   0.9843975901603699,
+   0.9376895427703857,
+   0.8522046804428101,
+   0.8417364954948425,
+   0.5556661486625671
+  ],
+  "coverage": 0.75,
+  "pages": [
+   26,
+   103,
+   102,
+   26,
+   133
+  ],
+  "gold_pages": [
+   26
+  ]
+ },
+ {
+  "qid": "q064",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "How many credits are needed for a second major in Economics for non-Economics students?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9973471164703369,
+  "scores": [
+   0.9973471164703369,
+   0.9720935225486755,
+   0.7330988049507141,
+   0.5554925203323364,
+   0.2881237268447876
+  ],
+  "coverage": 0.8571428571428571,
+  "pages": [
+   49,
+   34,
+   49,
+   26,
+   46
+  ],
+  "gold_pages": [
+   49
+  ]
+ },
+ {
+  "qid": "q065",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "What is the credit requirement for the Bachelor of Social Science in Sociology?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9985752105712891,
+  "scores": [
+   0.9985752105712891,
+   0.9971622824668884,
+   0.9970628619194031,
+   0.9961482286453247,
+   0.9956371188163757
+  ],
+  "coverage": 0.8571428571428571,
+  "pages": [
+   76,
+   77,
+   79,
+   78,
+   80
+  ],
+  "gold_pages": [
+   76
+  ]
+ },
+ {
+  "qid": "q066",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "How many elective courses must a Sociology student choose?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8071040511131287,
+  "scores": [
+   0.8071040511131287,
+   0.34876808524131775,
+   0.12799648940563202,
+   0.1179254874587059,
+   0.1140877828001976
+  ],
+  "coverage": 0.8,
+  "pages": [
+   78,
+   45,
+   77,
+   157,
+   79
+  ],
+  "gold_pages": [
+   78
+  ]
+ },
+ {
+  "qid": "q067",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "What are the compulsory language and general education courses in CSE?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9862891435623169,
+  "scores": [
+   0.9862891435623169,
+   0.970018208026886,
+   0.9471762776374817,
+   0.896709680557251,
+   0.8715813755989075
+  ],
+  "coverage": 1.0,
+  "pages": [
+   114,
+   113,
+   121,
+   45,
+   58
+  ],
+  "gold_pages": [
+   114
+  ]
+ },
+ {
+  "qid": "q068",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "How many major elective courses does a CSE student take in the chosen major area?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9782717823982239,
+  "scores": [
+   0.9782717823982239,
+   0.928477942943573,
+   0.6324967741966248,
+   0.5866402983665466,
+   0.5757850408554077
+  ],
+  "coverage": 0.8181818181818182,
+  "pages": [
+   117,
+   117,
+   121,
+   119,
+   118
+  ],
+  "gold_pages": [
+   117
+  ]
+ },
+ {
+  "qid": "q069",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "How many non-major elective credits does CSE require?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9821017384529114,
+  "scores": [
+   0.9821017384529114,
+   0.9198925495147705,
+   0.6961984634399414,
+   0.6556327939033508,
+   0.6124870777130127
+  ],
+  "coverage": 1.0,
+  "pages": [
+   117,
+   114,
+   24,
+   58,
+   119
+  ],
+  "gold_pages": [
+   117
+  ]
+ },
+ {
+  "qid": "q070",
+  "category": "program_specific",
+  "answerable": true,
+  "query": "What are the minimum HSC grades in Chemistry and Biology for Pharmacy admission?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9848837852478027,
+  "scores": [
+   0.9848837852478027,
+   0.9621357917785645,
+   0.894947350025177,
+   0.665769636631012,
+   0.2354961335659027
+  ],
+  "coverage": 1.0,
+  "pages": [
+   143,
+   176,
+   143,
+   176,
+   220
+  ],
+  "gold_pages": [
+   143
+  ]
+ },
+ {
+  "qid": "q071",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "If I retake a course, can I still get a gold medal or a scholarship?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9256996512413025,
+  "scores": [
+   0.9256996512413025,
+   0.6267967820167542,
+   0.05840258300304413,
+   0.03585171699523926,
+   0.011612270958721638
+  ],
+  "coverage": 0.6666666666666666,
+  "pages": [
+   218,
+   26,
+   217,
+   26,
+   216
+  ],
+  "gold_pages": [
+   26,
+   218,
+   219
+  ]
+ },
+ {
+  "qid": "q072",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "If I am on academic probation, can I take a leave of absence?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9934129118919373,
+  "scores": [
+   0.9934129118919373,
+   0.9823653101921082,
+   0.9541345834732056,
+   0.731244683265686,
+   0.09229351580142975
+  ],
+  "coverage": 1.0,
+  "pages": [
+   218,
+   218,
+   217,
+   215,
+   218
+  ],
+  "gold_pages": [
+   217,
+   218
+  ]
+ },
+ {
+  "qid": "q073",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "What is the maximum credit share I can transfer and what does credit transfer cost per credit?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.2507569193840027,
+  "scores": [
+   0.2507569193840027,
+   0.0735495314002037,
+   0.040402378886938095,
+   0.014821522869169712,
+   0.0069777281023561954
+  ],
+  "coverage": 0.6,
+  "pages": [
+   214,
+   181,
+   214,
+   222,
+   214
+  ],
+  "gold_pages": [
+   214,
+   181
+  ]
+ },
+ {
+  "qid": "q074",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "What CGPA do I need to graduate and what happens if my CGPA falls below 2?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.9691634774208069,
+  "scores": [
+   0.9691634774208069,
+   0.9315037727355957,
+   0.6512556076049805,
+   0.581981360912323,
+   0.5723615288734436
+  ],
+  "coverage": 0.7,
+  "pages": [
+   217,
+   217,
+   223,
+   26,
+   224
+  ],
+  "gold_pages": [
+   25,
+   217
+  ]
+ },
+ {
+  "qid": "q075",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "For a CSE student, what are the lab fee and student activity fee per semester?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9856554269790649,
+  "scores": [
+   0.9856554269790649,
+   0.19658571481704712,
+   0.16873696446418762,
+   0.02049342729151249,
+   0.008672020398080349
+  ],
+  "coverage": 1.0,
+  "pages": [
+   180,
+   121,
+   179,
+   287,
+   215
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q076",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "What are the requirements for the freedom fighter admission quota and tuition waiver?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9864687919616699,
+  "scores": [
+   0.9864687919616699,
+   0.16094382107257843,
+   0.1602766215801239,
+   0.14744460582733154,
+   0.05253351479768753
+  ],
+  "coverage": 1.0,
+  "pages": [
+   223,
+   223,
+   176,
+   228,
+   219
+  ],
+  "gold_pages": [
+   223
+  ]
+ },
+ {
+  "qid": "q077",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "Which programs need Math competence and what SAT-waiver GPA do Science and Engineering applicants need?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.9763075113296509,
+  "scores": [
+   0.9763075113296509,
+   0.7503598928451538,
+   0.08042391389608383,
+   0.03518930450081825,
+   0.027231238782405853
+  ],
+  "coverage": 0.6923076923076923,
+  "pages": [
+   177,
+   176,
+   143,
+   121,
+   167
+  ],
+  "gold_pages": [
+   176,
+   177
+  ]
+ },
+ {
+  "qid": "q078",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "If I fail the remedial English course once, what do I pay next time?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8693158030509949,
+  "scores": [
+   0.8693158030509949,
+   0.034508805721998215,
+   0.01002014335244894,
+   0.002305149333551526,
+   0.002124207792803645
+  ],
+  "coverage": 0.875,
+  "pages": [
+   180,
+   217,
+   218,
+   218,
+   373
+  ],
+  "gold_pages": [
+   180,
+   217
+  ]
+ },
+ {
+  "qid": "q079",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "Can a B.Pharm student on a merit scholarship register fewer than 12 credits per semester?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.997057318687439,
+  "scores": [
+   0.997057318687439,
+   0.990172266960144,
+   0.989912211894989,
+   0.9894152879714966,
+   0.9814335703849792
+  ],
+  "coverage": 0.75,
+  "pages": [
+   220,
+   177,
+   219,
+   178,
+   220
+  ],
+  "gold_pages": [
+   215,
+   220
+  ]
+ },
+ {
+  "qid": "q080",
+  "category": "multi_hop",
+  "answerable": true,
+  "query": "How is CGPA computed for repeated courses and what happens to my earlier F?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.9435692429542542,
+  "scores": [
+   0.9435692429542542,
+   0.6759271025657654,
+   0.019677158445119858,
+   0.008287638425827026,
+   0.006045736372470856
+  ],
+  "coverage": 0.6,
+  "pages": [
+   217,
+   218,
+   25,
+   216,
+   223
+  ],
+  "gold_pages": [
+   217,
+   218
+  ]
+ },
+ {
+  "qid": "q081",
+  "category": "comparison",
+  "answerable": true,
+  "query": "How does the per-credit tuition for BBA compare with B.Pharm?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.25113293528556824,
+  "scores": [
+   0.25113293528556824,
+   0.13372109830379486,
+   0.09095297753810883,
+   0.06133679300546646,
+   0.050993096083402634
+  ],
+  "coverage": 0.8,
+  "pages": [
+   180,
+   24,
+   179,
+   145,
+   177
+  ],
+  "gold_pages": [
+   179,
+   180
+  ]
+ },
+ {
+  "qid": "q082",
+  "category": "comparison",
+  "answerable": true,
+  "query": "Compare the lab fees for CSE, Civil Engineering and Pharmacy.",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.961341917514801,
+  "scores": [
+   0.961341917514801,
+   0.22575271129608154,
+   0.03879377245903015,
+   0.004482661373913288,
+   0.0012921601301059127
+  ],
+  "coverage": 0.8888888888888888,
+  "pages": [
+   180,
+   180,
+   179,
+   162,
+   203
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q083",
+  "category": "comparison",
+  "answerable": true,
+  "query": "Which needs more credits, CSE or Civil Engineering?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.4624820649623871,
+  "scores": [
+   0.4624820649623871,
+   0.14564695954322815,
+   0.07332516461610794,
+   0.05863802880048752,
+   0.04352983832359314
+  ],
+  "coverage": 1.0,
+  "pages": [
+   162,
+   24,
+   121,
+   117,
+   115
+  ],
+  "gold_pages": [
+   24
+  ]
+ },
+ {
+  "qid": "q084",
+  "category": "comparison",
+  "answerable": true,
+  "query": "What is the difference between Summa Cum Laude and Magna Cum Laude CGPA requirements?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.9879224896430969,
+  "scores": [
+   0.9879224896430969,
+   0.5265740752220154,
+   0.02421778440475464,
+   0.018553193658590317,
+   0.012883519753813744
+  ],
+  "coverage": 0.8333333333333334,
+  "pages": [
+   26,
+   26,
+   25,
+   223,
+   217
+  ],
+  "gold_pages": [
+   26
+  ]
+ },
+ {
+  "qid": "q085",
+  "category": "comparison",
+  "answerable": true,
+  "query": "How does the student activity fee differ between B.Pharm and other departments?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.9218503832817078,
+  "scores": [
+   0.9218503832817078,
+   0.13526590168476105,
+   0.0752696767449379,
+   0.035598356276750565,
+   0.03440677002072334
+  ],
+  "coverage": 0.9090909090909091,
+  "pages": [
+   180,
+   180,
+   142,
+   215,
+   220
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q086",
+  "category": "comparison",
+  "answerable": true,
+  "query": "How does tuition for BBA compare with BSS in Economics?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.8187261819839478,
+  "scores": [
+   0.8187261819839478,
+   0.25942280888557434,
+   0.24268117547035217,
+   0.04292218014597893,
+   0.04220609739422798
+  ],
+  "coverage": 0.8,
+  "pages": [
+   179,
+   49,
+   24,
+   44,
+   44
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q087",
+  "category": "comparison",
+  "answerable": true,
+  "query": "What is the gold medal CGPA for undergraduates versus graduate students?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.9791004061698914,
+  "scores": [
+   0.9791004061698914,
+   0.6049766540527344,
+   0.2234027236700058,
+   0.16621273756027222,
+   0.13400284945964813
+  ],
+  "coverage": 0.5454545454545454,
+  "pages": [
+   26,
+   26,
+   223,
+   222,
+   25
+  ],
+  "gold_pages": [
+   26
+  ]
+ },
+ {
+  "qid": "q088",
+  "category": "comparison",
+  "answerable": true,
+  "query": "What CGPA leads to probation versus automatic dismissal?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.9799553751945496,
+  "scores": [
+   0.9799553751945496,
+   0.9223151803016663,
+   0.13378438353538513,
+   0.12406931072473526,
+   0.019488682970404625
+  ],
+  "coverage": 0.6,
+  "pages": [
+   217,
+   217,
+   218,
+   223,
+   220
+  ],
+  "gold_pages": [
+   217
+  ]
+ },
+ {
+  "qid": "q089",
+  "category": "comparison",
+  "answerable": true,
+  "query": "How do library hours on Friday differ from Sunday-Thursday?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8936070799827576,
+  "scores": [
+   0.8936070799827576,
+   0.04323701560497284,
+   0.006036837585270405,
+   0.0001452888682251796,
+   0.0001242558064404875
+  ],
+  "coverage": 1.0,
+  "pages": [
+   208,
+   211,
+   208,
+   209,
+   82
+  ],
+  "gold_pages": [
+   208
+  ]
+ },
+ {
+  "qid": "q090",
+  "category": "comparison",
+  "answerable": true,
+  "query": "Compare merit-scholarship credit requirements for CSE and Bachelor of Laws.",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.4332948923110962,
+  "scores": [
+   0.4332948923110962,
+   0.2905835509300232,
+   0.26891955733299255,
+   0.12867677211761475,
+   0.10583288967609406
+  ],
+  "coverage": 0.8461538461538461,
+  "pages": [
+   221,
+   24,
+   222,
+   220,
+   221
+  ],
+  "gold_pages": [
+   221
+  ]
+ },
+ {
+  "qid": "q091",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "What is the tuition per credit for BBA? And for CSE?",
+  "rewrite_reason": "follow_up",
+  "top_score": 0.9645013809204102,
+  "scores": [
+   0.9645013809204102,
+   0.6748160123825073,
+   0.47212570905685425,
+   0.4148435592651367,
+   0.24927765130996704
+  ],
+  "coverage": 1.0,
+  "pages": [
+   179,
+   180,
+   24,
+   30,
+   29
+  ],
+  "gold_pages": [
+   179
+  ]
+ },
+ {
+  "qid": "q092",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "What is the tuition per credit for CSE? What about B.Pharm?",
+  "rewrite_reason": "follow_up",
+  "top_score": 0.7203075885772705,
+  "scores": [
+   0.7203075885772705,
+   0.48749101161956787,
+   0.35665756464004517,
+   0.3137781322002411,
+   0.29774242639541626
+  ],
+  "coverage": 0.9,
+  "pages": [
+   180,
+   24,
+   220,
+   219,
+   179
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q093",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "What is the tuition per credit for CSE? Is there also a lab fee for it?",
+  "rewrite_reason": "follow_up",
+  "top_score": 0.8989578485488892,
+  "scores": [
+   0.8989578485488892,
+   0.5673511624336243,
+   0.3142177164554596,
+   0.10592673718929291,
+   0.023547599092125893
+  ],
+  "coverage": 0.8888888888888888,
+  "pages": [
+   180,
+   179,
+   121,
+   279,
+   277
+  ],
+  "gold_pages": [
+   180
+  ]
+ },
+ {
+  "qid": "q094",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "What is academic probation? What happens if I don't raise it in time?",
+  "rewrite_reason": "follow_up",
+  "top_score": 0.3125254213809967,
+  "scores": [
+   0.3125254213809967,
+   0.30587947368621826,
+   0.06197584420442581,
+   0.03161738067865372,
+   0.010036399587988853
+  ],
+  "coverage": 0.5,
+  "pages": [
+   217,
+   217,
+   216,
+   218,
+   215
+  ],
+  "gold_pages": [
+   217
+  ]
+ },
+ {
+  "qid": "q095",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "Can I retake a course? Can I still get a scholarship if I do that?",
+  "rewrite_reason": "follow_up",
+  "top_score": 0.7274056673049927,
+  "scores": [
+   0.7274056673049927,
+   0.7182424664497375,
+   0.039325274527072906,
+   0.02617918699979782,
+   0.02173447422683239
+  ],
+  "coverage": 0.75,
+  "pages": [
+   218,
+   217,
+   220,
+   222,
+   220
+  ],
+  "gold_pages": [
+   219
+  ]
+ },
+ {
+  "qid": "q096",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "Which department chairperson leads CSE? How many credits is that program?",
+  "rewrite_reason": "follow_up",
+  "top_score": 0.4547758400440216,
+  "scores": [
+   0.4547758400440216,
+   0.3050643801689148,
+   0.20887359976768494,
+   0.06173776090145111,
+   0.05070369318127632
+  ],
+  "coverage": 0.7777777777777778,
+  "pages": [
+   24,
+   24,
+   121,
+   114,
+   117
+  ],
+  "gold_pages": [
+   24,
+   114
+  ]
+ },
+ {
+  "qid": "q097",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "What CGPA gives an undergraduate a gold medal? What about for graduate students?",
+  "rewrite_reason": "follow_up",
+  "top_score": 0.9950569868087769,
+  "scores": [
+   0.9950569868087769,
+   0.7303911447525024,
+   0.39410069584846497,
+   0.35351118445396423,
+   0.3035733699798584
+  ],
+  "coverage": 0.6,
+  "pages": [
+   26,
+   26,
+   223,
+   220,
+   220
+  ],
+  "gold_pages": [
+   26
+  ]
+ },
+ {
+  "qid": "q098",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "And how much is the urgent one?",
+  "rewrite_reason": "multi_part",
+  "top_score": 0.0271567702293396,
+  "scores": [
+   0.0271567702293396,
+   0.0025680523831397295,
+   0.0025422980543226004,
+   0.00039563063182868063,
+   0.00025362116866745055
+  ],
+  "coverage": 1.0,
+  "pages": [
+   181,
+   228,
+   226,
+   179,
+   108
+  ],
+  "gold_pages": [
+   181
+  ]
+ },
+ {
+  "qid": "q099",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "What are the library hours from Sunday to Thursday? And on Fridays?",
+  "rewrite_reason": "follow_up",
+  "top_score": 0.9881604909896851,
+  "scores": [
+   0.9881604909896851,
+   0.028797561302781105,
+   0.026641525328159332,
+   0.011621935293078423,
+   0.001034806715324521
+  ],
+  "coverage": 0.8,
+  "pages": [
+   208,
+   208,
+   17,
+   17,
+   207
+  ],
+  "gold_pages": [
+   208
+  ]
+ },
+ {
+  "qid": "q100",
+  "category": "follow_up",
+  "answerable": true,
+  "query": "What is the minimum for Pharmacy students?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8775770664215088,
+  "scores": [
+   0.8775770664215088,
+   0.8439080715179443,
+   0.8341525197029114,
+   0.8166724443435669,
+   0.8075583577156067
+  ],
+  "coverage": 1.0,
+  "pages": [
+   144,
+   144,
+   145,
+   144,
+   143
+  ],
+  "gold_pages": [
+   220
+  ]
+ },
+ {
+  "qid": "q101",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "What IELTS score do I need to get admitted?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.04756861925125122,
+  "scores": [
+   0.04756861925125122,
+   0.03616564720869064,
+   0.011463532224297523,
+   0.009867558255791664,
+   0.006666142493486404
+  ],
+  "coverage": 0.6666666666666666,
+  "pages": [
+   177,
+   177,
+   176,
+   176,
+   24
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q102",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Does EWU offer a Bachelor of Nursing program?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9968087077140808,
+  "scores": [
+   0.9968087077140808,
+   0.8128820061683655,
+   0.7629128694534302,
+   0.7176859974861145,
+   0.7073915004730225
+  ],
+  "coverage": 1.0,
+  "pages": [
+   17,
+   17,
+   16,
+   17,
+   18
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q103",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Does EWU have a football team?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.3525928854942322,
+  "scores": [
+   0.3525928854942322,
+   0.3066817820072174,
+   0.2713106572628021,
+   0.23781515657901764,
+   0.20475928485393524
+  ],
+  "coverage": 0.0,
+  "pages": [
+   212,
+   212,
+   15,
+   213,
+   15
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q104",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "What are the campus bus service timings?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.00038160389522090554,
+  "scores": [
+   0.00038160389522090554,
+   0.0003137061430606991,
+   0.00030958079150877893,
+   0.0002759531489573419,
+   0.00027274113381281495
+  ],
+  "coverage": 0.75,
+  "pages": [
+   490,
+   428,
+   25,
+   199,
+   208
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q105",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Can I pay my tuition in instalments?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.007235331926494837,
+  "scores": [
+   0.007235331926494837,
+   0.004033726640045643,
+   0.003438879968598485,
+   0.00232223654165864,
+   0.0022589722648262978
+  ],
+  "coverage": 0.6666666666666666,
+  "pages": [
+   181,
+   214,
+   215,
+   222,
+   218
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q106",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Does EWU have a student exchange program with a university in Europe?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.3527473211288452,
+  "scores": [
+   0.3527473211288452,
+   0.2526452839374542,
+   0.2387181669473648,
+   0.05368396267294884,
+   0.05016326531767845
+  ],
+  "coverage": 0.75,
+  "pages": [
+   16,
+   15,
+   18,
+   220,
+   177
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q107",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Can students take part-time jobs on campus?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.035492975264787674,
+  "scores": [
+   0.035492975264787674,
+   0.009966876357793808,
+   0.0023767449893057346,
+   0.0020455566700547934,
+   0.001898725749924779
+  ],
+  "coverage": 1.0,
+  "pages": [
+   212,
+   56,
+   268,
+   33,
+   218
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q108",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Does the university have a gym for students?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.014060942456126213,
+  "scores": [
+   0.014060942456126213,
+   0.008618602529168129,
+   0.006624373607337475,
+   0.003598388284444809,
+   0.0035264217294752598
+  ],
+  "coverage": 0.5,
+  "pages": [
+   212,
+   211,
+   182,
+   197,
+   16
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q109",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Is there a daycare center on campus?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.002172926440834999,
+  "scores": [
+   0.002172926440834999,
+   0.0016781226731836796,
+   0.0015530820237472653,
+   0.000764798023737967,
+   0.000730111903976649
+  ],
+  "coverage": 0.6666666666666666,
+  "pages": [
+   15,
+   16,
+   213,
+   57,
+   213
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q110",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Where is the university health center located?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.006217001471668482,
+  "scores": [
+   0.006217001471668482,
+   0.0044829631224274635,
+   0.0034364149905741215,
+   0.0033595431596040726,
+   0.0024091857485473156
+  ],
+  "coverage": 1.0,
+  "pages": [
+   16,
+   15,
+   143,
+   207,
+   185
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q111",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "What is the deadline to apply for Fall 2025 admission?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.0024257332552224398,
+  "scores": [
+   0.0024257332552224398,
+   0.002101992256939411,
+   0.0020214885007590055,
+   0.0019003049237653613,
+   0.0016349154757335782
+  ],
+  "coverage": 0.4,
+  "pages": [
+   176,
+   181,
+   145,
+   176,
+   176
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q112",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "What is the placement rate of CSE graduates?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.2768174707889557,
+  "scores": [
+   0.2768174707889557,
+   0.07615018635988235,
+   0.07223168760538101,
+   0.06575217843055725,
+   0.029321106150746346
+  ],
+  "coverage": 0.7142857142857143,
+  "pages": [
+   121,
+   111,
+   111,
+   111,
+   112
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q113",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Is there a swimming pool on campus?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.003481522900983691,
+  "scores": [
+   0.003481522900983691,
+   0.0029551098123192787,
+   0.0026794839650392532,
+   0.001984353642910719,
+   0.001842749654315412
+  ],
+  "coverage": 0.3333333333333333,
+  "pages": [
+   15,
+   16,
+   213,
+   212,
+   197
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q114",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "How much does a dormitory room cost per month?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.004238042049109936,
+  "scores": [
+   0.004238042049109936,
+   0.0032034534960985184,
+   0.002508097095414996,
+   0.0010568872094154358,
+   0.0006728126900270581
+  ],
+  "coverage": 0.0,
+  "pages": [
+   228,
+   225,
+   226,
+   224,
+   181
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q115",
+  "category": "unanswerable",
+  "answerable": false,
+  "query": "Where is the cricket ground?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.0008899349486455321,
+  "scores": [
+   0.0008899349486455321,
+   0.0008414900512434542,
+   0.00010502328223083168,
+   8.533812069799751e-05,
+   7.690254278713837e-05
+  ],
+  "coverage": 0.0,
+  "pages": [
+   16,
+   121,
+   376,
+   376,
+   255
+  ],
+  "gold_pages": []
+ },
+ {
+  "qid": "q116",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "What GPA must I maintain for a scholarship?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9430809617042542,
+  "scores": [
+   0.9430809617042542,
+   0.9418429732322693,
+   0.9341245889663696,
+   0.933641791343689,
+   0.9148324131965637
+  ],
+  "coverage": 0.5714285714285714,
+  "pages": [
+   219,
+   219,
+   220,
+   177,
+   220
+  ],
+  "gold_pages": [
+   219,
+   220,
+   222
+  ]
+ },
+ {
+  "qid": "q117",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "What is the minimum CGPA required to graduate?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9535825252532959,
+  "scores": [
+   0.9535825252532959,
+   0.9433724284172058,
+   0.922410249710083,
+   0.9164631366729736,
+   0.9052245020866394
+  ],
+  "coverage": 0.7142857142857143,
+  "pages": [
+   25,
+   25,
+   223,
+   222,
+   26
+  ],
+  "gold_pages": [
+   25
+  ]
+ },
+ {
+  "qid": "q118",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "What is the fee for the admission form?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9838566780090332,
+  "scores": [
+   0.9838566780090332,
+   0.9697903394699097,
+   0.39990144968032837,
+   0.2218495011329651,
+   0.19064457714557648
+  ],
+  "coverage": 1.0,
+  "pages": [
+   178,
+   176,
+   179,
+   179,
+   179
+  ],
+  "gold_pages": [
+   176
+  ]
+ },
+ {
+  "qid": "q119",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "At what CGPA is a student automatically dismissed?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9953422546386719,
+  "scores": [
+   0.9953422546386719,
+   0.8853127360343933,
+   0.25181880593299866,
+   0.12496384233236313,
+   0.12413643300533295
+  ],
+  "coverage": 0.75,
+  "pages": [
+   217,
+   217,
+   218,
+   224,
+   223
+  ],
+  "gold_pages": [
+   217
+  ]
+ },
+ {
+  "qid": "q120",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "What CGPA is required for the Medha Lalon Scholarship?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9979931116104126,
+  "scores": [
+   0.9979931116104126,
+   0.9949160814285278,
+   0.5399897694587708,
+   0.4683651030063629,
+   0.36294278502464294
+  ],
+  "coverage": 0.75,
+  "pages": [
+   224,
+   224,
+   225,
+   226,
+   228
+  ],
+  "gold_pages": [
+   224
+  ]
+ },
+ {
+  "qid": "q121",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "What percentage admission quota is reserved for freedom fighters wards?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.994789719581604,
+  "scores": [
+   0.994789719581604,
+   0.9092430472373962,
+   0.19731579720973969,
+   0.1900862157344818,
+   0.09233209490776062
+  ],
+  "coverage": 1.0,
+  "pages": [
+   223,
+   219,
+   227,
+   227,
+   228
+  ],
+  "gold_pages": [
+   223
+  ]
+ },
+ {
+  "qid": "q122",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "What are the library hours on Saturday?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9476175308227539,
+  "scores": [
+   0.9476175308227539,
+   0.4320586919784546,
+   0.008465203456580639,
+   0.0004364331834949553,
+   0.00019982551748398691
+  ],
+  "coverage": 1.0,
+  "pages": [
+   208,
+   211,
+   208,
+   207,
+   465
+  ],
+  "gold_pages": [
+   208
+  ]
+ },
+ {
+  "qid": "q123",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "What is the grade point for an A+?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.8020817637443542,
+  "scores": [
+   0.8020817637443542,
+   0.26314544677734375,
+   0.013784833252429962,
+   0.011275867000222206,
+   0.009525165893137455
+  ],
+  "coverage": 1.0,
+  "pages": [
+   216,
+   217,
+   219,
+   217,
+   216
+  ],
+  "gold_pages": [
+   216
+  ]
+ },
+ {
+  "qid": "q124",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "What CGPA is needed for Cum Laude?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9829238057136536,
+  "scores": [
+   0.9829238057136536,
+   0.8196674585342407,
+   0.14979130029678345,
+   0.1386803537607193,
+   0.122378408908844
+  ],
+  "coverage": 0.625,
+  "pages": [
+   26,
+   26,
+   220,
+   25,
+   224
+  ],
+  "gold_pages": [
+   26
+  ]
+ },
+ {
+  "qid": "q125",
+  "category": "adversarial",
+  "answerable": true,
+  "query": "How many credits are needed to graduate from the CSE department, not the MS in CSE?",
+  "rewrite_reason": "self_contained",
+  "top_score": 0.9226371645927429,
+  "scores": [
+   0.9226371645927429,
+   0.6873475313186646,
+   0.6365321278572083,
+   0.5760576725006104,
+   0.5188338756561279
+  ],
+  "coverage": 0.875,
+  "pages": [
+   24,
+   24,
+   117,
+   114,
+   222
+  ],
+  "gold_pages": [
+   24
+  ]
+ }
+]

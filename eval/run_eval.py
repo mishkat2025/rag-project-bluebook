@@ -107,12 +107,20 @@ def main() -> None:
             include_breadcrumb=None if args.rerank_text is None
             else args.rerank_text == "breadcrumb"
         )
-        print(f"reranking with {reranker.model_name} "
+        print(f"reranking with {reranker.model_name} on "
+              f"{reranker.device_description} "
               f"(top_k={args.rerank_top_k or 'all'}, "
               f"breadcrumb={reranker.include_breadcrumb}) ...", flush=True)
 
     per_question = []
-    for row in rows:
+    for index, row in enumerate(rows, start=1):
+        # Without this the reranking run prints once and then goes silent for
+        # as long as it takes, which is indistinguishable from a hang. It was
+        # tens of minutes on the CPU; it is under a minute on the GPU, but the
+        # progress line is what tells you which of the two you are getting.
+        if reranker is not None and (index == 1 or index % 10 == 0):
+            print(f"  {index}/{len(rows)}", flush=True)
+
         if rankings is not None:
             if row["qid"] not in rankings:
                 continue

@@ -1,0 +1,86 @@
+{
+ "answerable": [
+  [
+   "What is the grading scale?",
+   0.06522691249847412
+  ],
+  [
+   "How do you work out someone's CGPA?",
+   0.49722450971603394
+  ],
+  [
+   "What do I need to get in?",
+   0.2736565172672272
+  ],
+  [
+   "How much does one credit cost?",
+   0.051577065140008926
+  ],
+  [
+   "Can I bring credits over from another uni?",
+   0.23866739869117737
+  ],
+  [
+   "What happens if my grades drop too low?",
+   0.3228420615196228
+  ],
+  [
+   "Is there money available for good students?",
+   0.015351640991866589
+  ],
+  [
+   "How many classes can I miss?",
+   0.07127072662115097
+  ],
+  [
+   "Who runs the computer science department?",
+   0.10377626866102219
+  ],
+  [
+   "What degrees can I study here?",
+   0.47132518887519836
+  ],
+  [
+   "How long does a bachelor's take?",
+   0.1532578319311142
+  ],
+  [
+   "What's the deal with academic probation?",
+   0.3529919981956482
+  ]
+ ],
+ "unanswerable": [
+  [
+   "Is there a swimming pool?",
+   0.0015260180225595832
+  ],
+  [
+   "Where do I park my car?",
+   0.0009629830019548535
+  ],
+  [
+   "Can I get a dorm room?",
+   0.0018099731532856822
+  ],
+  [
+   "Does the uni have a gym?",
+   0.007225817069411278
+  ],
+  [
+   "What time does the shuttle bus run?",
+   6.99152224115096e-05
+  ],
+  [
+   "Is there a nursing degree?",
+   0.44856899976730347
+  ],
+  [
+   "How do I join the football club?",
+   0.00024438282707706094
+  ],
+  [
+   "Can I pay my fees monthly?",
+   0.005872694309800863
+  ]
+ ]
+}

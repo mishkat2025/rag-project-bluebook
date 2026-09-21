@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 5 — Collapse the agent layer (Phases 0–4 done)**
+**Current phase: 6 — Grounding + deterministic validation (Phases 0–5 done)**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -15,8 +15,8 @@ Read HANDOFF.md for the full plan before working.
 | 2 | Ingestion rebuild (font hierarchy, tables, parent/child) | done (see caveat on the Recall@20 criterion) |
 | 3 | Retrieval (BGE-M3, persisted BM25, expansion) | done (acceptance met; see the expansion caveat) |
 | 4 | Reranking (bge-reranker-v2-m3, enforce top_k=5) | done (acceptance NOT met; see below) |
-| 5 | Collapse the agent layer | next |
-| 6 | Grounding + deterministic validation | not started |
+| 5 | Collapse the agent layer | done (acceptance met; abstention gate ships below the Phase 6 target — see Session 6) |
+| 6 | Grounding + deterministic validation | next |
 | 7 | Verification, terminal app, observability | not started |
 
 ---
@@ -46,9 +46,9 @@ saved run, which is how the Phase 1 baseline was restated below without rebuildi
 | page-P@5 | 0.195 | 0.187 | 0.193 | 0.200 | 0.209 | - |
 | Citation accuracy | - | - | - | - | - | >= 0.95 |
 | Number fidelity | - | - | - | - | - | 1.00 |
-| Abstention accuracy | - | - | - | - | - | >= 0.80 |
+| Abstention accuracy | - | - | - | - | **0.600** (see Session 6) | >= 0.80 |
 | Faithfulness | - | - | - | - | - | >= 0.90 |
-| LLM calls / query | 5-11 | - | - | - | - | 1-2 |
+| LLM calls / query | 5-11 | - | - | - | **1 typical, 2 max** | 1-2 |
 
 Phase 4 is the shipped configuration: BGE-M3, pool 50, acronym expansion on the BM25 side,
 bge-reranker-v2-m3 over the fused 50, `top_k=5` enforced.
@@ -345,3 +345,149 @@ unanswerable questions, not guessed. LM Studio still has not been exercised live
 `evidence_agent.py`, `routing.py` and the retrieval retry loop; make query rewriting conditional;
 replace `EvidenceAgent` with a deterministic score + coverage gate calibrated on the unanswerable
 set. Target: 5-11 LLM calls per query down to 1-2, p95 latency down >= 60%, no quality regression.
+
+### Session 6 - Phase 5 (collapse the agent layer) + the GPU pre-flight
+
+Deleted five agents, the router and the retry loop; replaced them with plain functions, a
+conditional query rewriter and a deterministic abstention gate. 163 tests pass, 1 xfail
+(up from 90). Retrieval metrics are **bit-identical to Phase 4** - this phase changed
+orchestration, not ranking, and the eval confirms that rather than assuming it.
+
+**PRE-FLIGHT (items 1-7 and 9 done; item 8 blocked).** `torch 2.14.0+cpu` -> **`2.14.0+cu130`**,
+`cuda.is_available()` now True on the RTX 4060 Ti.
+
+- **cu128 does not carry torch 2.14** - it stops at 2.11, so the command written in HANDOFF
+  fails outright. cu130 is the lowest index carrying 2.14.0. `requirements.txt` now pins
+  `torch==2.14.0+cu130` with the install command in a comment, so a fresh clone cannot
+  silently reproduce the CPU bug.
+- **A rerank eval went from 25-50 minutes to 3m56s**, and produced *exactly* the same numbers
+  (page-nDCG@10 0.878, recall@5 0.926, recall@10 0.983 - every figure identical). HANDOFF's
+  claim that CPU vs GPU changes speed and not results is now measured, not assumed.
+- `src/config/device.py` resolves the device once and **raises** (naming the installed torch
+  build) when `settings.require_gpu` is set and CUDA is missing. `device=` is now passed
+  explicitly to **both** model loads - `SentenceTransformer` in `chroma_store.py` and
+  `CrossEncoder` in `reranker.py` - which was the actual Phase 1-4 defect. Both verified live
+  on `cuda:0`. `tests/test_device.py` (10 tests) pins the resolution rules and asserts the
+  resolved device is cuda when torch sees a GPU.
+- Batch sizes raised off their CPU values: `rerank_batch_size` 8 -> 32,
+  `embedding_encode_batch_size` 8 -> 64 (the misleading trailing "# (CPU)" comment is fixed).
+  Reranker resident VRAM ~2.1 GB. Progress lines added to both eval loops, so a long run is
+  no longer indistinguishable from a hang.
+- The chatbot prints the resolved device and LLM reachability at startup, e.g.
+  `embedder/reranker: cuda (NVIDIA GeForce RTX 4060 Ti) | LLM: LM Studio @ ... [ok]`.
+- **Item 8 is still blocked: LM Studio is not running** (endpoint refused the connection, GPU
+  at 929 MiB). Gemma's GPU offload is therefore still unconfirmed, and **no real Gemma call
+  has been made in any session yet** - outstanding since Phase 0. Everything LLM-side is
+  exercised through fakes and through its typed fallbacks. This is the single largest
+  untested surface in the project.
+
+**Deleted:** `supervisor_agent.py`, `reranking_agent.py`, `retrieval_agent.py`,
+`evidence_agent.py`, `query_planning_agent.py`, `orchestration/routing.py`, the retrieval
+retry loop, `settings.max_retrieval_retries`, `settings.final_context_top_k` (it sliced a
+5-item list), `state.retry_count`, `state.workflow_type`, and 7 stale `scripts/test_*.py`
+smoke scripts. A parametrised test asserts each deleted module stays unimportable.
+
+**Added:** `src/orchestration/pipeline.py` (the whole control flow, readable top to bottom),
+`src/retrieval/query_rewriter.py`, `src/retrieval/evidence_gate.py`,
+`eval/calibrate_abstention.py`, `eval/paraphrase_probe.py`, `tests/test_pipeline.py`,
+`tests/test_query_rewriter.py`, `tests/test_evidence_gate.py`, `tests/test_device.py`.
+`workflow.py` is now a small object that owns model lifetime and delegates to `pipeline.run`.
+
+**ACCEPTANCE: LLM calls 5-11 -> 1 typical, 2 maximum. Met.** Asserted structurally in
+`tests/test_pipeline.py` rather than benchmarked: a self-contained query costs 1 (generation),
+a follow-up or multi-part costs 2 (rewrite + generation), an abstention costs **0**. The
+rewriter fires on **21/125 = 16.8%** of eval questions - 8/10 follow_up, 8/10 comparison,
+4/10 multi_hop, and **zero** of the 25 single_fact, 15 exact_number, 15 table, 15
+program_specific, 15 unanswerable or 10 adversarial questions. The detector is deterministic
+and free; a test caps the fire rate at 30% so a regression cannot quietly restore
+`QueryPlanningAgent`'s per-query cost. p95 latency is not reported separately because the
+removed calls *were* the latency: 4 of 5 LLM round trips are gone on a typical query.
+
+**Answer quality does not regress: page-level retrieval metrics are identical to Phase 4**
+(recall@5 0.926, @10 0.983, @20 0.986, nDCG@10 0.878, MRR@10 0.855). Generation quality
+cannot be measured until LM Studio runs.
+
+#### THE ABSTENTION GATE SHIPS AT 0.02, NOT THE 0.40 THE CALIBRATION SET ASKS FOR
+
+Read this before touching the threshold.
+
+`eval/calibrate_abstention.py` sweeps the gate over all 125 questions and reports a clean
+result: threshold 0.40 catches 14/15 unanswerable (abstention accuracy **0.933**, comfortably
+past the >= 0.80 Phase 6 target) at a cost of 6 of 110 answerable. The separation looks
+excellent - answerable top scores median 0.977, unanswerable median 0.0072.
+
+**That result does not survive contact with real phrasing, and the eval set cannot show it.**
+`dataset.jsonl` was generated FROM the PDF, and `build_dataset.py` verifies every gold fact
+appears on its gold page. That makes it a sound *retrieval* benchmark and a **biased
+calibration set for abstention**: its questions reuse the bulletin's own vocabulary, so the
+cross-encoder scores them near 1.0. bge-reranker-v2-m3's absolute score is a relevance
+probability conditioned on wording. The same correct chunk (p216, Grading System) scores:
+
+| query | score for the same p216 chunk |
+|---|---|
+| "grading system letter grades grade points" | 0.9913 |
+| "What is the grading scale?" | 0.0652 |
+
+Identical ranking, identical passage, one synonym apart.
+
+`eval/paraphrase_probe.py` (new) scores 12 naturally-worded answerable questions and 8
+naturally-worded out-of-corpus ones:
+
+| threshold | answerable kept | unanswerable caught | abstention acc. on dataset.jsonl |
+|---|---|---|---|
+| 0.01 | 12/12 | 7/8 | 0.533 |
+| **0.02 -- shipped** | **11/12** | **7/8** | **0.600** |
+| 0.05 | 11/12 | 7/8 | 0.733 |
+| 0.30 | 4/12 | 7/8 | 0.800 |
+| 0.40 | 2/12 | 7/8 | 0.933 |
+
+**Raising the threshold above ~0.01 buys zero additional refusals on naturally-worded
+questions and costs answerable ones steeply.** At 0.40 the chatbot refuses 10 of 12 questions
+the bulletin genuinely answers - including "What is the grading scale?" and "How much does
+one credit cost?" - while catching no more unanswerable ones than 0.02 does. That is not a
+gate, it is an outage. 0.02 also yields **zero** false abstentions across all 110 answerable
+eval questions.
+
+**Consequence, stated plainly: abstention accuracy is 0.600 at the shipped threshold, below
+the >= 0.80 Phase 6 criterion.** The gap is not closable by threshold tuning, and two
+candidate second signals were measured and rejected rather than assumed:
+
+- **term coverage** (implemented, `settings.gate_min_coverage`, default 0.0): catches **no**
+  additional unanswerable question at any floor; above 0.5 it only costs answerable ones
+  (0.6 -> 9 false abstentions, 0.7 -> 18).
+- **top-vs-runner-up score margin**: does not separate at all. Answerable median 1.40x,
+  unanswerable median 1.32x - overlapping distributions.
+
+The residual failure has one specific shape, and it is a *generation* problem rather than a
+retrieval one: "Is there a nursing degree?" scores 0.4486 and "Does EWU offer a Bachelor of
+Nursing program?" scores 0.9968, because retrieval correctly returns the **Degrees Offered**
+page (p18). The page is right; the correct answer is to read it and say no such program is
+listed. No score threshold can express that. **Phase 6 owns this** - deterministic grounding
+plus an answer prompt that must ground its claim in the retrieved text is the mechanism that
+works regardless of vocabulary.
+
+**The signature query regressed back, and the gate provably cannot rescue it.** Session 5
+asked Phase 5 to treat "What is the minimum CGPA for admission to CSE?" as the gate's
+calibration case. At 0.40 it did abstain (top score 0.1596). At the shipped 0.02 it answers
+from CSE curriculum pages 26/121/117/24 - the Phase 4 regression, unchanged. No threshold
+catches it without also refusing legitimate questions: 0.1596 sits *inside* the range of
+correctly-answered natural phrasings (0.0516 "How much does one credit cost?", 0.0652 "What
+is the grading scale?", 0.3530 "academic probation"). `tests/test_reranker.py` keeps its
+`xfail`. This is firmly Phase 6/7 work, as Session 5 suspected.
+
+**Also changed:** `AnswerAgent` reads `context_text` (the parent section, when parent
+expansion is on) instead of the 250-token child that happened to rank; the conversation cap
+lives in `pipeline.trim_history` so every entry point gets it rather than only the REPL
+(diagnosis #14 fully closed); `scripts/chat.py` gained the device/LLM banner, a `trace`
+command showing how the last answer was produced, and an abstention message that says *why*
+it declined. `settings.llm_verification_enabled` defaults **False** - `VerificationAgent` is
+untouched on disk but off, since it judged the answer against the chunks that produced it
+(diagnosis #11) and Phase 7 is where it gets restructured.
+
+**Next - Phase 6:** sentence-level `[Page N]` citations; `src/validation/citations.py` (every
+cited page is in the retrieved set) and `src/validation/numbers.py` (every number in the
+answer appears verbatim in context); the abstention path; ONE regeneration carrying the
+explicit failure reason; move prompts into `src/generation/prompts.py` (still 0 bytes).
+Targets: citation accuracy >= 0.95, number fidelity 1.00, abstention accuracy >= 0.80 - and
+note that the last of those now depends on grounding, not on the gate. **Start LM Studio
+first**; Phase 6 is the first phase that cannot be honestly verified without it.
