@@ -260,6 +260,79 @@ pages in 111-127.
 ACCEPT: nDCG@10 improves by >= 0.10 with the reranker on vs off.
 
 ### PHASE 5 — Collapse the agent layer (2 days, mostly deletion)
+
+**PRE-FLIGHT — DO THIS FIRST, BEFORE ANY EVAL RUN.**
+
+torch was installed as the CPU-only wheel (`2.14.0+cpu`, `torch.cuda.is_available() == False`),
+so Phases 1-4 ran entirely on CPU and the RTX 4060 Ti sat idle. A single Phase 4 rerank eval
+took ~30-50 minutes (110 questions x pool 50 = ~5,500 cross-encoder passes on a 568M
+XLM-R-large at max_length 1024). On GPU the same run is under a minute.
+
+Phase 5 calibrates an abstention threshold over the unanswerable set, which means MANY eval
+runs. On CPU that is impractical. Fix this before starting:
+
+1. Install the CUDA build:
+       .\.venv\Scripts\python.exe -m pip install --force-reinstall --index-url https://download.pytorch.org/whl/cu128 torch
+   If cu128 does not resolve for torch 2.14, get the exact command from
+   https://pytorch.org/get-started/locally/ (Stable / Windows / Pip / Python / CUDA).
+
+2. Verify — this must print True:
+       .\.venv\Scripts\python.exe -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+
+3. Raise the batch sizes in settings.py. Both are currently 8 and explicitly tuned for CPU:
+       rerank_batch_size:            8  -> 32
+       embedding_encode_batch_size:  8  -> 64
+   Fix the trailing "# (CPU)" comment on embedding_encode_batch_size — it will mislead the
+   next session otherwise.
+
+4. Re-pin torch in requirements.txt. It currently pins the +cpu build, so a fresh clone
+   reproduces this exact bug. This is a reproducibility defect, not just a speed one.
+
+5. Add a progress indicator to the rerank loop (tqdm over batches, or a flushed
+   "i/total" print every N questions). It currently prints once and then goes silent for
+   tens of minutes, which is indistinguishable from a hang.
+
+6. VRAM budget on the 16GB card once CUDA is live: Gemma 4 ~9GB + BGE-M3 ~1.1GB +
+   reranker ~1.1GB = ~11.5GB. It fits, but if LM Studio is loaded during an eval, watch for
+   OOM and lower the batch sizes before blaming the model.
+
+7. MAKE THE DEVICE EXPLICIT AND FAIL LOUD. There is currently NO device handling anywhere
+   in the codebase — `CrossEncoder(model_name)` and `SentenceTransformer(model_name)` are
+   both constructed with no device argument and rely on silent auto-detection. That is
+   exactly how Phases 1-4 ran on CPU without anyone noticing. Auto-detect is not enough;
+   the system must announce what it is doing.
+
+   - Add to settings.py:
+         device: str = "cuda"          # "cuda" | "cpu" | "auto"
+         require_gpu: bool = True      # refuse to silently fall back
+   - Pass `device=settings.device` to BOTH the SentenceTransformer load in
+     chroma_store.py and the CrossEncoder load in reranker.py.
+   - Add one shared helper (e.g. src/config/device.py) that resolves the device once and,
+     when `require_gpu` is True and CUDA is unavailable, RAISES with a message naming the
+     installed torch build. A warning is not enough — it scrolls past.
+   - Add a test asserting the resolved device is "cuda" when torch.cuda.is_available().
+
+   THIS APPLIES TO THE SHIPPED CHATBOT, NOT JUST EVAL. The terminal app loads the same
+   Reranker and ChromaVectorStore, so without this the finished product can silently run
+   its embedder and reranker on CPU and simply feel slow, with nothing in the output
+   saying why.
+
+8. LM STUDIO IS SEPARATE. Gemma 4's GPU usage is controlled by LM Studio's own
+   "GPU Offload" slider, NOT by torch or by anything in this repo. Fixing torch does
+   nothing for the LLM. Confirm in the LM Studio model load panel that GPU offload is set
+   to all layers, and confirm the model is actually resident with:
+       nvidia-smi --query-gpu=memory.used --format=csv
+   Gemma 4 12B q4 resident should show roughly 7-9GB. A few hundred MB means it is on CPU.
+
+9. Add a startup line to the terminal chatbot that prints the resolved device and whether
+   the LLM endpoint is reachable, e.g.
+       "embedder/reranker: cuda (RTX 4060 Ti) | LLM: LM Studio @ localhost:1234 [ok]"
+   so a CPU regression is visible the moment the app starts instead of being felt as
+   unexplained slowness.
+
+Nothing measured in Phases 1-4 is invalidated by this. CPU vs GPU changes speed, not results.
+
+**Then the phase itself:**
 - Delete supervisor_agent.py, reranking_agent.py, retrieval_agent.py, evidence_agent.py,
   routing.py, and the retrieval retry loop.
 - Make query rewriting conditional (pronoun/ellipsis/conjunction detection).

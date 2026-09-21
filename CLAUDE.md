@@ -20,6 +20,15 @@ against the real code, index, and PDF.
 - Never read or grep `.venv/`.
 - LLM: Gemma 4 12B via **LM Studio** at `http://localhost:1234/v1` (OpenAI-compatible).
   Not Ollama.
+- GPU: RTX 4060 Ti 16GB. **Check `torch.cuda.is_available()` before any eval, index build,
+  or app run.** torch was installed as the CPU-only wheel, so Phases 1–4 ran on CPU and a
+  single rerank eval took 30–50 minutes instead of under a minute. The code has **no device
+  handling at all** — both model loads rely on silent auto-detection, which is how this went
+  unnoticed. See the PRE-FLIGHT block at the top of Phase 5 in HANDOFF.md: it must be made
+  explicit and fail-loud, for the shipped chatbot as well as for eval. Never start a long
+  run on CPU without saying so first.
+- Gemma 4's GPU usage is controlled by **LM Studio's own GPU Offload setting**, not by torch
+  and not by anything in this repo. Fixing torch does nothing for the LLM.
 
 ## Rules
 
