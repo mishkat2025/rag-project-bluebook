@@ -71,6 +71,17 @@ _MULTI_PART_PATTERNS = (
 
 _WORD = re.compile(r"[a-z0-9]+")
 
+#: "Is there a swimming pool?" -- existential "there", not a reference to the
+#: previous turn. Without this, every "is/are there X?" question inside a
+#: conversation was misread as a follow-up: it cost a needless LLM call, and
+#: the rewritten query scored high enough to slip past the abstention gate that
+#: would otherwise have caught it. Locative "there" ("what happens if I fail
+#: there?") is genuinely anaphoric and is left alone.
+_EXISTENTIAL_THERE = re.compile(
+    r"\b(?:is|are|was|were|isn't|aren't|there's)\s+there\b|^there\s+(?:is|are|was|were)\b",
+    re.IGNORECASE,
+)
+
 
 @dataclass
 class RewriteDecision:
@@ -135,8 +146,24 @@ def needs_rewrite(
         if lowered.startswith(opener + " ") or lowered == opener:
             return RewriteDecision(True, "follow_up")
 
-    if _BACKREFERENCE_WORDS.intersection(tokens):
+    referential = set(tokens)
+
+    # Drop "there" when every occurrence is existential, so "Is there a gym?"
+    # is not mistaken for a reference to the previous turn.
+    existential_uses = len(_EXISTENTIAL_THERE.findall(lowered))
+    existential = existential_uses > 0
+
+    if existential and existential_uses >= lowered.count("there"):
+        referential.discard("there")
+
+    if _BACKREFERENCE_WORDS.intersection(referential):
         return RewriteDecision(True, "follow_up")
+
+    # An existential question is complete on its own however short it is --
+    # "Is there a gym?" names its own subject. Exempt it before the length
+    # heuristic below, which would otherwise catch it at 4 tokens.
+    if existential:
+        return RewriteDecision(False, "self_contained")
 
     # "For Pharmacy?" -- too short to carry its own subject.
     if len(tokens) <= 4:

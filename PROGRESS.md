@@ -10,12 +10,12 @@ Read HANDOFF.md for the full plan before working.
 
 | Phase | Description | Status |
 |---|---|---|
-| 0 | LM Studio client, error handling, prints, pinning | done (live LM Studio check pending) |
+| 0 | LM Studio client, error handling, prints, pinning | done (**verified live against Gemma 4, Session 7**) |
 | 1 | Evaluation harness + gold questions (125) | done (baseline recorded) |
 | 2 | Ingestion rebuild (font hierarchy, tables, parent/child) | done (see caveat on the Recall@20 criterion) |
 | 3 | Retrieval (BGE-M3, persisted BM25, expansion) | done (acceptance met; see the expansion caveat) |
 | 4 | Reranking (bge-reranker-v2-m3, enforce top_k=5) | done (acceptance NOT met; see below) |
-| 5 | Collapse the agent layer | done (acceptance met; abstention gate ships below the Phase 6 target — see Session 6) |
+| 5 | Collapse the agent layer | done + **verified end to end against live Gemma 4** (Session 7) |
 | 6 | Grounding + deterministic validation | next |
 | 7 | Verification, terminal app, observability | not started |
 
@@ -491,3 +491,130 @@ explicit failure reason; move prompts into `src/generation/prompts.py` (still 0 
 Targets: citation accuracy >= 0.95, number fidelity 1.00, abstention accuracy >= 0.80 - and
 note that the last of those now depends on grounding, not on the gate. **Start LM Studio
 first**; Phase 6 is the first phase that cannot be honestly verified without it.
+
+### Session 7 - Phase 5 live verification against LM Studio
+
+**The first real Gemma calls in this project.** Phase 0 shipped the LM Studio client in
+Session 1 and it had never been exercised; every phase since ran on fakes and fallbacks.
+That gap is now closed, and closing it found four defects, three of them in shipped code.
+
+**Getting LM Studio up (pre-flight item 8, previously blocked).** The app was running but
+its **server was off** - `lms status` reported `Server: OFF`, nothing was listening on 1234,
+and no model was resident. `lms server start`, then
+`lms load gemma-4-12b-it-qat --gpu max --context-length 16384`.
+- **GPU offload confirmed: 810 MiB -> 9741 MiB, ~8.9 GB resident**, matching HANDOFF's
+  "roughly 7-9GB". Embedder + reranker add ~2.2 GB on top; total ~12 GB of 16 GB, so the
+  budget in HANDOFF holds with LM Studio loaded. **Pre-flight item 8 is now done.**
+- The loaded identifier is **`gemma-4-12b-it-qat`**, while `.env` sets
+  `LLM_MODEL=gemma-4-12b-it`. Session 1 flagged this as needing confirmation: LM Studio
+  prefix-matches, and **both ids were verified to resolve to the same loaded model**, so the
+  mismatch is harmless. Left as-is and documented in settings.
+
+#### DEFECT 1 (critical): Gemma 4 is a reasoning model, and it timed out half the questions
+
+Not stated anywhere in HANDOFF, which specifies "Gemma 4 12B Instruct" and assumes ordinary
+instruct behaviour. Measured here: **"What is 17 * 24?" costs 248 reasoning tokens to emit 3
+characters.** The response carries a separate `reasoning_content` field and
+`completion_tokens_details.reasoning_tokens`.
+
+On RAG prompts the effect is severe. The prompt is not the problem - it is only ~1,550
+tokens, and generation runs at a healthy ~29 tok/s. The output is the problem:
+
+| question | reasoning on | reasoning off |
+|---|---|---|
+| minimum CGPA for admission | 103.8s, 2258 tok (2200 reasoning) | **11.4s**, 230 tok |
+| what is the grading scale | 145.6s, 4009 tok (3530 reasoning) | **19.8s**, 485 tok |
+| credits for a bachelor's | 61.5s, 1712 tok (1315 reasoning) | **17.2s**, 409 tok |
+| minimum CGPA for CSE | 18.7s, 437 tok | **4.3s**, 20 tok |
+
+With reasoning on, **3 of 6 end-to-end queries hit the 120s `llm_timeout`** and the user got
+"the language model is unavailable". The chatbot was effectively broken on ordinary questions.
+
+**Quality is equal or better with reasoning off**, which is the part worth noting: on the
+first question reasoning talked itself into a hedge ("does not provide information regarding
+a minimum CGPA; however...") while the non-reasoning answer gave the direct, complete,
+correctly-cited answer. Grounded extraction from five already-selected passages has nothing
+left to reason about.
+
+Fixes: `settings.llm_reasoning_effort = "none"` (plumbed through `LMStudioClient`) and
+`llm_timeout` 120 -> 300 as a safety net. **`reasoning_effort` "low" and "minimal" are
+silently ignored by this model** (measured: both still emit ~240 reasoning tokens), so it is
+on/off in practice. Structured output (`json_schema`) was re-verified to still work with
+reasoning off - the query rewriter depends on both together.
+
+#### DEFECT 2: existential "there" was misread as a follow-up
+
+Found by driving the actual REPL. Inside a conversation, **"Is there a swimming pool on
+campus?" was classified `follow_up`**, because "there" is in the back-reference list. Two
+consequences: a needless LLM call, and - worse - the rewritten query scored *above* the
+abstention threshold, so **the gate that correctly caught this question when asked first was
+bypassed when it was asked second**. Fixed: existential "there" (`is/are/was/were there`) no
+longer counts as anaphoric, and such questions are exempt from the short-query heuristic too
+(they run 4-7 tokens). Locative "there" ("what happens if I fail there?") is still treated as
+a follow-up. 4 regression tests. The eval-set fire rate is unchanged at 21/125 = 16.8%.
+
+#### DEFECT 3: the terminal could not print the bulletin's own punctuation
+
+The Windows console is cp1252; the chunks are correct UTF-8. An answer quoting
+`GCE 'O' Level` rendered as `GCE ?O? Level`. **The data is clean** - 0 of 2855 chunks contain
+a replacement character, and the codepoints are ordinary U+2018/U+2019/U+2013 - so this was
+purely a display defect in the deliverable. `scripts/chat.py` now reconfigures stdout/stderr
+to UTF-8.
+
+#### DEFECT 4 (recorded, deliberately NOT fixed): top-5 membership is unstable under paraphrase
+
+This is the most important finding for Phase 6, and it generalises the threshold problem
+recorded in Session 6.
+
+Observed live: the same follow-up, asked in two conversations that differed only in an
+earlier unrelated turn, gave a correct answer once and a wrong one the next time. The
+rewritten *retrieval* query was **byte-identical** both times - the abstention turn did not
+poison it, which was the obvious hypothesis and it was wrong. What differed was the
+LLM-generated `rerank_query` sentence, and that alone changed which pages survived `top_k=5`.
+
+Four phrasings of one information need, reranked over an identical fused pool:
+
+| rerank query | top-5 pages | p216 (the grading table) |
+|---|---|---|
+| "What grade point does a B grade carry in the EWU Undergraduate Bulletin?" | 217, 176, 220, 178, 25 | **MISSING** |
+| "Find the specific grade point value assigned to a B grade..." | 216, 217, 176, 24, 25 | present |
+| "Determine the specific grade point value assigned to a B grade..." | 217, 178, 176, 220, 220 | **MISSING** |
+| "What about for a B grade?" (the bare user turn) | 216, 217, 214, 24, 176 | present |
+
+**No variant dominates.** The fully-specified rewritten question - the one that looks best and
+which this session nearly adopted as a "fix" - is one of the two that loses the answer, and
+the vague original user turn keeps it. A change was NOT made on this evidence: any choice
+here would be tuning on a single question.
+
+Two things follow:
+1. **There is a measurement gap.** `eval/run_eval.py` reranks with the query as asked, but
+   the pipeline reranks with an LLM-invented `rerank_query`. The eval has therefore never
+   scored the reranking input that production actually uses. Phase 6 should close this -
+   either by reranking on something deterministic, or by having the harness use the real
+   rewriter.
+2. **`top_k=5` is where the loss happens, and the existing numbers say so.** Phase 4 measured
+   page-recall@5 0.926 against page-recall@10 0.983: for ~6% of questions the gold page sits
+   at rank 6-10 and the enforced cut discards it. Phase 4 also measured pool 100 lifting
+   recall@5 to 0.938. HANDOFF mandates `top_k=5`, so it stays, but this is the concrete lever
+   if Phase 6 needs headroom.
+
+#### End-to-end results after the fixes
+
+All 7 representative queries succeed, no timeouts, mean 41.5s (18-75s), and every fact
+checked against the PDF: A- = 3.70 [p216], B = 3.00 [p216], minimum GPA 3.00 in SSC and HSC
+[p176], Law GPA 3.00 [p90], per-program credit table [p24]. LLM-call accounting holds live:
+self-contained = 1, follow-up and multi-part = 2, abstention = **0**.
+
+**The generator refuses the signature query on its own.** "What is the minimum CGPA for
+admission to CSE?" retrieves the wrong CSE curriculum pages (26/121/117/24) and Gemma answers
+"the available bulletin evidence does not provide information regarding the minimum CGPA
+required for admission to CSE" rather than inventing one from them. This is direct evidence
+for the Session 6 recommendation: **grounding in the generator catches what the score
+threshold provably cannot**, and it is vocabulary-independent. Phase 6 should lean on it.
+
+173 tests pass, 1 xfail (up from 163). Retrieval metrics unchanged.
+
+**Still open for Phase 6:** the eval/production reranking mismatch (defect 4); abstention
+accuracy 0.600 vs the >= 0.80 target, which Session 6 showed needs grounding rather than
+threshold tuning; and `readme.md`, which still documents Ollama/Qwen and `app/chat.py`
+(0 bytes) - that is the Phase 7 contradiction HANDOFF asks to be resolved.

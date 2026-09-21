@@ -139,3 +139,61 @@ def test_client_raises_llmerror_when_server_unreachable():
 
     with pytest.raises(LLMError):
         client.generate("hi")
+
+
+# ---------------------------------------------------------------------------
+# Gemma 4 is a reasoning model (found during Phase 5 live verification)
+# ---------------------------------------------------------------------------
+
+def test_reasoning_effort_is_sent_when_configured():
+    """Gemma 4 reasons before answering, and those tokens dominate latency.
+
+    Measured live: with reasoning on, "What is the grading scale?" spent 4,009
+    completion tokens (3,530 of them reasoning) and took 145s, against 485
+    tokens and 20s with it off -- for an equal-or-better answer. Left on, the
+    shipped chatbot timed out on half of all questions.
+    """
+    import requests
+
+    captured = {}
+
+    class FakeResponse:
+        status_code = 200
+
+        @staticmethod
+        def raise_for_status():
+            return None
+
+        @staticmethod
+        def json():
+            return {"choices": [{"message": {"content": "ok"}}]}
+
+    def fake_post(url, json=None, timeout=None):
+        captured["payload"] = json
+        return FakeResponse()
+
+    original = requests.post
+    requests.post = fake_post
+
+    try:
+        LMStudioClient(reasoning_effort="none").generate("hi")
+        assert captured["payload"]["reasoning_effort"] == "none"
+
+        captured.clear()
+        LMStudioClient(reasoning_effort="default").generate("hi")
+        assert "reasoning_effort" not in captured["payload"]
+    finally:
+        requests.post = original
+
+
+def test_the_shipped_client_disables_reasoning():
+    from src.config.settings import settings
+
+    assert settings.llm_reasoning_effort == "none"
+
+
+def test_the_timeout_survives_a_slow_generation():
+    """120s was not enough even for some non-reasoning answers."""
+    from src.config.settings import settings
+
+    assert settings.llm_timeout >= 300

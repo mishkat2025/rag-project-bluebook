@@ -225,3 +225,37 @@ def test_the_rewriter_never_fires_on_a_plain_single_fact_question():
 
     for row in single_fact:
         assert not needs_rewrite(row["question"], []).needed, row["qid"]
+
+
+# ---------------------------------------------------------------------------
+# Existential "there" (found by driving the real REPL in Phase 5)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("query", [
+    "Is there a swimming pool on campus?",
+    "Is there a gym?",
+    "Are there any scholarships?",
+    "Is there a dormitory?",
+])
+def test_existential_there_is_not_a_follow_up(query):
+    """"Is there X?" names its own subject; the "there" is not anaphoric.
+
+    Caught live: inside a conversation, "Is there a swimming pool on campus?"
+    was rewritten as a follow-up, and the rewritten query then scored high
+    enough to slip past the abstention gate that had correctly caught it when
+    the same question was asked first. It also cost an LLM call it did not
+    need. Note these are 4-7 tokens, so the length heuristic must not catch
+    them either.
+    """
+    assert not needs_rewrite(query, HISTORY).needed
+
+
+def test_locative_there_is_still_a_follow_up():
+    """Only the existential construction is exempt, not every "there"."""
+    assert needs_rewrite("What happens if I fail there?", HISTORY).reason == "follow_up"
+
+
+@pytest.mark.parametrize("query", ["How many credits?", "For Pharmacy?"])
+def test_short_fragments_are_still_follow_ups(query):
+    """The length heuristic still fires on genuine fragments."""
+    assert needs_rewrite(query, HISTORY).reason == "follow_up"

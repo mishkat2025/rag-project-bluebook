@@ -200,9 +200,33 @@ class Settings(BaseSettings):
     # LLM (LM Studio, OpenAI-compatible)
     # ---------------------------------------------------------
     llm_base_url: str = "http://localhost:1234/v1"
+
+    #: LM Studio matches this against the loaded model by prefix, so both
+    #: "gemma-4-12b-it" and the exact id "gemma-4-12b-it-qat" resolve. Verified
+    #: live against both.
     llm_model: str = "gemma-4-12b-it"
     llm_temperature: float = 0.1
-    llm_timeout: int = 120
+
+    #: Raised from 120s. Gemma 4 REASONS before answering (see
+    #: llm_reasoning_effort): with reasoning on, a RAG answer can spend 4,600
+    #: completion tokens, which at ~29 tok/s on this card is ~160s and blew
+    #: the old 120s timeout on half of all questions.
+    llm_timeout: int = 300
+
+    #: Gemma 4 is a reasoning model. Measured on this box: "What is 17 * 24?"
+    #: costs 248 reasoning tokens to emit 3 characters, and a grounded RAG
+    #: answer costs thousands before the first visible word.
+    #:
+    #: "none" turns it off and is the shipped value. This task is grounded
+    #: extraction from five passages that are already in the prompt -- the
+    #: evidence has been selected, so there is nothing left to reason out, and
+    #: latency is what the user feels. LM Studio accepts "none"; note that
+    #: "low" and "minimal" are silently ignored by this model (measured: both
+    #: still emit ~240 reasoning tokens), so this is on/off in practice.
+    #:
+    #: Set to "default" to turn reasoning back on if a later phase finds a
+    #: quality task that needs it.
+    llm_reasoning_effort: str = "none"
 
     model_config = SettingsConfigDict(
         env_file=".env",

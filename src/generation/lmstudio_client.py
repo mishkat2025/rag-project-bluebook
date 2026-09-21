@@ -18,6 +18,7 @@ class LMStudioClient:
         model: str | None = None,
         temperature: float | None = None,
         timeout: int | None = None,
+        reasoning_effort: str | None = None,
     ):
         self.base_url = (base_url or settings.llm_base_url).rstrip("/")
         self.model = model or settings.llm_model
@@ -25,6 +26,11 @@ class LMStudioClient:
             settings.llm_temperature if temperature is None else temperature
         )
         self.timeout = timeout or settings.llm_timeout
+        self.reasoning_effort = (
+            settings.llm_reasoning_effort
+            if reasoning_effort is None
+            else reasoning_effort
+        )
 
     def generate(
         self,
@@ -35,6 +41,10 @@ class LMStudioClient:
         """Return the model's reply. Raises LLMError on any failure.
 
         If json_schema is given, the server is asked to constrain output to it.
+
+        Only ``message.content`` is returned. Gemma 4 also emits
+        ``reasoning_content``, which is not part of the answer and must never
+        reach the user or the citation validator.
         """
 
         if not prompt.strip():
@@ -48,6 +58,12 @@ class LMStudioClient:
             ),
             "stream": False,
         }
+
+        # Gemma 4 reasons before answering, and those tokens dominate latency
+        # (a RAG answer can spend thousands of them before the first visible
+        # word). "default" leaves the model's own behaviour alone.
+        if self.reasoning_effort and self.reasoning_effort != "default":
+            payload["reasoning_effort"] = self.reasoning_effort
 
         if json_schema is not None:
             payload["response_format"] = {

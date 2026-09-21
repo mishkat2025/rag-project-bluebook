@@ -14,6 +14,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+# The bulletin uses curly quotes and en-dashes, and the chunks store them as
+# proper UTF-8. The Windows console defaults to cp1252, which renders them as
+# "?" -- so an answer quoting 'GCE "O" Level' came out mangled. Reconfigure
+# rather than strip: the text is correct, only the terminal's default is not.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, OSError):  # redirected to something unreconfigurable
+        pass
+
 from src.config.settings import settings  # noqa: E402
 from src.generation.lmstudio_client import LMStudioClient  # noqa: E402
 from src.orchestration.state import ConversationTurn, RAGState  # noqa: E402
