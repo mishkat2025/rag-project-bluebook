@@ -62,21 +62,6 @@ class RAGWorkflow:
             elif agent_name == "reranking":
                 self.reranking.rerank(state)
 
-                print("\n[WORKFLOW RERANKING DEBUG]")
-                print("Original query:", state.original_query)
-                print("Rerank query:", state.rerank_query)
-                print("Retrieved chunks:", len(state.retrieved_chunks))
-                print("Reranked chunks:", len(state.reranked_chunks))
-
-                for chunk in state.reranked_chunks[:10]:
-                    metadata = chunk.get("metadata", {})
-                    print(
-                        f"Rank={chunk.get('rerank_rank')} | "
-                        f"Chunk={chunk.get('chunk_id')} | "
-                        f"Page={metadata.get('page')} | "
-                        f"Score={chunk.get('rerank_score')}"
-                    )
-
             elif agent_name == "evidence":
                 self.evidence.assess(state)
 

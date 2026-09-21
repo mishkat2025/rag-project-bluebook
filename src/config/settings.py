@@ -60,13 +60,12 @@ class Settings(BaseSettings):
     max_conversation_exchanges: int = 6
 
     # ---------------------------------------------------------
-    # Ollama
+    # LLM (LM Studio, OpenAI-compatible)
     # ---------------------------------------------------------
-    ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = ""
-
-    ollama_temperature: float = 0.1
-    ollama_timeout: int = 120
+    llm_base_url: str = "http://localhost:1234/v1"
+    llm_model: str = "gemma-4-12b-it"
+    llm_temperature: float = 0.1
+    llm_timeout: int = 120
 
     model_config = SettingsConfigDict(
         env_file=".env",

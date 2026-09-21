@@ -1,3 +1,4 @@
+from src.config.settings import settings
 from src.orchestration.state import ConversationTurn, RAGState
 from src.orchestration.workflow import RAGWorkflow
 
@@ -56,10 +57,12 @@ def main():
             print("-" * 60)
 
             if final_state.verification_result:
-                print(
-                    f"Verification: "
-                    f"{'Approved' if final_state.verification_result.get('approved') else 'Not approved'}"
-                )
+                result = final_state.verification_result
+                if result.get("skipped"):
+                    status = "Skipped (verifier unavailable)"
+                else:
+                    status = "Approved" if result.get("approved") else "Not approved"
+                print(f"Verification: {status}")
 
             pages = final_state.evidence_status.get("source_pages", [])
 
@@ -74,8 +77,9 @@ def main():
                 )
             )
 
-            # Keep only the most recent 6 exchanges.
-            conversation_history = conversation_history[-6:]
+            conversation_history = conversation_history[
+                -settings.max_conversation_exchanges:
+            ]
 
         except Exception as exc:
             print("\nRAG Error:")

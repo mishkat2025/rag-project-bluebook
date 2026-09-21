@@ -1,16 +1,19 @@
+import logging
 import json
 from typing import Any
 
 from src.config.settings import settings
-from src.generation.ollama_client import OllamaClient
+from src.generation.lmstudio_client import LLMError, LMStudioClient
 from src.orchestration.state import RAGState
+
+logger = logging.getLogger(__name__)
 
 
 class QueryPlanningAgent:
     """Rewrite, expand, and decompose queries for retrieval and re-ranking."""
 
-    def __init__(self, ollama_client: OllamaClient | None = None):
-        self.ollama = ollama_client or OllamaClient()
+    def __init__(self, llm_client: LMStudioClient | None = None):
+        self.llm = llm_client or LMStudioClient()
 
     def plan(self, state: RAGState) -> list[str]:
         """Generate structured information needs and retrieval queries."""
@@ -20,12 +23,17 @@ class QueryPlanningAgent:
 
         prompt = self._build_prompt(state)
 
-        response = self.ollama.generate(
-            prompt=prompt,
-            temperature=0.0,
-        )
-
-        information_needs, rerank_query = self._parse_response(response)
+        try:
+            response = self.llm.generate(
+                prompt=prompt,
+                temperature=0.0,
+            )
+            information_needs, rerank_query = self._parse_response(response)
+        except (LLMError, ValueError) as exc:
+            logger.warning("Query planning failed: %s", exc)
+            query = state.original_query.strip()
+            information_needs = [{"need": query, "query": query}]
+            rerank_query = query
 
         information_needs = self._limit_information_needs(
             information_needs

@@ -1,5 +1,8 @@
-from src.generation.ollama_client import OllamaClient
+import logging
+from src.generation.lmstudio_client import LLMError, LMStudioClient
 from src.orchestration.state import RAGState
+
+logger = logging.getLogger(__name__)
 
 
 class AnswerAgent:
@@ -8,8 +11,8 @@ class AnswerAgent:
     by the Evidence Agent.
     """
 
-    def __init__(self, ollama_client: OllamaClient | None = None):
-        self.ollama = ollama_client or OllamaClient()
+    def __init__(self, llm_client: LMStudioClient | None = None):
+        self.llm = llm_client or LMStudioClient()
 
     def answer(self, state: RAGState) -> str:
         if not state.original_query.strip():
@@ -37,16 +40,18 @@ class AnswerAgent:
 
         prompt = self._build_prompt(state, supported_chunks)
 
-        answer = self.ollama.generate(
-            prompt=prompt,
-            temperature=0.1,
-        )
-        print("\n[Answer Agent Raw Response]")
-        print("-" * 60)
-        print(answer)
-        print("-" * 60)
-        if not answer.strip():
-            raise RuntimeError("Ollama returned an empty answer.")
+        try:
+            answer = self.llm.generate(
+                prompt=prompt,
+                temperature=0.1,
+            )
+        except LLMError as exc:
+            logger.warning("Answer generation failed: %s", exc)
+            answer = (
+                "I could not generate an answer because the language "
+                "model is unavailable. Please try again."
+            )
+            state.trace["answer_error"] = str(exc)
 
         state.draft_answer = answer.strip()
 

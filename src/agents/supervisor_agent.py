@@ -1,15 +1,18 @@
+import logging
 import json
 from typing import Any
 
-from src.generation.ollama_client import OllamaClient
+from src.generation.lmstudio_client import LLMError, LMStudioClient
 from src.orchestration.state import RAGState
+
+logger = logging.getLogger(__name__)
 
 
 class SupervisorAgent:
     """Controls the RAG workflow without answering the user."""
 
-    def __init__(self, ollama_client: OllamaClient | None = None):
-        self.ollama = ollama_client or OllamaClient()
+    def __init__(self, llm_client: LMStudioClient | None = None):
+        self.llm = llm_client or LMStudioClient()
 
     def decide(self, state: RAGState) -> str:
         """
@@ -27,12 +30,15 @@ class SupervisorAgent:
         else:
             prompt = self._build_prompt(state)
 
-            response = self.ollama.generate(
-                prompt=prompt,
-                temperature=0.0,
-            )
-
-            workflow = self._parse_response(response)
+            try:
+                response = self.llm.generate(
+                    prompt=prompt,
+                    temperature=0.0,
+                )
+                workflow = self._parse_response(response)
+            except (LLMError, ValueError) as exc:
+                logger.warning("Supervisor failed: %s", exc)
+                workflow = "complex"
 
         state.workflow_type = workflow
 

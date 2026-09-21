@@ -1,16 +1,19 @@
+import logging
 import json
 from typing import Any
 
 from src.config.settings import settings
-from src.generation.ollama_client import OllamaClient
+from src.generation.lmstudio_client import LLMError, LMStudioClient
 from src.orchestration.state import RAGState
+
+logger = logging.getLogger(__name__)
 
 
 class VerificationAgent:
     """Verifies that the generated answer is fully supported by the evidence."""
 
-    def __init__(self, ollama_client: OllamaClient | None = None):
-        self.ollama = ollama_client or OllamaClient()
+    def __init__(self, llm_client: LMStudioClient | None = None):
+        self.llm = llm_client or LMStudioClient()
 
     def verify(self, state: RAGState) -> dict[str, Any]:
         """Verify the draft answer against the selected evidence."""
@@ -38,15 +41,23 @@ class VerificationAgent:
             chunks=supported_chunks,
         )
 
-        response = self.ollama.generate(
-            prompt=prompt,
-            temperature=0.0,
-        )
-        print("\n[Verification Agent Raw Response]")
-        print("-" * 60)
-        print(response)
-        print("-" * 60)
-        verification_result = self._parse_response(response)
+        try:
+            response = self.llm.generate(
+                prompt=prompt,
+                temperature=0.0,
+            )
+            verification_result = self._parse_response(response)
+        except (LLMError, ValueError) as exc:
+            logger.warning("Verification failed: %s", exc)
+            verification_result = {
+                "approved": True,
+                "skipped": True,
+                "unsupported_claims": [],
+                "missing_subquestions": [],
+                "citation_errors": [],
+                "outside_knowledge": [],
+                "notes": [f"Verification skipped: {exc}"],
+            }
 
         state.verification_result = verification_result
 

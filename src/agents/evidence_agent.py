@@ -1,9 +1,12 @@
+import logging
 import json
 from typing import Any
 
 from src.config.settings import settings
-from src.generation.ollama_client import OllamaClient
+from src.generation.lmstudio_client import LLMError, LMStudioClient
 from src.orchestration.state import RAGState
+
+logger = logging.getLogger(__name__)
 
 
 class EvidenceAgent:
@@ -14,10 +17,10 @@ class EvidenceAgent:
 
     def __init__(
         self,
-        ollama_client: OllamaClient | None = None,
+        llm_client: LMStudioClient | None = None,
         final_context_top_k: int | None = None,
     ):
-        self.ollama = ollama_client or OllamaClient()
+        self.llm = llm_client or LMStudioClient()
         self.final_context_top_k = (
             final_context_top_k
             if final_context_top_k is not None
@@ -38,19 +41,18 @@ class EvidenceAgent:
             chunks=candidates,
         )
 
-        response = self.ollama.generate(
-            prompt=prompt,
-            temperature=0.0,
-        )
-        print("\n[Evidence Agent Raw Response]")
-        print("-" * 60)
-        print(response)
-        print("-" * 60)
-
-        evidence_status = self._parse_response(
-            response=response,
-            candidates=candidates,
-        )
+        try:
+            response = self.llm.generate(
+                prompt=prompt,
+                temperature=0.0,
+            )
+            evidence_status = self._parse_response(
+                response=response,
+                candidates=candidates,
+            )
+        except (LLMError, ValueError) as exc:
+            logger.warning("Evidence assessment failed: %s", exc)
+            evidence_status = self._fallback_status(candidates, str(exc))
 
         state.evidence_status = evidence_status
 
@@ -60,6 +62,31 @@ class EvidenceAgent:
         self._update_trace(state, evidence_status)
 
         return evidence_status
+
+    @staticmethod
+    def _fallback_status(
+        candidates: list[dict[str, Any]],
+        reason: str,
+    ) -> dict[str, Any]:
+        """Use the top reranked chunks when the LLM assessment is unusable."""
+
+        selected = candidates[: settings.rerank_top_k]
+
+        return {
+            "sufficient": bool(selected),
+            "supported_chunks": selected,
+            "selected_chunk_count": len(selected),
+            "source_pages": [
+                chunk.get("metadata", {}).get("page")
+                for chunk in selected
+                if chunk.get("metadata", {}).get("page") is not None
+            ],
+            "missing_subquestions": [],
+            "conflicts": [],
+            "weak_evidence": [],
+            "notes": [f"Evidence assessment unavailable: {reason}"],
+            "fallback": True,
+        }
 
     def _build_prompt(
     self,
