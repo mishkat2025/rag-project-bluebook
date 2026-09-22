@@ -45,6 +45,16 @@ class RAGState:
         default_factory=list
     )
 
+    #: The full cross-encoder ranking of the fused pool, before the
+    #: ``rerank_top_k`` cut. ``reranked_chunks`` above is what the generator
+    #: sees; this is what an independent verifier should see, so it is not
+    #: judging the answer against the same narrow slice that produced it
+    #: (diagnosis #11). Same scores, no extra model call -- the cross-encoder
+    #: already scores every candidate before any cut is applied.
+    all_reranked_chunks: list[dict[str, Any]] = field(
+        default_factory=list
+    )
+
     # ---------------------------------------------------------
     # Evidence
     # ---------------------------------------------------------

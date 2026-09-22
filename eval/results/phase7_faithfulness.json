@@ -1,0 +1,1146 @@
+[
+ {
+  "qid": "q002",
+  "pages": [
+   176
+  ],
+  "sentence": "Applicants can fill the admission forms online by paying Tk. 1,000  .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.003,
+   "neutral": 0.996
+  }
+ },
+ {
+  "qid": "q002",
+  "pages": [
+   178
+  ],
+  "sentence": "The fee of the admission form for the Foreign Students is $13.00, payable in International Money Order in favor of EWU .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.008,
+   "neutral": 0.992
+  }
+ },
+ {
+  "qid": "q004",
+  "pages": [
+   179
+  ],
+  "sentence": "An admission fee of Tk. 5,000 is applicable for Non-Degree students .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.056,
+   "entailment": 0.064,
+   "neutral": 0.88
+  }
+ },
+ {
+  "qid": "q006",
+  "pages": [
+   214
+  ],
+  "sentence": "To avoid late fees (Tk. 500 to Tk. 1, 000), students must register during the scheduled registration period .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.002,
+   "entailment": 0.002,
+   "neutral": 0.995
+  }
+ },
+ {
+  "qid": "q007",
+  "pages": [
+   25
+  ],
+  "sentence": "The time limit to complete an undergraduate degree may be extended up to Seven (7) years maximum on compassionate ground approved by the authority .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.004,
+   "entailment": 0.001,
+   "neutral": 0.996
+  }
+ },
+ {
+  "qid": "q008",
+  "pages": [
+   25
+  ],
+  "sentence": "Residency requirement requires that at least 75% of courses must be completed at EWU .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.001,
+   "neutral": 0.998
+  }
+ },
+ {
+  "qid": "q010",
+  "pages": [
+   216
+  ],
+  "sentence": "A security deposit of Tk.200 will be charged on the students as Re-Scrutiny Fee for re-scrutiny of each Script of Final Examinations .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.004,
+   "entailment": 0.002,
+   "neutral": 0.994
+  }
+ },
+ {
+  "qid": "q013",
+  "pages": [
+   31
+  ],
+  "sentence": "The minimum requirement for the Bachelor of Business Administration (BBA) degree is 123 Credits  .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.004,
+   "neutral": 0.995
+  }
+ },
+ {
+  "qid": "q014",
+  "pages": [
+   180
+  ],
+  "sentence": "The fee for the remedial (non-credit) course in English is Tk 3,163 for one semester only .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.092,
+   "neutral": 0.908
+  }
+ },
+ {
+  "qid": "q014",
+  "pages": [
+   180
+  ],
+  "sentence": "If a student fails in the Remedial English course in the first attempt, they will have to pay regular course fees of Tk.12,000 for this course during subsequent registration .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.003,
+   "entailment": 0.001,
+   "neutral": 0.995
+  }
+ },
+ {
+  "qid": "q015",
+  "pages": [
+   13
+  ],
+  "sentence": "The chairperson of the Department of Computer Science and Engineering is Dr. Taskeed Jabid  .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.001,
+   "neutral": 0.999
+  }
+ },
+ {
+  "qid": "q017",
+  "pages": [
+   177
+  ],
+  "sentence": "The fee for verification of each document provided by the students is Tk. 50.00, though no fee will be charged for the first copy of each document .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.029,
+   "neutral": 0.969
+  }
+ },
+ {
+  "qid": "q018",
+  "pages": [
+   177
+  ],
+  "sentence": "The general requirement of admission test waiver is a minimum total score of 1000 in SAT (considering Critical Reading, Math and Writing) .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.93,
+   "entailment": 0.002,
+   "neutral": 0.067
+  }
+ },
+ {
+  "qid": "q018",
+  "pages": [
+   177
+  ],
+  "sentence": "For foreign students from other systems, an SAT score of 1000 qualifies them to not sit for the Admission Test .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.168,
+   "neutral": 0.832
+  }
+ },
+ {
+  "qid": "q020",
+  "pages": [
+   218
+  ],
+  "sentence": "Any form of cheating such as copying any document or another person\u2019s work, seeking or providing help to other students during tests, or adopting any other form of unfair means during exams, will constitute grounds for disciplinary action .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.003,
+   "neutral": 0.997
+  }
+ },
+ {
+  "qid": "q020",
+  "pages": [
+   218
+  ],
+  "sentence": "Instructors are expected to use reasonably practical means of preventing and detecting cheating .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.016,
+   "neutral": 0.984
+  }
+ },
+ {
+  "qid": "q020",
+  "pages": [
+   218
+  ],
+  "sentence": "Any student found to be cheating will be reported to the Dean of concerned faculty by the relevant faculty member for disciplinary action .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.001,
+   "neutral": 0.999
+  }
+ },
+ {
+  "qid": "q024",
+  "pages": [
+   176
+  ],
+  "sentence": "The fee of the admission form for the Foreign Students is $13.00, payable in International Money Order in favor of EWU  .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.46,
+   "entailment": 0.013,
+   "neutral": 0.527
+  }
+ },
+ {
+  "qid": "q025",
+  "pages": [
+   215
+  ],
+  "sentence": "An undergraduate student (except Pharmacy) must register for a minimum of 3 (three) courses (9 credits) every semester, and students of the B.Pharm. program must take 4 (four) courses (12 credits) every semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.005,
+   "neutral": 0.994
+  }
+ },
+ {
+  "qid": "q030",
+  "pages": [
+   180
+  ],
+  "sentence": "The lab fee for B. Sc. in Civil Engineering is Tk. 2,650/-(non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.013,
+   "entailment": 0.002,
+   "neutral": 0.985
+  }
+ },
+ {
+  "qid": "q031",
+  "pages": [
+   180
+  ],
+  "sentence": "The lab fee for Bachelor of Pharmacy is Tk. 3, 750/- (non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.023,
+   "entailment": 0.003,
+   "neutral": 0.974
+  }
+ },
+ {
+  "qid": "q032",
+  "pages": [
+   157
+  ],
+  "sentence": "The B.Sc. in Civil Engineering requires a minimum of 156.5 Credits  .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.004,
+   "entailment": 0.009,
+   "neutral": 0.987
+  }
+ },
+ {
+  "qid": "q033",
+  "pages": [
+   142
+  ],
+  "sentence": "The Bachelor of Pharmacy program requires completion of 158 credits .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.001,
+   "neutral": 0.999
+  }
+ },
+ {
+  "qid": "q033",
+  "pages": [
+   144
+  ],
+  "sentence": "The minimum requirement for the program is 158 Credits .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.763,
+   "entailment": 0.186,
+   "neutral": 0.05
+  }
+ },
+ {
+  "qid": "q034",
+  "pages": [
+   91
+  ],
+  "sentence": "The LL.B. (Hon\u2019s) program requires a minimum of 135 Credits    .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.003,
+   "entailment": 0.001,
+   "neutral": 0.996
+  }
+ },
+ {
+  "qid": "q039",
+  "pages": [
+   219
+  ],
+  "sentence": "A sum of Taka 11,13,44,628 (Eleven core thirteen lac forty four thousand six hundred and twenty eight) was awarded to 1921 students in 2018-2019 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.007,
+   "neutral": 0.992
+  }
+ },
+ {
+  "qid": "q039",
+  "pages": [
+   228
+  ],
+  "sentence": "The table for various scholarships and financial assistance programs shows a total of 1921 students for the year 2018-2019 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.001,
+   "neutral": 0.998
+  }
+ },
+ {
+  "qid": "q040",
+  "pages": [
+   180
+  ],
+  "sentence": "The student's registration fee for Pharmacy Council is Tk. 300.00 (non refundable) .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.583,
+   "entailment": 0.003,
+   "neutral": 0.414
+  }
+ },
+ {
+  "qid": "q041",
+  "pages": [
+   216
+  ],
+  "sentence": "An A- grade carries a grade point of 3.70 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.01,
+   "entailment": 0.007,
+   "neutral": 0.983
+  }
+ },
+ {
+  "qid": "q042",
+  "pages": [
+   216
+  ],
+  "sentence": "The numerical score range for a B+ grade is 83 - below 87 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.011,
+   "entailment": 0.009,
+   "neutral": 0.98
+  }
+ },
+ {
+  "qid": "q043",
+  "pages": [
+   216
+  ],
+  "sentence": "A grade of D is worth 1.00 grade points .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.016,
+   "entailment": 0.005,
+   "neutral": 0.979
+  }
+ },
+ {
+  "qid": "q044",
+  "pages": [
+   216
+  ],
+  "sentence": "A C+ grade has a grade point of 2.30 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.007,
+   "entailment": 0.005,
+   "neutral": 0.988
+  }
+ },
+ {
+  "qid": "q048",
+  "pages": [
+   222
+  ],
+  "sentence": "An MS in CSE student must have completed 18 credits in two consecutive semesters to be eligible for a Merit Scholarship .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.004,
+   "entailment": 0.002,
+   "neutral": 0.995
+  }
+ },
+ {
+  "qid": "q049",
+  "pages": [
+   121
+  ],
+  "sentence": "The prerequisite for CSE207 Data Structures is CSE110 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.052,
+   "entailment": 0.107,
+   "neutral": 0.841
+  }
+ },
+ {
+  "qid": "q049",
+  "pages": [
+   433
+  ],
+  "sentence": "For ICE207: Data Structures, the prerequisite is ICE107 Object Oriented Programming .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.005,
+   "entailment": 0.011,
+   "neutral": 0.984
+  }
+ },
+ {
+  "qid": "q049",
+  "pages": [
+   273
+  ],
+  "sentence": "Additionally, knowledge of CSE110 is noted as being needed as prerequisite knowledge for CSE207 Data Structures .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.0,
+   "neutral": 0.999
+  }
+ },
+ {
+  "qid": "q050",
+  "pages": [
+   121
+  ],
+  "sentence": "The prerequisite for CSE326: Algorithms is CSE207: Data Structures  .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.078,
+   "entailment": 0.271,
+   "neutral": 0.651
+  }
+ },
+ {
+  "qid": "q051",
+  "pages": [
+   116
+  ],
+  "sentence": "Object Oriented Programming (CSE110) in the CSE curriculum is 3+1.5=4.5 credits .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.006,
+   "entailment": 0.038,
+   "neutral": 0.956
+  }
+ },
+ {
+  "qid": "q052",
+  "pages": [
+   287
+  ],
+  "sentence": "Students must complete at least 105 credits before starting the CSE400: Capstone Project .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.692,
+   "entailment": 0.0,
+   "neutral": 0.308
+  }
+ },
+ {
+  "qid": "q052",
+  "pages": [
+   117
+  ],
+  "sentence": "The bulletin also states that students must complete at least 105 credit hours for the CSE400 Capstone Project .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.002,
+   "neutral": 0.997
+  }
+ },
+ {
+  "qid": "q054",
+  "pages": [
+   115
+  ],
+  "sentence": "Core Natural Science courses total 9+2=11 credits in the CSE program .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.868,
+   "entailment": 0.039,
+   "neutral": 0.093
+  }
+ },
+ {
+  "qid": "q059",
+  "pages": [
+   168
+  ],
+  "sentence": "A student must complete a minimum of 127 credit hours to obtain the degree in BS in Applied Statistics .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.006,
+   "neutral": 0.994
+  }
+ },
+ {
+  "qid": "q060",
+  "pages": [
+   26
+  ],
+  "sentence": "The courses in Group B of the minor in Computer Science and Engineering are CSE 411, CSE 348, CSE 442, and CSE 480 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.096,
+   "entailment": 0.01,
+   "neutral": 0.894
+  }
+ },
+ {
+  "qid": "q061",
+  "pages": [
+   26
+  ],
+  "sentence": "For Group A of the CSE minor, any five courses can be chosen from: CSE 105, CSE 107, CSE 207, CSE 245, CSE 301, CSE 209, CSE 251, and CSE 345 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.159,
+   "entailment": 0.336,
+   "neutral": 0.505
+  }
+ },
+ {
+  "qid": "q062",
+  "pages": [
+   26
+  ],
+  "sentence": "The courses in Group B of the EEE minor are EEE 401, EEE 403, EEE 416, EEE 423, and EEE 445 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.084,
+   "entailment": 0.01,
+   "neutral": 0.906
+  }
+ },
+ {
+  "qid": "q063",
+  "pages": [
+   26
+  ],
+  "sentence": "The courses in Group B of the ETE minor are ETE 401, ETE 403, ETE 430, ETE 441, ETE 442, and ETE 444 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.202,
+   "entailment": 0.019,
+   "neutral": 0.779
+  }
+ },
+ {
+  "qid": "q065",
+  "pages": [
+   76
+  ],
+  "sentence": "The credit requirement for the Bachelor of Social Science in Sociology is 123 Credits     .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.001,
+   "neutral": 0.998
+  }
+ },
+ {
+  "qid": "q067",
+  "pages": [
+   114
+  ],
+  "sentence": "The compulsory language and general education courses in CSE are ENG101 Basic English (3 credits), ENG 102 Composition and Communication Skills (3 credits), and GEN226 Emergence of Bangladesh (3 credits) .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.623,
+   "entailment": 0.039,
+   "neutral": 0.338
+  }
+ },
+ {
+  "qid": "q068",
+  "pages": [
+   117
+  ],
+  "sentence": "A CSE student takes three elective courses in their chosen major area .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.06,
+   "entailment": 0.247,
+   "neutral": 0.693
+  }
+ },
+ {
+  "qid": "q070",
+  "pages": [
+   143
+  ],
+  "sentence": "Candidates must pass HSC/ \u201cA\u201d level or recognized equivalent examination with a minimum GPA 3.0 in Chemistry and Biology separately   .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.017,
+   "neutral": 0.982
+  }
+ },
+ {
+  "qid": "q071",
+  "pages": [
+   218
+  ],
+  "sentence": "A student using the advantage of Retake Policy shall not be eligible for getting Gold Medal/Award/ Distinction .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.002,
+   "neutral": 0.997
+  }
+ },
+ {
+  "qid": "q071",
+  "pages": [
+   26
+  ],
+  "sentence": "A student availing himself or herself of the advantage of retaking any course any time will not be eligible for a gold medal .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.632,
+   "entailment": 0.035,
+   "neutral": 0.333
+  }
+ },
+ {
+  "qid": "q074",
+  "pages": [
+   217
+  ],
+  "sentence": "If a student's CGPA falls below 2 subsequently, they will again be placed on probation .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.016,
+   "neutral": 0.984
+  }
+ },
+ {
+  "qid": "q075",
+  "pages": [
+   180
+  ],
+  "sentence": "The lab fee for a CSE student is Tk. 2, 500/-(non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.003,
+   "entailment": 0.003,
+   "neutral": 0.994
+  }
+ },
+ {
+  "qid": "q075",
+  "pages": [
+   180
+  ],
+  "sentence": "The student activity fee for all departments other than B.Pharm is Tk. 510/-(non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.006,
+   "neutral": 0.993
+  }
+ },
+ {
+  "qid": "q076",
+  "pages": [
+   223
+  ],
+  "sentence": "Additionally, to continue financial aid, undergraduate students must register for at least three courses (9 credits) in each semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.005,
+   "neutral": 0.994
+  }
+ },
+ {
+  "qid": "q077",
+  "pages": [
+   177
+  ],
+  "sentence": "Candidates seeking admission to the Faculty of Sciences and Engineering must have a minimum GPA of 3.5 in Math and Physics separately in HSC/A level examinations to get waiver from the admission test .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.021,
+   "entailment": 0.004,
+   "neutral": 0.975
+  }
+ },
+ {
+  "qid": "q078",
+  "pages": [
+   180
+  ],
+  "sentence": "If a student fails in the Remedial English course in the first attempt, he/she will have to pay regular course fees of Tk.12,000 for this course during subsequent registration .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.005,
+   "entailment": 0.002,
+   "neutral": 0.993
+  }
+ },
+ {
+  "qid": "q080",
+  "pages": [
+   218
+  ],
+  "sentence": "In case of repeating a course due to an 'F' grade, the 'F' grade of previous attempt(s) will be converted to 'R' grade and the grade of last attempt will be counted in CGPA .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.002,
+   "neutral": 0.998
+  }
+ },
+ {
+  "qid": "q080",
+  "pages": [
+   217
+  ],
+  "sentence": "GPA and CGPA will be calculated on the basis of the grades obtained in the last attempt of the course(s) only .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.027,
+   "entailment": 0.049,
+   "neutral": 0.923
+  }
+ },
+ {
+  "qid": "q081",
+  "pages": [
+   179
+  ],
+  "sentence": "The per-credit tuition fee for BBA is 5, 500/- , while the per-credit tuition fee for B. Pharm. is 6, 000/- .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.001,
+   "neutral": 0.999
+  }
+ },
+ {
+  "qid": "q082",
+  "pages": [
+   180
+  ],
+  "sentence": "The lab fee for CSE is Tk. 2,500/-(non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.004,
+   "entailment": 0.003,
+   "neutral": 0.994
+  }
+ },
+ {
+  "qid": "q082",
+  "pages": [
+   180
+  ],
+  "sentence": "The lab fee for B. Sc. in Civil Engineering is Tk. 2,650/-(non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.013,
+   "entailment": 0.002,
+   "neutral": 0.985
+  }
+ },
+ {
+  "qid": "q082",
+  "pages": [
+   180
+  ],
+  "sentence": "The lab fee for Bachelor of Pharmacy is Tk. 3,750/-(non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.022,
+   "entailment": 0.004,
+   "neutral": 0.973
+  }
+ },
+ {
+  "qid": "q084",
+  "pages": [
+   26
+  ],
+  "sentence": "Summa Cum Laude requires an undergraduate student to graduate with a CGPA of 3.90 or above (out of 4.00) within four years .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.05,
+   "entailment": 0.106,
+   "neutral": 0.844
+  }
+ },
+ {
+  "qid": "q084",
+  "pages": [
+   26
+  ],
+  "sentence": "Magna Cum Laude requires an undergraduate student graduating with a CGPA of 3.80 to less than 3.90 (out of 4.00) within four years .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.064,
+   "entailment": 0.132,
+   "neutral": 0.804
+  }
+ },
+ {
+  "qid": "q085",
+  "pages": [
+   180
+  ],
+  "sentence": "The student activity fee for B.Pharm is Tk. 765/- (non refundable) per semester , while the fee for all other departments is Tk. 510/-(non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.015,
+   "neutral": 0.983
+  }
+ },
+ {
+  "qid": "q087",
+  "pages": [
+   26
+  ],
+  "sentence": "An undergraduate student must have a CGPA of 4.00 or above (out of 4.00) to be eligible for a gold medal .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.032,
+   "entailment": 0.028,
+   "neutral": 0.94
+  }
+ },
+ {
+  "qid": "q087",
+  "pages": [
+   26
+  ],
+  "sentence": "A student of a graduate program must have a CGPA of 3.99 or above (out of 4.00) to be eligible for a gold medal .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.059,
+   "entailment": 0.058,
+   "neutral": 0.883
+  }
+ },
+ {
+  "qid": "q088",
+  "pages": [
+   217
+  ],
+  "sentence": "A student whose CGPA falls below 1.0 after the first two or any subsequent semesters will be automatically dismissed from the university .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.006,
+   "entailment": 0.009,
+   "neutral": 0.985
+  }
+ },
+ {
+  "qid": "q089",
+  "pages": [
+   208
+  ],
+  "sentence": "On Sunday to Thursday, the library is open from 8:30 am \u2013 10.00 pm .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.007,
+   "entailment": 0.386,
+   "neutral": 0.607
+  }
+ },
+ {
+  "qid": "q090",
+  "pages": [
+   221
+  ],
+  "sentence": "For merit scholarships in undergraduate programs, the credit requirement for B.Sc. in Computer Science & Engineering is 35 , while the requirement for Bachelor of Laws [LL.B. (Hons.)] is 33 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.004,
+   "entailment": 0.002,
+   "neutral": 0.994
+  }
+ },
+ {
+  "qid": "q092",
+  "pages": [
+   177
+  ],
+  "sentence": "Program must register at least 12 credits in a semester to qualify for certain merit scholarships   .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.011,
+   "entailment": 0.376,
+   "neutral": 0.612
+  }
+ },
+ {
+  "qid": "q092",
+  "pages": [
+   180
+  ],
+  "sentence": "The lab fee for Bachelor of Pharmacy is Tk. 3, 750/- (non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.023,
+   "entailment": 0.003,
+   "neutral": 0.974
+  }
+ },
+ {
+  "qid": "q092",
+  "pages": [
+   180
+  ],
+  "sentence": "The student activity fee for B.Pharm is Tk. 765/- (non refundable) per semester .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.002,
+   "entailment": 0.001,
+   "neutral": 0.997
+  }
+ },
+ {
+  "qid": "q095",
+  "pages": [
+   219
+  ],
+  "sentence": "Students availing the advantage of retaking any course any time will not be eligible for any scholarship .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.014,
+   "neutral": 0.986
+  }
+ },
+ {
+  "qid": "q097",
+  "pages": [
+   26
+  ],
+  "sentence": "A student of a graduate program graduating with a CGPA of 3.99 or above (out of 4.00) within the stipulated time for the respective degree (1 to 2 years, as the case may be) will be eligible for getting a gold medal .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.097,
+   "entailment": 0.08,
+   "neutral": 0.822
+  }
+ },
+ {
+  "qid": "q097",
+  "pages": [
+   26
+  ],
+  "sentence": "A student admitted in this university on waiver/transfer of credits from other university(s) and/or availing himself or herself of the advantage of retaking any course any time, will not be eligible for this award .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.175,
+   "entailment": 0.037,
+   "neutral": 0.788
+  }
+ },
+ {
+  "qid": "q116",
+  "pages": [
+   219
+  ],
+  "sentence": "For most Merit Scholarships in Undergraduate Programs, students must maintain a minimum GPA 3.50 in each semester as a regular student   .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.045,
+   "neutral": 0.955
+  }
+ },
+ {
+  "qid": "q118",
+  "pages": [
+   176
+  ],
+  "sentence": "Applicants can fill the admission forms online by paying Tk. 1,000  .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.001,
+   "entailment": 0.003,
+   "neutral": 0.996
+  }
+ },
+ {
+  "qid": "q118",
+  "pages": [
+   176
+  ],
+  "sentence": "The fee of the admission form for the Foreign Students is $13.00, payable in International Money Order in favor of EWU  .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.46,
+   "entailment": 0.013,
+   "neutral": 0.527
+  }
+ },
+ {
+  "qid": "q118",
+  "pages": [
+   179
+  ],
+  "sentence": "An admission fee of Tk. 5,000 is applicable for Non-Degree students .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.056,
+   "entailment": 0.064,
+   "neutral": 0.88
+  }
+ },
+ {
+  "qid": "q119",
+  "pages": [
+   217
+  ],
+  "sentence": "A student whose CGPA falls below 1.0 after the first two or any subsequent semesters will be automatically dismissed from the university .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.006,
+   "entailment": 0.009,
+   "neutral": 0.985
+  }
+ },
+ {
+  "qid": "q119",
+  "pages": [
+   217
+  ],
+  "sentence": "Additionally, students who are on probation and fail to raise their CGPA to at least 2 after the probation period will lead to dismissal from the university .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.0,
+   "entailment": 0.053,
+   "neutral": 0.947
+  }
+ },
+ {
+  "qid": "q120",
+  "pages": [
+   224
+  ],
+  "sentence": "The CGPA requirement for awarding Medha Lalon Scholarship is 3.50 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.059,
+   "entailment": 0.07,
+   "neutral": 0.871
+  }
+ },
+ {
+  "qid": "q121",
+  "pages": [
+   219
+  ],
+  "sentence": "This 3 percent is also noted as being reserved for the wards of freedom fighters out of the 6 (six) percent of enrolled students who are poor and meritorious required by the Private University Act, 2010 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.002,
+   "entailment": 0.004,
+   "neutral": 0.994
+  }
+ },
+ {
+  "qid": "q122",
+  "pages": [
+   208
+  ],
+  "sentence": "The library hours on Saturday are 5:00 pm \u2013 10:00 pm .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.011,
+   "entailment": 0.006,
+   "neutral": 0.983
+  }
+ },
+ {
+  "qid": "q123",
+  "pages": [
+   216
+  ],
+  "sentence": "The grade point for an A+ is 4.00 .",
+  "label": "neutral",
+  "best_scores": {
+   "contradiction": 0.009,
+   "entailment": 0.007,
+   "neutral": 0.984
+  }
+ }
+]

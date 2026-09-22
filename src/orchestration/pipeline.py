@@ -154,15 +154,26 @@ def retrieve(
 
 
 def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
-    """Cross-encode the fused pool and cut it to ``settings.rerank_top_k``."""
+    """Cross-encode the fused pool and cut it to ``settings.rerank_top_k``.
+
+    Scores every candidate exactly once, regardless of the cut: the
+    cross-encoder scores the whole pool internally either way, so asking for
+    the full ranking (``top_k=None``) and slicing ourselves costs nothing
+    extra. The full ranking is kept on ``state.all_reranked_chunks`` so a
+    verifier can see everything the reranker judged, not just the slice the
+    generator reads -- see the field's docstring for why that matters.
+    """
     query = state.rerank_query.strip() or state.original_query
 
-    reranked = reranker.rerank(
+    full = reranker.rerank(
         query=query,
         candidates=state.retrieved_chunks,
-        top_k=settings.rerank_top_k,
+        top_k=None,
     )
 
+    reranked = full[: settings.rerank_top_k]
+
+    state.all_reranked_chunks = full
     state.reranked_chunks = reranked
 
     state.trace["reranking"] = {
@@ -172,6 +183,7 @@ def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
         "top_k": settings.rerank_top_k,
         "input_candidate_count": len(state.retrieved_chunks),
         "output_candidate_count": len(reranked),
+        "full_pool_size": len(full),
         "scores": [item.get("rerank_score") for item in reranked],
     }
 

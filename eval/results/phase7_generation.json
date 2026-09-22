@@ -1,0 +1,4675 @@
+[
+ {
+  "qid": "q001",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the minimum attendance required in lectures, tutorials and practical classes?",
+  "answer": "To complete their studies successfully, students must attend a reasonable portion (not less than 80%) of the lectures, tutorials and practical classes for the respective course [Page 179].",
+  "error": null,
+  "elapsed_s": 6.78,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   178,
+   215,
+   93,
+   92
+  ],
+  "gate_top_score": 0.993229866027832,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "80"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q002",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "How much do I pay to fill in the online admission form?",
+  "answer": "Applicants can fill the admission forms online by paying Tk. 1,000 [Page 176] [Page 178]. The fee of the admission form for the Foreign Students is $13.00, payable in International Money Order in favor of EWU [Page 178].",
+  "error": null,
+  "elapsed_s": 19.71,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   178,
+   176,
+   179,
+   214,
+   228
+  ],
+  "gate_top_score": 0.9671450257301331,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   176,
+   178
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "1000",
+   "13.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   176
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q003",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the one-time admission fee?",
+  "answer": "The one-time and non refundable Admission Fee is Tk.15, 000/- [Page 179].",
+  "error": null,
+  "elapsed_s": 4.34,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   176,
+   180,
+   178
+  ],
+  "gate_top_score": 0.8858585357666016,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "15000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q004",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the admission fee for non-degree students?",
+  "answer": "An admission fee of Tk. 5,000 is applicable for Non-Degree students [Page 179].",
+  "error": null,
+  "elapsed_s": 4.68,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   178,
+   176
+  ],
+  "gate_top_score": 0.9934927821159363,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "5000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q005",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the re-admission fee if I change my degree program?",
+  "answer": "The re-admission fee for a student who wishes to change their major discipline of study is TK. 15,000 [Page 179].",
+  "error": null,
+  "elapsed_s": 5.13,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   218,
+   180,
+   181
+  ],
+  "gate_top_score": 0.9829067587852478,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "15000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q006",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the late registration fee?",
+  "answer": "Students who are given permission to register late must pay a late registration fee of Tk. 500 to Tk.1, 000 [Page 215]. A late registration fee of Tk. 500 to Tk.1, 000 is charged to students who register or pay their fees after the regular registration period [Page 181]. To avoid late fees (Tk. 500 to Tk. 1, 000), students must register during the scheduled registration period [Page 214].",
+  "error": null,
+  "elapsed_s": 7.76,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   215,
+   181,
+   214
+  ],
+  "gate_top_score": 0.98045414686203,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   215,
+   181,
+   214
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "500",
+   "1000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   181,
+   215
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q007",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the maximum time allowed to complete an undergraduate degree on compassionate ground?",
+  "answer": "The time limit to complete an undergraduate degree may be extended up to Seven (7) years maximum on compassionate ground approved by the authority [Page 25].",
+  "error": null,
+  "elapsed_s": 14.88,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   25,
+   218,
+   219
+  ],
+  "gate_top_score": 0.9815670847892761,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   25
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "7"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   25
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q008",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What share of courses must be completed at EWU under the residency requirement?",
+  "answer": "Residency requirement requires that at least 75% of courses must be completed at EWU [Page 25].",
+  "error": null,
+  "elapsed_s": 5.09,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   25,
+   214,
+   29,
+   223,
+   70
+  ],
+  "gate_top_score": 0.9902364611625671,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   25
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "75"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   25
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q009",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What percentage of credit hours can be accepted through credit transfer?",
+  "answer": "A maximum of twenty five percent (25%) of credit hours for the intended undergraduate program may be accepted through credit transfer into EWU\u2019s academic program [Page 214].",
+  "error": null,
+  "elapsed_s": 4.87,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   214,
+   276,
+   168
+  ],
+  "gate_top_score": 0.9937049746513367,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   214
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "25"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   214
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q010",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "How much is the re-scrutiny fee for one final exam script?",
+  "answer": "A security deposit of Tk.200 will be charged on the students as Re-Scrutiny Fee for re-scrutiny of each Script of Final Examinations [Page 216].",
+  "error": null,
+  "elapsed_s": 5.3,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   216,
+   179,
+   181,
+   183,
+   180
+  ],
+  "gate_top_score": 0.9575842022895813,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   216
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "200"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   216
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q011",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "When is the library open on Sunday to Thursday?",
+  "answer": "The library is open from 8:30 am \u2013 10.00 pm on Sunday to Thursday [Page 208].",
+  "error": null,
+  "elapsed_s": 5.52,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   208,
+   17,
+   211
+  ],
+  "gate_top_score": 0.9872806668281555,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   208
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "8",
+   "30",
+   "10.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   208
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q012",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "How many clubs does EWU have?",
+  "answer": "East West University (EWU) has 18 clubs [Page 212].",
+  "error": null,
+  "elapsed_s": 4.81,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   212,
+   213,
+   83,
+   15
+  ],
+  "gate_top_score": 0.9991897940635681,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   212
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "18"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   212
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q013",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "How many credits are required for the BBA degree?",
+  "answer": "The minimum requirement for the Bachelor of Business Administration (BBA) degree is 123 Credits [Page 31] [Page 34].",
+  "error": null,
+  "elapsed_s": 4.69,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   31,
+   34,
+   32
+  ],
+  "gate_top_score": 0.9893607497215271,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   31,
+   34
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "123"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   23,
+   24
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q014",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What fee is charged for the remedial English course?",
+  "answer": "The fee for the remedial (non-credit) course in English is Tk 3,163 for one semester only [Page 180]. If a student fails in the Remedial English course in the first attempt, they will have to pay regular course fees of Tk.12,000 for this course during subsequent registration [Page 180].",
+  "error": null,
+  "elapsed_s": 6.72,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   373,
+   179,
+   181,
+   217
+  ],
+  "gate_top_score": 0.9792019724845886,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3163",
+   "12000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q015",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "Who is the chairperson of the Department of Computer Science and Engineering?",
+  "answer": "The chairperson of the Department of Computer Science and Engineering is Dr. Taskeed Jabid [Page 13] [Page 22].",
+  "error": null,
+  "elapsed_s": 5.04,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   13,
+   22,
+   124,
+   126,
+   123
+  ],
+  "gate_top_score": 0.9843116402626038,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   13,
+   22
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   22
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q016",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "Who is the Dean of the Faculty of Sciences and Engineering?",
+  "answer": "The Dean of the Faculty of Sciences and Engineering is Professor Dr. Mohamed Ruhul Amin [Page 22] [Page 10] [Page 12].",
+  "error": null,
+  "elapsed_s": 4.77,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   22,
+   10,
+   12,
+   139,
+   97
+  ],
+  "gate_top_score": 0.9992048144340515,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   22,
+   10,
+   12
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   22
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q017",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the fee for verifying each academic document?",
+  "answer": "The fee for verification of each document provided by the students is Tk. 50.00, though no fee will be charged for the first copy of each document [Page 177]. No fee will be charged for verification of documents from students intending for higher studies in other universities [Page 177].",
+  "error": null,
+  "elapsed_s": 6.22,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   177,
+   180,
+   181,
+   216
+  ],
+  "gate_top_score": 0.9933868050575256,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   177
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "50.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   177
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q018",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What SAT score qualifies for an admission test waiver?",
+  "answer": "The general requirement of admission test waiver is a minimum total score of 1000 in SAT (considering Critical Reading, Math and Writing) [Page 177]. For foreign students from other systems, an SAT score of 1000 qualifies them to not sit for the Admission Test [Page 177].",
+  "error": null,
+  "elapsed_s": 6.13,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   177,
+   220,
+   219
+  ],
+  "gate_top_score": 0.9981606602668762,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   177
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "1000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   177
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q019",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the fee for an urgent official transcript?",
+  "answer": "The fee for an urgent official transcript is Tk. 700.00 [Page 181].",
+  "error": null,
+  "elapsed_s": 4.66,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   181,
+   214,
+   179,
+   178,
+   176
+  ],
+  "gate_top_score": 0.9174298644065857,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   181
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "700.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   181
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q020",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is EWU's policy on cheating?",
+  "answer": "There is a policy of zero tolerance on cheating [Page 218]. Any form of cheating such as copying any document or another person\u2019s work, seeking or providing help to other students during tests, or adopting any other form of unfair means during exams, will constitute grounds for disciplinary action [Page 218]. Instructors are expected to use reasonably practical means of preventing and detecting cheating [Page 218]. Any student found to be cheating will be reported to the Dean of concerned faculty by the relevant faculty member for disciplinary action [Page 218].",
+  "error": null,
+  "elapsed_s": 7.88,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   218,
+   205,
+   15,
+   185,
+   206
+  ],
+  "gate_top_score": 0.5961350798606873,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   218
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   218
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q021",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "For how long can a leave of absence be granted?",
+  "answer": "A leave of absence or dropping a semester may be granted for up to three consecutive semesters/one academic year to a student in good academic standing [Page 218]. For students who are in good academic standing but remain absent without prior permission, a leave of absence can be approved by the Vice Chancellor for one semester, two consecutive semesters, or three consecutive semesters with corresponding penalties [Page 218]. A student on probation who remains absent without prior permission may be allowed leave by the Vice Chancellor for a maximum of one semester in some special cases [Page 218] [Page 215]. On extreme compassionate ground, a student who has completed the first semester of probation may be granted leave/drop for the 2nd semester of probation if they showed improved results in the first semester [Page 218]. A newly admitted student might be granted leave of absence for the first semester on compassionate ground [Page 218].",
+  "error": null,
+  "elapsed_s": 10.22,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   218,
+   215,
+   217
+  ],
+  "gate_top_score": 0.9851415157318115,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   218,
+   215
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   218
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q022",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What does a duplicate degree certificate cost?",
+  "answer": "The fee for a Duplicate Copy of Degree Certificate is Tk. 1,000.00 (In case of Loss/Damage) [Page 181].",
+  "error": null,
+  "elapsed_s": 40.43,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   181,
+   177,
+   226,
+   179,
+   180
+  ],
+  "gate_top_score": 0.7519683241844177,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   181
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "1000.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   181
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q023",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the student activity fee per semester?",
+  "answer": "The student activity fee is Tk. 765/- (non refundable) per semester for B.Pharm and Tk. 510/-(non refundable) per semester for all other departments [Page 180].",
+  "error": null,
+  "elapsed_s": 11.47,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   181,
+   179,
+   218
+  ],
+  "gate_top_score": 0.949551522731781,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "765",
+   "510"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q024",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "How much is the admission form fee for foreign students?",
+  "answer": "The fee of the admission form for the Foreign Students is $13.00, payable in International Money Order in favor of EWU [Page 176] [Page 178].",
+  "error": null,
+  "elapsed_s": 11.25,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   178,
+   176,
+   179,
+   177
+  ],
+  "gate_top_score": 0.9980822801589966,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   176,
+   178
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "13.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   176
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q025",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is the minimum number of credits an undergraduate must register each semester?",
+  "answer": "All Undergraduate students must register at least 9 credits in a semester, while the requirement is 12 credits in a semester for the students of B.Pharm. program [Page 177] [Page 178] [Page 215] [Page 219]. An undergraduate student (except Pharmacy) must register for a minimum of 3 (three) courses (9 credits) every semester, and students of the B.Pharm. program must take 4 (four) courses (12 credits) every semester [Page 215].",
+  "error": null,
+  "elapsed_s": 16.26,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   177,
+   178,
+   215,
+   219
+  ],
+  "gate_top_score": 0.9896981120109558,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   177,
+   178,
+   215,
+   219
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "9",
+   "12",
+   "3",
+   "4"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   215
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q026",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "What is the tuition fee per credit for the BBA program?",
+  "answer": "The tuition fee for the BBA program is 5, 500/- per credit [Page 179].",
+  "error": null,
+  "elapsed_s": 9.43,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   180,
+   34,
+   23,
+   33
+  ],
+  "gate_top_score": 0.9305794835090637,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "5500"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q027",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "What is the tuition fee per credit for B.Sc. in CSE?",
+  "answer": "The tuition fee for B. Sc. in CSE is 5, 500/- per credit [Page 179].",
+  "error": null,
+  "elapsed_s": 15.98,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   180,
+   121,
+   162,
+   24
+  ],
+  "gate_top_score": 0.9488011598587036,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "5500"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q028",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "What is the per-credit tuition for BA in English?",
+  "answer": "The tuition fee for a BA in English is 4,000/- per credit [Page 179].",
+  "error": null,
+  "elapsed_s": 11.99,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   62,
+   61
+  ],
+  "gate_top_score": 0.9049059152603149,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "4000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q029",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "What is the per-credit tuition for B.Pharm?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 10.44,
+  "llm_calls": 1,
+  "abstained": true,
+  "abstention_reason": "generator_not_in_bulletin",
+  "retrieved_pages": [
+   220,
+   219,
+   177,
+   180
+  ],
+  "gate_top_score": 0.6580610275268555,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q030",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "How much is the lab fee for B.Sc. in Civil Engineering per semester?",
+  "answer": "The lab fee for B. Sc. in Civil Engineering is Tk. 2,650/-(non refundable) per semester [Page 180].",
+  "error": null,
+  "elapsed_s": 13.4,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   179,
+   162,
+   156,
+   161
+  ],
+  "gate_top_score": 0.9883126616477966,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2650"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q031",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "How much is the lab fee for Bachelor of Pharmacy per semester?",
+  "answer": "The lab fee for Bachelor of Pharmacy is Tk. 3, 750/- (non refundable) per semester [Page 180].",
+  "error": null,
+  "elapsed_s": 10.96,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   220,
+   215
+  ],
+  "gate_top_score": 0.9841117858886719,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3750"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q032",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "How many total credits does the B.Sc. in Civil Engineering need?",
+  "answer": "The B.Sc. in Civil Engineering requires a minimum of 156.5 Credits [Page 157] [Page 24].",
+  "error": null,
+  "elapsed_s": 11.43,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   157,
+   24,
+   161,
+   162,
+   156
+  ],
+  "gate_top_score": 0.9773604869842529,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   157,
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "156.5"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q033",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "How many credits is the Bachelor of Pharmacy program?",
+  "answer": "The Bachelor of Pharmacy program requires completion of 158 credits [Page 142]. The minimum requirement for the program is 158 Credits [Page 144].",
+  "error": null,
+  "elapsed_s": 14.49,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   142,
+   144,
+   145
+  ],
+  "gate_top_score": 0.9955332279205322,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   142,
+   144
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "158"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q034",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "How many credits does the LL.B (Hons.) require?",
+  "answer": "The LL.B. (Hon\u2019s) program requires a minimum of 135 Credits [Page 91] [Page 92] [Page 93] [Page 94].",
+  "error": null,
+  "elapsed_s": 211.47,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   92,
+   91,
+   93,
+   94,
+   90
+  ],
+  "gate_top_score": 0.9886199235916138,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   91,
+   92,
+   93,
+   94
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "135"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   23
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q035",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "What is the fee for correction of name?",
+  "answer": "The fee for the correction of name is Tk. 300.00 [Page 181].",
+  "error": null,
+  "elapsed_s": 5.39,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   181,
+   177,
+   179,
+   216
+  ],
+  "gate_top_score": 0.7548689246177673,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   181
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "300.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   181
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q036",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "What is the credit transfer or waiver fee per credit?",
+  "answer": "The credit transfer/waiver fee is Tk. 500.00 per credit [Page 181] [Page 214].",
+  "error": null,
+  "elapsed_s": 5.18,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   214,
+   181,
+   222,
+   220,
+   26
+  ],
+  "gate_top_score": 0.9354017376899719,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   181,
+   214
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "500.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   181
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q037",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "How many credits of tuition waiver can a Trustee member award each semester?",
+  "answer": "A Trustee member may award a maximum of upto 27 credits tuition fee waiver in each semester or higher as per requirements under his/her discretionary quota [Page 222].",
+  "error": null,
+  "elapsed_s": 5.53,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   222,
+   220,
+   223,
+   219
+  ],
+  "gate_top_score": 0.9996857643127441,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   222
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "27"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   222
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q038",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "What minimum CGPA keeps the District Quota scholarship?",
+  "answer": "The continuation of the District Quota scholarship is contingent upon maintaining a minimum CGPA of 2.60 as a regular student [Page 220].",
+  "error": null,
+  "elapsed_s": 4.96,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   220,
+   223,
+   219,
+   222
+  ],
+  "gate_top_score": 0.9775656461715698,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   220
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2.60"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   220
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q039",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "How many students received scholarships in 2018-2019?",
+  "answer": "A sum of Taka 11,13,44,628 (Eleven core thirteen lac forty four thousand six hundred and twenty eight) was awarded to 1921 students in 2018-2019 [Page 219]. The table for various scholarships and financial assistance programs shows a total of 1921 students for the year 2018-2019 [Page 228].",
+  "error": null,
+  "elapsed_s": 34.62,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   219,
+   227,
+   228,
+   220,
+   226
+  ],
+  "gate_top_score": 0.9305761456489563,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   219,
+   228
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "11",
+   "13",
+   "44628",
+   "1921",
+   "2018",
+   "2019"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   219
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q040",
+  "category": "exact_number",
+  "answerable": true,
+  "question": "What is the registration fee for the Pharmacy Council?",
+  "answer": "The student's registration fee for Pharmacy Council is Tk. 300.00 (non refundable) [Page 180].",
+  "error": null,
+  "elapsed_s": 12.59,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   181,
+   215,
+   496
+  ],
+  "gate_top_score": 0.8556161522865295,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "300.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q041",
+  "category": "table",
+  "answerable": true,
+  "question": "What grade point does an A- carry?",
+  "answer": "An A- grade carries a grade point of 3.70 [Page 216].",
+  "error": null,
+  "elapsed_s": 33.37,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   217,
+   216,
+   138,
+   219
+  ],
+  "gate_top_score": 0.20070049166679382,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   216
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.70"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   216
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q042",
+  "category": "table",
+  "answerable": true,
+  "question": "What numerical score range earns a B+?",
+  "answer": "The numerical score range for a B+ grade is 83 - below 87 [Page 216].",
+  "error": null,
+  "elapsed_s": 5.57,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   216,
+   217,
+   176,
+   221,
+   177
+  ],
+  "gate_top_score": 0.670118510723114,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   216
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "83",
+   "87"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   216
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q043",
+  "category": "table",
+  "answerable": true,
+  "question": "What grade point is a D worth?",
+  "answer": "A grade of D is worth 1.00 grade points [Page 216].",
+  "error": null,
+  "elapsed_s": 5.55,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   216,
+   217,
+   219,
+   177
+  ],
+  "gate_top_score": 0.1880616396665573,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   216
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "1.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   216
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q044",
+  "category": "table",
+  "answerable": true,
+  "question": "What grade point does a C+ have?",
+  "answer": "A C+ grade has a grade point of 2.30 [Page 216].",
+  "error": null,
+  "elapsed_s": 22.75,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   216,
+   217,
+   121,
+   219,
+   177
+  ],
+  "gate_top_score": 0.720207154750824,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   216
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2.30"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   216
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q045",
+  "category": "table",
+  "answerable": true,
+  "question": "Which letter grades are passing grades?",
+  "answer": "The letter grades A, B, C, and D are considered passing grades [Page 216].",
+  "error": null,
+  "elapsed_s": 5.25,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   216,
+   217,
+   218,
+   177
+  ],
+  "gate_top_score": 0.9852511882781982,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   216
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   216
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q046",
+  "category": "table",
+  "answerable": true,
+  "question": "How many credits must a CSE undergraduate complete in the last year to be eligible for merit scholarship?",
+  "answer": "To be eligible for Merit Scholarship, undergraduate students must register for at least three courses (9 credits) in each semester [Page 220]. The bulletin does not specify a specific number of credits that a CSE student must complete specifically in their last year to be eligible for the merit scholarship [Page 220] [Page 24].",
+  "error": null,
+  "elapsed_s": 24.31,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   222,
+   220,
+   24
+  ],
+  "gate_top_score": 0.7268477082252502,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   220,
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "9"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   221
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q047",
+  "category": "table",
+  "answerable": true,
+  "question": "How many credits must a B.Pharm student earn to be eligible for merit scholarship?",
+  "answer": "Students of B.Pharm. Program must register at least 12 credits in a semester to be eligible for merit scholarship [Page 177] [Page 219] [Page 220].",
+  "error": null,
+  "elapsed_s": 13.32,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   220,
+   219,
+   177
+  ],
+  "gate_top_score": 0.997032880783081,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   177,
+   219,
+   220
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "12"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   221
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q048",
+  "category": "table",
+  "answerable": true,
+  "question": "How many credits must an MS in CSE student have completed in two semesters for scholarship eligibility?",
+  "answer": "An MS in CSE student must have completed 18 credits in two consecutive semesters to be eligible for a Merit Scholarship [Page 222].",
+  "error": null,
+  "elapsed_s": 22.75,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   222,
+   24,
+   221,
+   220,
+   117
+  ],
+  "gate_top_score": 0.9301455616950989,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   222
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "18"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   222
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q049",
+  "category": "table",
+  "answerable": true,
+  "question": "What are the prerequisites of Data Structures (CSE207)?",
+  "answer": "The prerequisite for CSE207 Data Structures is CSE110 [Page 121]. For ICE207: Data Structures, the prerequisite is ICE107 Object Oriented Programming [Page 433]. Additionally, knowledge of CSE110 is noted as being needed as prerequisite knowledge for CSE207 Data Structures [Page 273].",
+  "error": null,
+  "elapsed_s": 24.75,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   274,
+   121,
+   433,
+   273,
+   435
+  ],
+  "gate_top_score": 0.8813954591751099,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   121,
+   433,
+   273
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "207",
+   "110",
+   "107"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   116
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q050",
+  "category": "table",
+  "answerable": true,
+  "question": "What is the prerequisite of the Algorithms course CSE326?",
+  "answer": "The prerequisite for CSE326: Algorithms is CSE207: Data Structures [Page 121] [Page 274].",
+  "error": null,
+  "elapsed_s": 23.04,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   297,
+   277,
+   121,
+   119,
+   274
+  ],
+  "gate_top_score": 0.9954273700714111,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   121,
+   274
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "326",
+   "207"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   116
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q051",
+  "category": "table",
+  "answerable": true,
+  "question": "How many credits is Object Oriented Programming in the CSE curriculum?",
+  "answer": "Object Oriented Programming (CSE110) in the CSE curriculum is 3+1.5=4.5 credits [Page 116]. The course consists of 3.0 theory credits and 1.5 laboratory credits [Page 272].",
+  "error": null,
+  "elapsed_s": 6.18,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   273,
+   272,
+   116,
+   284,
+   488
+  ],
+  "gate_top_score": 0.9620105624198914,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   116,
+   272
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "110",
+   "3",
+   "1.5",
+   "4.5",
+   "3.0"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   116
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q052",
+  "category": "table",
+  "answerable": true,
+  "question": "How many credit hours must a CSE student complete before starting the Capstone Project?",
+  "answer": "Students must complete at least 105 credits before starting the CSE400: Capstone Project [Page 287]. The bulletin also states that students must complete at least 105 credit hours for the CSE400 Capstone Project [Page 117].",
+  "error": null,
+  "elapsed_s": 23.51,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   287,
+   117,
+   456,
+   415
+  ],
+  "gate_top_score": 0.9949931502342224,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   287,
+   117
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "105",
+   "400"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   117
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q053",
+  "category": "table",
+  "answerable": true,
+  "question": "How many credits do the core mathematics and statistics courses total for CSE?",
+  "answer": "The core mathematics and statistics courses for CSE total 15 credits [Page 113] [Page 115].",
+  "error": null,
+  "elapsed_s": 22.58,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   116,
+   113,
+   115,
+   157,
+   160
+  ],
+  "gate_top_score": 0.9815648198127747,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   113,
+   115
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "15"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   115
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q054",
+  "category": "table",
+  "answerable": true,
+  "question": "How many credits do Core Natural Science courses total in the CSE program?",
+  "answer": "Core Natural Science courses total 9+2=11 credits in the CSE program [Page 115].",
+  "error": null,
+  "elapsed_s": 22.84,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   115,
+   270,
+   117,
+   121,
+   113
+  ],
+  "gate_top_score": 0.8796814680099487,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   115
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "9",
+   "2",
+   "11"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   115
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q055",
+  "category": "table",
+  "answerable": true,
+  "question": "What is the semester credit requirement for MBA students to qualify for the merit scholarship?",
+  "answer": "The provided bulletin does not contain information regarding a semester credit requirement for MBA students to qualify for the merit scholarship; it only lists the credit requirements for undergraduate programs [Page 219] [Page 220] [Page 177].",
+  "error": null,
+  "elapsed_s": 5.96,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   220,
+   221,
+   222,
+   219,
+   177
+  ],
+  "gate_top_score": 0.8897184133529663,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   219,
+   220,
+   177
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   221
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q056",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "How many credits does the B.Sc. in CSE require?",
+  "answer": "The B.Sc. in CSE requires 140 credits [Page 24].",
+  "error": null,
+  "elapsed_s": 5.25,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   24,
+   162,
+   58,
+   157,
+   117
+  ],
+  "gate_top_score": 0.9770432710647583,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "140"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24,
+   114
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q057",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "How many credits is the B.Sc. in EEE program?",
+  "answer": "The B.Sc. in Electrical and Electronic Engineering (EEE) program is 140 credits [Page 24] [Page 131].",
+  "error": null,
+  "elapsed_s": 11.65,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   131,
+   24,
+   132
+  ],
+  "gate_top_score": 0.9977153539657593,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   24,
+   131
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "140"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q058",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "How many credits is the B.Sc. in Genetic Engineering and Biotechnology?",
+  "answer": "The Bachelor of Genetic Engineering and Biotechnology at East West University requires a minimum of 133 credits [Page 150] [Page 152].",
+  "error": null,
+  "elapsed_s": 5.49,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   152,
+   150,
+   153
+  ],
+  "gate_top_score": 0.9978809952735901,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   150,
+   152
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "133"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q059",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "How many credits is the BS in Applied Statistics?",
+  "answer": "A student must complete a minimum of 127 credit hours to obtain the degree in BS in Applied Statistics [Page 168]. The program is listed as Bachelor of Science (BS) in Applied Statistics- 127 Credits [Page 24].",
+  "error": null,
+  "elapsed_s": 6.0,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   24,
+   168,
+   221,
+   170
+  ],
+  "gate_top_score": 0.995169460773468,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   168,
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "127"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q060",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "Which courses are in Group B of the minor in Computer Science and Engineering?",
+  "answer": "The courses in Group B of the minor in Computer Science and Engineering are CSE 411, CSE 348, CSE 442, and CSE 480 [Page 26].",
+  "error": null,
+  "elapsed_s": 21.3,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   26,
+   25,
+   116
+  ],
+  "gate_top_score": 0.9833943843841553,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "411",
+   "348",
+   "442",
+   "480"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q061",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "Which courses can be chosen for Group A of the CSE minor?",
+  "answer": "For Group A of the CSE minor, any five courses can be chosen from: CSE 105, CSE 107, CSE 207, CSE 245, CSE 301, CSE 209, CSE 251, and CSE 345 [Page 26].",
+  "error": null,
+  "elapsed_s": 22.31,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   26,
+   25,
+   121
+  ],
+  "gate_top_score": 0.9626908302307129,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "105",
+   "107",
+   "207",
+   "245",
+   "301",
+   "209",
+   "251",
+   "345"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q062",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "Which courses are in Group B of the EEE minor?",
+  "answer": "The courses in Group B of the EEE minor are EEE 401, EEE 403, EEE 416, EEE 423, and EEE 445 [Page 26].",
+  "error": null,
+  "elapsed_s": 12.07,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   26,
+   133,
+   103,
+   102
+  ],
+  "gate_top_score": 0.9722537398338318,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "401",
+   "403",
+   "416",
+   "423",
+   "445"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q063",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "Which courses are in Group B of the ETE minor?",
+  "answer": "The courses in Group B of the ETE minor are ETE 401, ETE 403, ETE 430, ETE 441, ETE 442, and ETE 444 [Page 26].",
+  "error": null,
+  "elapsed_s": 5.84,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   26,
+   103,
+   102,
+   133
+  ],
+  "gate_top_score": 0.9843975901603699,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "401",
+   "403",
+   "430",
+   "441",
+   "442",
+   "444"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q064",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "How many credits are needed for a second major in Economics for non-Economics students?",
+  "answer": "The total credit requirement for a second major in Economics for non-Economics undergraduate students is 45 [Page 49]. This consists of 39 compulsory credits and 06 ECO 3XX/ECO 4XX Level credits [Page 49].",
+  "error": null,
+  "elapsed_s": 5.67,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   49,
+   34,
+   26,
+   46
+  ],
+  "gate_top_score": 0.9973471164703369,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   49
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "45",
+   "39",
+   "06",
+   "3",
+   "4"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   49
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q065",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "What is the credit requirement for the Bachelor of Social Science in Sociology?",
+  "answer": "The credit requirement for the Bachelor of Social Science in Sociology is 123 Credits [Page 76] [Page 77] [Page 78] [Page 79] [Page 80].",
+  "error": null,
+  "elapsed_s": 6.43,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   76,
+   77,
+   79,
+   78,
+   80
+  ],
+  "gate_top_score": 0.9985752105712891,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   76,
+   77,
+   78,
+   79,
+   80
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "123"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   76
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q066",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "How many elective courses must a Sociology student choose?",
+  "answer": "A Sociology student must choose any 11 elective courses [Page 78].",
+  "error": null,
+  "elapsed_s": 5.26,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   78,
+   45,
+   77,
+   157,
+   79
+  ],
+  "gate_top_score": 0.8071040511131287,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   78
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "11"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   78
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q067",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "What are the compulsory language and general education courses in CSE?",
+  "answer": "The compulsory language and general education courses in CSE are ENG101 Basic English (3 credits), ENG 102 Composition and Communication Skills (3 credits), and GEN226 Emergence of Bangladesh (3 credits) [Page 114]. These courses total 9 credits [Page 113] [Page 114].",
+  "error": null,
+  "elapsed_s": 22.67,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   114,
+   113,
+   121,
+   45,
+   58
+  ],
+  "gate_top_score": 0.9862891435623169,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   114,
+   113
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "101",
+   "3",
+   "102",
+   "226",
+   "9"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   114
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q068",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "How many major elective courses does a CSE student take in the chosen major area?",
+  "answer": "A CSE student takes three elective courses in their chosen major area [Page 117].",
+  "error": null,
+  "elapsed_s": 22.77,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   117,
+   121,
+   119,
+   118
+  ],
+  "gate_top_score": 0.9782717823982239,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   117
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   117
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q069",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "How many non-major elective credits does CSE require?",
+  "answer": "CSE requires a minimum of 8 credits from one or more major/non-major areas other than the selected major area [Page 117]. The Course Summary lists Non-major Elective Computer Science and Engineering Courses as having 8 credits [Page 114].",
+  "error": null,
+  "elapsed_s": 5.88,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   117,
+   114,
+   24,
+   58,
+   119
+  ],
+  "gate_top_score": 0.9821017384529114,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   117,
+   114
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "8"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   117
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q070",
+  "category": "program_specific",
+  "answerable": true,
+  "question": "What are the minimum HSC grades in Chemistry and Biology for Pharmacy admission?",
+  "answer": "Candidates must pass HSC/ \u201cA\u201d level or recognized equivalent examination with a minimum GPA 3.0 in Chemistry and Biology separately [Page 143] [Page 176] [Page 220].",
+  "error": null,
+  "elapsed_s": 13.24,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   143,
+   176,
+   220
+  ],
+  "gate_top_score": 0.9848837852478027,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   143,
+   176,
+   220
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.0"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   143
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q071",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "If I retake a course, can I still get a gold medal or a scholarship?",
+  "answer": "A student using the advantage of Retake Policy shall not be eligible for getting Gold Medal/Award/ Distinction [Page 218]. A student availing himself or herself of the advantage of retaking any course any time will not be eligible for a gold medal [Page 26]. The bulletin does not provide information regarding eligibility for scholarships.",
+  "error": null,
+  "elapsed_s": 27.13,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   218,
+   26,
+   217,
+   216
+  ],
+  "gate_top_score": 0.9256996512413025,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   218,
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26,
+   218,
+   219
+  ],
+  "gold_fact_recall": 0.5,
+  "gold_number_recall": 0.5
+ },
+ {
+  "qid": "q072",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "If I am on academic probation, can I take a leave of absence?",
+  "answer": "Students who are on probation or subject to dismissal are not allowed to drop a semester or to take leave of absence [Page 217]. However, students who are on probation and remain absent without permission may, in some special cases, be allowed leave by the Vice Chancellor for a maximum of one semester with a 20% penalty of 9 credits tuition fees [Page 218] [Page 215].",
+  "error": null,
+  "elapsed_s": 7.66,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   218,
+   217,
+   215
+  ],
+  "gate_top_score": 0.9934129118919373,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   217,
+   218,
+   215
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "20",
+   "9"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   217,
+   218
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q073",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "What is the maximum credit share I can transfer and what does credit transfer cost per credit?",
+  "answer": "A maximum of twenty five percent (25%) of credit hours for the intended undergraduate program may be accepted through credit transfer into EWU\u2019s academic program [Page 214]. The cost for a credit transfer/waiver is Tk. 500.00 per credit [Page 181] [Page 214].",
+  "error": null,
+  "elapsed_s": 10.96,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   214,
+   181,
+   222
+  ],
+  "gate_top_score": 0.29492083191871643,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   214,
+   181
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "25",
+   "500.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   214,
+   181
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q074",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "What CGPA do I need to graduate and what happens if my CGPA falls below 2?",
+  "answer": "To graduate from an undergraduate program, you must earn at least a minimum CGPA of 2.00 [Page 25]. If your CGPA is between 1 and 2 after the first two or any subsequent semesters, you will be placed on probation for the next two semesters [Page 217]. If you fail to raise your CGPA to at least 2 after the probation period, it will lead to dismissal from the university [Page 217]. If a student's CGPA falls below 2 subsequently, they will again be placed on probation [Page 217].",
+  "error": null,
+  "elapsed_s": 12.77,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   217,
+   25,
+   223
+  ],
+  "gate_top_score": 0.5761355757713318,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   25,
+   217
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2.00",
+   "1",
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   25,
+   217
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q075",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "For a CSE student, what are the lab fee and student activity fee per semester?",
+  "answer": "The lab fee for a CSE student is Tk. 2, 500/-(non refundable) per semester [Page 180]. The student activity fee for all departments other than B.Pharm is Tk. 510/-(non refundable) per semester [Page 180].",
+  "error": null,
+  "elapsed_s": 24.45,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   121,
+   179,
+   287,
+   215
+  ],
+  "gate_top_score": 0.9856554269790649,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2500",
+   "510"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 0.5,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q076",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "What are the requirements for the freedom fighter admission quota and tuition waiver?",
+  "answer": "The university reserves a 3% admission quota for the wards of freedom fighters of all categories, provided they fulfill the minimum admission requirements [Page 223]. For children of freedom fighters, the minimum admission requirements are a total GPA of 5.00 in both SSC and HSC examinations, or at least one first division in either SSC or HSC [Page 176].\n\nTo receive a maximum 100% tuition waiver scholarship, wards of wounded, deceased, and financially needy freedom fighters must qualify in the EWU admission test and provide proof that their parent was a freedom fighter [Page 223]. To continue the tuition fee waiver, students must maintain a CGPA of 2.60 or more in each semester [Page 223]. Additionally, to continue financial aid, undergraduate students must register for at least three courses (9 credits) in each semester [Page 223]. Financial aid is discontinued if a student violates the East West University Disciplinary Code for Students and/or if their CGPA falls below 2.60 calculated on the basis of the grades earned in the last three consecutive semesters/one year [Page 223].",
+  "error": null,
+  "elapsed_s": 38.61,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   223,
+   176,
+   228,
+   219
+  ],
+  "gate_top_score": 0.9864687919616699,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   223,
+   176
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3",
+   "5.00",
+   "100",
+   "2.60",
+   "9"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   223
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q077",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "Which programs need Math competence and what SAT-waiver GPA do Science and Engineering applicants need?",
+  "answer": "Those who want to study Computer Science and Engineering, Electrical and Electronic Engineering, Information and Communication Engineering/Electronic and Telecommunication Engineering are required to have competence in HSC-level Mathematics [Page 176]. Candidates seeking admission to the Faculty of Sciences and Engineering must have a minimum GPA of 3.5 in Math and Physics separately in HSC/A level examinations to get waiver from the admission test [Page 177].",
+  "error": null,
+  "elapsed_s": 37.45,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   177,
+   176,
+   143,
+   167
+  ],
+  "gate_top_score": 0.9728668928146362,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   176,
+   177
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.5"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   176,
+   177
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q078",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "If I fail the remedial English course once, what do I pay next time?",
+  "answer": "If a student fails in the Remedial English course in the first attempt, he/she will have to pay regular course fees of Tk.12,000 for this course during subsequent registration [Page 180].",
+  "error": null,
+  "elapsed_s": 6.29,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   217,
+   218,
+   373
+  ],
+  "gate_top_score": 0.8693158030509949,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "12000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180,
+   217
+  ],
+  "gold_fact_recall": 0.5,
+  "gold_number_recall": 0.5
+ },
+ {
+  "qid": "q079",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "Can a B.Pharm student on a merit scholarship register fewer than 12 credits per semester?",
+  "answer": "No, a student in the B.Pharm. Program must register at least 12 credits in a semester to maintain their merit scholarship [Page 177] [Page 178] [Page 219] [Page 220].",
+  "error": null,
+  "elapsed_s": 25.69,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   220,
+   177,
+   219,
+   178
+  ],
+  "gate_top_score": 0.997057318687439,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   177,
+   178,
+   219,
+   220
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 0.5,
+  "numbers": [
+   "12"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   215,
+   220
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q080",
+  "category": "multi_hop",
+  "answerable": true,
+  "question": "How is CGPA computed for repeated courses and what happens to my earlier F?",
+  "answer": "In case of repeating a course due to an 'F' grade, the 'F' grade of previous attempt(s) will be converted to 'R' grade and the grade of last attempt will be counted in CGPA [Page 218]. GPA and CGPA will be calculated on the basis of the grades obtained in the last attempt of the course(s) only [Page 217].",
+  "error": null,
+  "elapsed_s": 28.6,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   218,
+   217,
+   216
+  ],
+  "gate_top_score": 0.9433830976486206,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   218,
+   217
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   217,
+   218
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q081",
+  "category": "comparison",
+  "answerable": true,
+  "question": "How does the per-credit tuition for BBA compare with B.Pharm?",
+  "answer": "The per-credit tuition fee for BBA is 5, 500/- [Page 179], while the per-credit tuition fee for B. Pharm. is 6, 000/- [Page 180].",
+  "error": null,
+  "elapsed_s": 29.91,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   179,
+   220,
+   24
+  ],
+  "gate_top_score": 0.7976499199867249,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179,
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "5500",
+   "6000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179,
+   180
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q082",
+  "category": "comparison",
+  "answerable": true,
+  "question": "Compare the lab fees for CSE, Civil Engineering and Pharmacy.",
+  "answer": "The lab fee for CSE is Tk. 2,500/-(non refundable) per semester [Page 180]. The lab fee for B. Sc. in Civil Engineering is Tk. 2,650/-(non refundable) per semester [Page 180]. The lab fee for Bachelor of Pharmacy is Tk. 3,750/-(non refundable) per semester [Page 180].",
+  "error": null,
+  "elapsed_s": 28.49,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   179,
+   121,
+   145
+  ],
+  "gate_top_score": 0.9824475646018982,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2500",
+   "2650",
+   "3750"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q083",
+  "category": "comparison",
+  "answerable": true,
+  "question": "Which needs more credits, CSE or Civil Engineering?",
+  "answer": "The B.Sc. in Computer Science and Engineering (CSE) requires 140 Credits [Page 24]. The bulletin does not provide a total credit count for the Bachelor of Science (B. Sc.) in Civil Engineering (CE) program, so it cannot be determined which needs more credits.",
+  "error": null,
+  "elapsed_s": 24.19,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   162,
+   24,
+   121,
+   117,
+   115
+  ],
+  "gate_top_score": 0.4624820649623871,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "140"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.5
+ },
+ {
+  "qid": "q084",
+  "category": "comparison",
+  "answerable": true,
+  "question": "What is the difference between Summa Cum Laude and Magna Cum Laude CGPA requirements?",
+  "answer": "Summa Cum Laude requires an undergraduate student to graduate with a CGPA of 3.90 or above (out of 4.00) within four years [Page 26]. Magna Cum Laude requires an undergraduate student graduating with a CGPA of 3.80 to less than 3.90 (out of 4.00) within four years [Page 26].",
+  "error": null,
+  "elapsed_s": 11.56,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   26,
+   223,
+   222,
+   25
+  ],
+  "gate_top_score": 0.9967193007469177,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.90",
+   "4.00",
+   "3.80"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q085",
+  "category": "comparison",
+  "answerable": true,
+  "question": "How does the student activity fee differ between B.Pharm and other departments?",
+  "answer": "The student activity fee for B.Pharm is Tk. 765/- (non refundable) per semester [Page 180], while the fee for all other departments is Tk. 510/-(non refundable) per semester [Page 180].",
+  "error": null,
+  "elapsed_s": 17.98,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   180,
+   142,
+   215,
+   220
+  ],
+  "gate_top_score": 0.979197084903717,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "765",
+   "510"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q086",
+  "category": "comparison",
+  "answerable": true,
+  "question": "How does tuition for BBA compare with BSS in Economics?",
+  "answer": "The tuition fee for BBA is 5, 500/- per credit [Page 179], while the tuition fee for BSS in Economics is 4, 000/- per credit [Page 179]. Both programs require a minimum of 123 credits to meet graduation requirements [Page 24].",
+  "error": null,
+  "elapsed_s": 10.53,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   180,
+   24,
+   49,
+   44
+  ],
+  "gate_top_score": 0.9782705307006836,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179,
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "5500",
+   "4000",
+   "123"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q087",
+  "category": "comparison",
+  "answerable": true,
+  "question": "What is the gold medal CGPA for undergraduates versus graduate students?",
+  "answer": "An undergraduate student must have a CGPA of 4.00 or above (out of 4.00) to be eligible for a gold medal [Page 26]. A student of a graduate program must have a CGPA of 3.99 or above (out of 4.00) to be eligible for a gold medal [Page 26].",
+  "error": null,
+  "elapsed_s": 10.65,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   26,
+   218,
+   223,
+   222
+  ],
+  "gate_top_score": 0.9932907819747925,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "4.00",
+   "3.99"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q088",
+  "category": "comparison",
+  "answerable": true,
+  "question": "What CGPA leads to probation versus automatic dismissal?",
+  "answer": "A student whose CGPA is between 1 and 2 after the first two or any subsequent semesters will be placed on probation for the next two semesters [Page 217]. A student whose CGPA falls below 1.0 after the first two or any subsequent semesters will be automatically dismissed from the university [Page 217]. Students who fail to raise their CGPA to at least 2 after the probation period will lead to dismissal from the university [Page 217].",
+  "error": null,
+  "elapsed_s": 11.86,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   217,
+   218,
+   26
+  ],
+  "gate_top_score": 0.9970357418060303,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   217
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "1",
+   "2",
+   "1.0"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   217
+  ],
+  "gold_fact_recall": 0.5,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q089",
+  "category": "comparison",
+  "answerable": true,
+  "question": "How do library hours on Friday differ from Sunday-Thursday?",
+  "answer": "On Sunday to Thursday, the library is open from 8:30 am \u2013 10.00 pm [Page 208]. On Friday, the library is open from 08:30 am \u2013 5:00 pm and includes a 1:00 pm-2:00 pm break [Page 208].",
+  "error": null,
+  "elapsed_s": 6.63,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   208,
+   211,
+   209,
+   82
+  ],
+  "gate_top_score": 0.8936070799827576,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   208
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "8",
+   "30",
+   "10.00",
+   "08",
+   "5",
+   "00",
+   "1",
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   208
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q090",
+  "category": "comparison",
+  "answerable": true,
+  "question": "Compare merit-scholarship credit requirements for CSE and Bachelor of Laws.",
+  "answer": "For merit scholarships in undergraduate programs, the credit requirement for B.Sc. in Computer Science & Engineering is 35 [Page 221], while the requirement for Bachelor of Laws [LL.B. (Hons.)] is 33 [Page 221].",
+  "error": null,
+  "elapsed_s": 28.77,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   221,
+   222,
+   93,
+   24,
+   92
+  ],
+  "gate_top_score": 0.7254810929298401,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   221
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "35",
+   "33"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   221
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q091",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "And for CSE?",
+  "answer": "The tuition for B. Sc. in CSE is 5,500/- per credit [Page 179].",
+  "error": null,
+  "elapsed_s": 26.36,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   179,
+   121,
+   180,
+   24,
+   162
+  ],
+  "gate_top_score": 0.7588946223258972,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "5500"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q092",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "What about B.Pharm?",
+  "answer": "Students in the B.Pharm. Program must register at least 12 credits in a semester to qualify for certain merit scholarships [Page 177] [Page 219] [Page 220]. The lab fee for Bachelor of Pharmacy is Tk. 3, 750/- (non refundable) per semester [Page 180]. The student activity fee for B.Pharm is Tk. 765/- (non refundable) per semester [Page 180]. There is a student's registration fee for Pharmacy Council of Tk. 300.00 (non refundable) [Page 180].",
+  "error": null,
+  "elapsed_s": 19.52,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   220,
+   219,
+   177,
+   180
+  ],
+  "gate_top_score": 0.742999792098999,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   177,
+   219,
+   220,
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "12",
+   "3750",
+   "765",
+   "300.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q093",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "Is there also a lab fee for it?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 25.37,
+  "llm_calls": 2,
+  "abstained": true,
+  "abstention_reason": "generator_not_in_bulletin",
+  "retrieved_pages": [
+   121,
+   24,
+   273,
+   287,
+   111
+  ],
+  "gate_top_score": 0.04690750688314438,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q094",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "What happens if I don't raise it in time?",
+  "answer": "Failure to raise your CGPA to at least 2 after the probation period will lead to dismissal from the university [Page 217]. Students who fail to raise CGPA to satisfactory levels during the probation period will face dismissal from the university [Page 217].",
+  "error": null,
+  "elapsed_s": 9.39,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   217,
+   218,
+   216,
+   26
+  ],
+  "gate_top_score": 0.9730858206748962,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   217
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   217
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q095",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "Can I still get a scholarship if I do that?",
+  "answer": "Students availing the advantage of retaking any course any time will not be eligible for any scholarship [Page 219].",
+  "error": null,
+  "elapsed_s": 29.07,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   217,
+   218,
+   219,
+   26
+  ],
+  "gate_top_score": 0.6480547785758972,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   219
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   219
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q096",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "How many credits is that program?",
+  "answer": "The B.Sc. in Computer Science and Engineering (CSE) undergraduate program is 140 Credits [Page 24].",
+  "error": null,
+  "elapsed_s": 26.73,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   24,
+   114,
+   117,
+   121
+  ],
+  "gate_top_score": 0.9962179064750671,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "140"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24,
+   114
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q097",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "What about for graduate students?",
+  "answer": "A student of a graduate program graduating with a CGPA of 3.99 or above (out of 4.00) within the stipulated time for the respective degree (1 to 2 years, as the case may be) will be eligible for getting a gold medal [Page 26]. A student admitted in this university on waiver/transfer of credits from other university(s) and/or availing himself or herself of the advantage of retaking any course any time, will not be eligible for this award [Page 26].",
+  "error": null,
+  "elapsed_s": 11.03,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   26,
+   218,
+   220,
+   223
+  ],
+  "gate_top_score": 0.9967543482780457,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.99",
+   "4.00",
+   "1",
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q098",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "And how much is the urgent one?",
+  "answer": "The fee for an urgent official transcript is Tk. 700.00 [Page 181].",
+  "error": null,
+  "elapsed_s": 7.94,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   181,
+   179,
+   177,
+   178,
+   180
+  ],
+  "gate_top_score": 0.8885494470596313,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   181
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "700.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   181
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q099",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "And on Fridays?",
+  "answer": "On Fridays, the library is open from 08:30 am \u2013 5:00 pm (1:00 pm-2:00 pm break). [Page 208]",
+  "error": null,
+  "elapsed_s": 8.75,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   208,
+   207,
+   211
+  ],
+  "gate_top_score": 0.9234999418258667,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   208
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 0.0,
+  "numbers": [
+   "08",
+   "30",
+   "5",
+   "00",
+   "1",
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   208
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q100",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "What is the minimum for Pharmacy students?",
+  "answer": "The minimum requirement for Bachelor of Pharmacy students is 158 Credits [Page 144].",
+  "error": null,
+  "elapsed_s": 12.66,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   144,
+   145,
+   143
+  ],
+  "gate_top_score": 0.8775768876075745,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   144
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "158"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   220
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q101",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "What IELTS score do I need to get admitted?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 4.81,
+  "llm_calls": 1,
+  "abstained": true,
+  "abstention_reason": "generator_not_in_bulletin",
+  "retrieved_pages": [
+   177,
+   176,
+   24
+  ],
+  "gate_top_score": 0.04756861925125122,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q102",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "Does EWU offer a Bachelor of Nursing program?",
+  "answer": "EWU plans to offer B.Sc. in Nursing degree [Page 17].",
+  "error": null,
+  "elapsed_s": 4.42,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   17,
+   16,
+   18
+  ],
+  "gate_top_score": 0.9968087077140808,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   17
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   17
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q103",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Does EWU have a football team?",
+  "answer": "The bulletin mentions a Sports Club [Page 213], but it does not state whether EWU has a football team.",
+  "error": null,
+  "elapsed_s": 33.01,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   212,
+   15,
+   213
+  ],
+  "gate_top_score": 0.3525928854942322,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   213
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0
+ },
+ {
+  "qid": "q104",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "What are the campus bus service timings?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 0.96,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   490,
+   428,
+   25,
+   199,
+   208
+  ],
+  "gate_top_score": 0.00038160389522090554,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q105",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Can I pay my tuition in instalments?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 1.63,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   181,
+   214,
+   215,
+   222,
+   218
+  ],
+  "gate_top_score": 0.007235331926494837,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q106",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "Does EWU have a student exchange program with a university in Europe?",
+  "answer": "East West University has a formal collaboration agreement with the University of Luton, Bedfordshire, England, UK [Page 16].",
+  "error": null,
+  "elapsed_s": 5.83,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   16,
+   15,
+   18,
+   220,
+   177
+  ],
+  "gate_top_score": 0.3527473211288452,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   16
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   16
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q107",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Can students take part-time jobs on campus?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 4.24,
+  "llm_calls": 1,
+  "abstained": true,
+  "abstention_reason": "generator_not_in_bulletin",
+  "retrieved_pages": [
+   212,
+   56,
+   268,
+   33,
+   218
+  ],
+  "gate_top_score": 0.035492975264787674,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q108",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Does the university have a gym for students?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 1.19,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   212,
+   211,
+   182,
+   197,
+   16
+  ],
+  "gate_top_score": 0.014060957357287407,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q109",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Is there a daycare center on campus?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 1.97,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   15,
+   16,
+   213,
+   185,
+   57
+  ],
+  "gate_top_score": 0.002172926440834999,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q110",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Where is the university health center located?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 1.25,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   16,
+   15,
+   143,
+   207,
+   185
+  ],
+  "gate_top_score": 0.006217007525265217,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q111",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "What is the deadline to apply for Fall 2025 admission?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 10.5,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   176,
+   181,
+   145
+  ],
+  "gate_top_score": 0.0024257332552224398,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q112",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "What is the placement rate of CSE graduates?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 24.52,
+  "llm_calls": 1,
+  "abstained": true,
+  "abstention_reason": "generator_not_in_bulletin",
+  "retrieved_pages": [
+   121,
+   111,
+   112
+  ],
+  "gate_top_score": 0.2768174707889557,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q113",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Is there a swimming pool on campus?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 1.96,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   15,
+   16,
+   213,
+   212,
+   197
+  ],
+  "gate_top_score": 0.003481522900983691,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q114",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "How much does a dormitory room cost per month?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 29.44,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   228,
+   225,
+   226,
+   224,
+   181
+  ],
+  "gate_top_score": 0.004238042049109936,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q115",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Where is the cricket ground?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 18.49,
+  "llm_calls": 0,
+  "abstained": true,
+  "abstention_reason": "below_threshold",
+  "retrieved_pages": [
+   16,
+   121,
+   376,
+   255
+  ],
+  "gate_top_score": 0.0008899349486455321,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "q116",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "What GPA must I maintain for a scholarship?",
+  "answer": "For most Merit Scholarships in Undergraduate Programs, students must maintain a minimum GPA 3.50 in each semester as a regular student [Page 219] [Page 177] [Page 220]. For the District Quota scholarship, the continuation of the scholarship is contingent upon maintaining a minimum CGPA of 2.60 as a regular student [Page 220]. For Graduate programs, students must maintain a CGPA 3.50 at all time to continue the scholarship [Page 220].",
+  "error": null,
+  "elapsed_s": 29.95,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   219,
+   220,
+   177
+  ],
+  "gate_top_score": 0.9430809617042542,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   219,
+   177,
+   220
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.50",
+   "2.60"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   219,
+   220,
+   222
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q117",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "What is the minimum CGPA required to graduate?",
+  "answer": "The minimum CGPA required to graduate for undergraduate programs is 2.00 [Page 25].",
+  "error": null,
+  "elapsed_s": 4.94,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   25,
+   223,
+   222,
+   26
+  ],
+  "gate_top_score": 0.9535825252532959,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   25
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   25
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q118",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "What is the fee for the admission form?",
+  "answer": "Applicants can fill the admission forms online by paying Tk. 1,000 [Page 176] [Page 178]. The fee of the admission form for the Foreign Students is $13.00, payable in International Money Order in favor of EWU [Page 176] [Page 178]. An admission fee of Tk. 5,000 is applicable for Non-Degree students [Page 179].",
+  "error": null,
+  "elapsed_s": 7.21,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   178,
+   176,
+   179
+  ],
+  "gate_top_score": 0.9838566780090332,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   176,
+   178,
+   179
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "1000",
+   "13.00",
+   "5000"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   176
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q119",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "At what CGPA is a student automatically dismissed?",
+  "answer": "A student whose CGPA falls below 1.0 after the first two or any subsequent semesters will be automatically dismissed from the university [Page 217]. Additionally, students who are on probation and fail to raise their CGPA to at least 2 after the probation period will lead to dismissal from the university [Page 217].",
+  "error": null,
+  "elapsed_s": 6.18,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   217,
+   218,
+   224,
+   223
+  ],
+  "gate_top_score": 0.9953422546386719,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   217
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "1.0",
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   217
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q120",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "What CGPA is required for the Medha Lalon Scholarship?",
+  "answer": "The CGPA requirement for awarding Medha Lalon Scholarship is 3.50 [Page 224].",
+  "error": null,
+  "elapsed_s": 34.62,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   224,
+   225,
+   226,
+   228
+  ],
+  "gate_top_score": 0.9979931116104126,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   224
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.50"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   224
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q121",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "What percentage admission quota is reserved for freedom fighters wards?",
+  "answer": "The university reserves a 3% admission quota for the wards of freedom fighters of all categories [Page 223]. This 3 percent is also noted as being reserved for the wards of freedom fighters out of the 6 (six) percent of enrolled students who are poor and meritorious required by the Private University Act, 2010 [Page 219].",
+  "error": null,
+  "elapsed_s": 36.47,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   223,
+   219,
+   227,
+   228
+  ],
+  "gate_top_score": 0.994789719581604,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   223,
+   219
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3",
+   "6",
+   "2010"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   223
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q122",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "What are the library hours on Saturday?",
+  "answer": "The library hours on Saturday are 5:00 pm \u2013 10:00 pm [Page 208].",
+  "error": null,
+  "elapsed_s": 5.23,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   208,
+   211,
+   207,
+   82
+  ],
+  "gate_top_score": 0.9476175308227539,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   208
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "5",
+   "00",
+   "10"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   208
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q123",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "What is the grade point for an A+?",
+  "answer": "The grade point for an A+ is 4.00 [Page 216].",
+  "error": null,
+  "elapsed_s": 5.5,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   216,
+   217,
+   219
+  ],
+  "gate_top_score": 0.8020817637443542,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   216
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "4.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   216
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 0.0
+ },
+ {
+  "qid": "q124",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "What CGPA is needed for Cum Laude?",
+  "answer": "An undergraduate student graduating with a CGPA of 3.75 to less than 3.80 (out of 4.00) within four years will be eligible for the award \u2018Cum Laude\u2019 [Page 26].",
+  "error": null,
+  "elapsed_s": 7.54,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   26,
+   220,
+   25,
+   224
+  ],
+  "gate_top_score": 0.9829238057136536,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.75",
+   "3.80",
+   "4.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q125",
+  "category": "adversarial",
+  "answerable": true,
+  "question": "How many credits are needed to graduate from the CSE department, not the MS in CSE?",
+  "answer": "A minimum of 140 credits are required for a B.Sc. in CSE [Page 24].",
+  "error": null,
+  "elapsed_s": 5.82,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "retrieved_pages": [
+   24,
+   117,
+   114,
+   222
+  ],
+  "gate_top_score": 0.9226371645927429,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "140"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ }
+]

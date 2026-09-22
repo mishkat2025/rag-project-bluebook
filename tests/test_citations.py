@@ -144,3 +144,49 @@ def test_a_short_fragment_is_not_treated_as_a_factual_claim():
 
     assert report.factual_sentences == 0
     assert report.citation_density == 1.0
+
+
+# ---------------------------------------------------------------------------
+# Abbreviations that precede a capitalised word
+#
+# The lookbehinds in _SENTENCE_END exist so "Dr. Taskeed Jabid" and "Tk.
+# 15,000" are not read as sentence boundaries. Every case above happens not to
+# exercise them: "Tk. 15,000" is followed by a digit, not a capital letter, so
+# the lookahead never fires regardless of whether the lookbehind works. These
+# cases only fire the lookahead, and would have caught the regression where
+# the lookbehinds were silently inert (a raw backspace byte had been saved in
+# place of the two-character regex escape \b, so every "(?<!\bXyz)" matched
+# unconditionally) -- see PROGRESS.md Session 9.
+# ---------------------------------------------------------------------------
+
+def test_an_abbreviated_title_before_a_capitalised_name_does_not_split():
+    answer = (
+        "Dr. Taskeed Jabid is the chairperson of the department [Page 22]. "
+        "He also teaches CSE 101 [Page 23]."
+    )
+
+    report = citations.validate(answer, [22, 23])
+
+    assert report.factual_sentences == 2
+    assert report.uncited_sentences == []
+
+
+def test_a_bsc_abbreviation_before_a_capitalised_word_does_not_split():
+    answer = (
+        "The Bachelor of Science (B. Sc.) in Civil Engineering requires "
+        "156.5 credits in total [Page 162]."
+    )
+
+    report = citations.validate(answer, [162])
+
+    assert report.factual_sentences == 1
+    assert report.uncited_sentences == []
+
+
+def test_a_tk_amount_before_a_capitalised_word_does_not_split():
+    answer = "The fee is Tk. Five hundred per semester [Page 180]."
+
+    report = citations.validate(answer, [180])
+
+    assert report.factual_sentences == 1
+    assert report.uncited_sentences == []

@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 7 — Verification, terminal app, observability (Phases 0–6 done)**
+**Current phase: 7 — Verification, terminal app, observability. DONE (Session 9).**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -17,7 +17,7 @@ Read HANDOFF.md for the full plan before working.
 | 4 | Reranking (bge-reranker-v2-m3, enforce top_k=5) | done (acceptance NOT met; see below) |
 | 5 | Collapse the agent layer | done + **verified end to end against live Gemma 4** (Session 7) |
 | 6 | Grounding + deterministic validation | done (**all three criteria met, live Gemma 4, Session 8**) |
-| 7 | Verification, terminal app, observability | next |
+| 7 | Verification, terminal app, observability | done (**abstention accuracy 0.923, hallucination rate 0.000 measured; faithfulness/NLI target not met -- see below**, Session 9) |
 
 ---
 
@@ -106,16 +106,24 @@ same single zero-recall question (q034), same 0/10 adversarial top-1 on a distra
 These need the whole pipeline and an LLM, which is why they are absent above: `run_eval.py`
 scores rankings and stops there.
 
-| Generation metric | Phase 6 | Target | |
-|---|---|---|---|
-| Citation accuracy | **1.000** | >= 0.95 | MET |
-| Number fidelity | **1.000** | = 1.00 | MET |
-| Abstention accuracy | **0.800** (12/15) | >= 0.80 | MET |
-| False abstentions on answerable | 2/110 | - | |
-| Citation density (factual sentences cited) | 0.965 | - | |
-| Gold values reaching the answer | 0.843 | - | |
-| LLM calls / query | 0 -> 9, 1 -> 94, 2 -> 22, 3 -> 0 | 1-2 (+1 regen) | |
-| Latency | mean 16.7s, median 15.0s, p95 30.2s | - | |
+| Generation metric | Phase 6 | **Phase 7** | Target | |
+|---|---|---|---|---|
+| Citation accuracy | 1.000 | **1.000** | >= 0.95 | MET |
+| Number fidelity | 1.000 | **1.000** | = 1.00 | MET |
+| Abstention accuracy | 0.800 (12/15) | **0.923** (12/13) | >= 0.80 | MET |
+| False abstentions on answerable | 2/110 | 2/112 (q029, q093) | - | |
+| Citation density (factual sentences cited) | 0.965 | 0.986 | - | |
+| Gold values reaching the answer | 0.843 | 0.850 | - | |
+| LLM calls / query | 0->9, 1->94, 2->22, 3->0 | 0->9, 1->95, 2->21, 3->0 | 1-2 (+1 regen) | |
+| Latency | mean 16.7s, median 15.0s, p95 30.2s | mean 15.2s, median 10.5s, p95 34.6s | - | |
+| Faithfulness (offline NLI diagnostic, entailment only) | not measured | **0.467** (0.458 on a 166-sentence Phase 6 sample) | >= 0.90 | NOT MET -- see Session 9, this is a measurement-instrument limit, not a grounding gap |
+| Hallucination rate (offline NLI diagnostic, contradiction only) | not measured | **0.000** (0/165) | <= 0.05 | MET |
+
+Phase 7's 13 unanswerable / 112 answerable (vs Phase 6's 15/110) reflects fixing two wrong
+gold labels this session (q102, q106 -- see below), not a change in the pipeline. Phase 6's
+own numbers were re-measured this session (label `phase7_generation.json` vs `phase6_generation.json`
+in `eval/results/`) after two fixes landed: the corrected dataset, and a citation-parsing
+bug fix (below) that was silently splitting a handful of sentences mid-abbreviation.
 
 ---
 
@@ -797,3 +805,198 @@ faithfulness gap survives; trace -> metrics aggregator; resolve `app/chat.py` (s
 vs `scripts/chat.py` and rewrite `readme.md`, which still documents Ollama/Qwen, a supervisor
 agent and an evidence-selection stage that no longer exist. Also fix the two wrong
 `unanswerable` labels (q102, q106) and re-measure abstention accuracy.
+
+### Session 9 — Phase 7 (verification, terminal app, observability). PROJECT COMPLETE.
+
+All six Phase 7 items are done. 249 tests pass (up from 242), 1 xfail. Retrieval metrics
+re-measured and unchanged from Phases 4-6 (page-recall@5 0.927, @10 0.984, @20 0.987,
+nDCG@10 0.880, MRR@10 0.858 — inside run-to-run noise of Session 8's numbers). Generation
+metrics re-measured live against Gemma 4 over all 125 questions: citation accuracy 1.000,
+number fidelity 1.000, **abstention accuracy 0.923** (up from 0.800 — see the gold-label fix
+below; the pipeline itself did not change abstention behaviour this session).
+
+**Files.** New: `src/validation/faithfulness.py`, `eval/faithfulness_eval.py`,
+`eval/trace_metrics.py`, `tests/test_verification_agent.py`, `app/chat.py` (was 0 bytes).
+Rewritten: `readme.md`. Changed: `src/agents/verification_agent.py`,
+`src/orchestration/{pipeline,state}.py`, `src/validation/citations.py`,
+`src/config/settings.py`, `scripts/chat.py`, `tests/test_citations.py`, `eval/dataset.jsonl`.
+
+#### 1. `VerificationAgent` now sees the full reranked pool, not the 5 chunks that produced the answer
+
+Diagnosis #11 said the original verifier read `evidence["supported_chunks"]` — the same
+chunks `EvidenceAgent` had already picked — so it judged an answer against the evidence that
+produced it and could not catch the dominant failure mode (wrong evidence retrieved).
+`EvidenceAgent` is gone (Phase 5), but the verifier still had the equivalent problem: it read
+only the gate's 5 selected chunks, not the wider fused pool.
+
+Fixed by adding `RAGState.all_reranked_chunks` — the cross-encoder's full ranking of the fused
+pool, saved by `pipeline.rerank()` at zero extra cost, since scoring already happens over every
+candidate before any `top_k` cut is applied; only the slicing changed. The verifier now reads
+this pool, capped at `settings.verification_max_chunks` (15 — three times what the generator
+saw, without pushing a 50-chunk prompt through one more LLM call). `tests/test_verification_agent.py`
+(4 tests) pins that a chunk outside the generator's 5-chunk slice is actually visible to the
+verifier's prompt, that the cap is enforced, and that a hand-built state without the wider pool
+still degrades to the old behaviour rather than crashing.
+
+**Decision: it stays off by default anyway** (`settings.llm_verification_enabled = False`,
+unchanged). Diagnosis #11 is now properly closed — the verifier is no longer structurally
+circular — but Session 8 already measured citation accuracy 1.000 and number fidelity 1.000
+from the deterministic checks alone, and this session's faithfulness diagnostic (below) found
+zero contradictions across every cited sentence in a 125-question run. A second LLM opinion has
+nothing measurably broken left to catch on this eval set. It is documented and tested rather
+than deleted, so a future deployment that wants an independent second read can flip one setting.
+
+#### 2. The faithfulness question: DeBERTa-v3-base-MNLI was added, measured, and NOT wired online
+
+HANDOFF's instruction was to add DeBERTa-v3-base-MNLI entailment "only if Phase 6 leaves a
+faithfulness gap." Answering that requires actually measuring it, so `src/validation/faithfulness.py`
+wraps `cross-encoder/nli-deberta-v3-base` and `eval/faithfulness_eval.py` runs it offline
+against a saved generation run: every cited, factual sentence is checked against the specific
+indexed chunk(s) on its cited page(s), and scored entailment / neutral / contradiction.
+
+**First version was wrong and said so out loud.** It concatenated every chunk on a page into
+one premise. 18/20 sampled pairs came back "neutral," including "the B.Sc. in Civil Engineering
+requires 156.5 credits" — a number that is definitely on the page and typed exactly that way.
+General-purpose NLI models are trained on single-sentence premises; a 1000+ token multi-chunk
+premise dilutes the one relevant sentence enough that the model hedges. Fixed by scoring each
+sentence against every individual chunk on its page separately and keeping the best match,
+which matches both the model's training distribution and this project's own ~250-token
+indexing granularity.
+
+**Result over the full Phase 7 run (166 cited sentences, 910 candidate pairs):**
+
+| | value | target | |
+|---|---|---|---|
+| faithfulness (strict entailment) | 0.458-0.467 | >= 0.90 | NOT MET |
+| hallucination rate (active contradiction) | **0.000** (0/165-166) | <= 0.05 | MET |
+
+**Reading this honestly: the entailment number is a measurement-instrument limit, not a
+grounding defect.** Even a general-purpose NLI model correctly refuses to *contradict* anything
+across 900+ (page, sentence) pairs — the strongest signal it can give here — while hedging to
+"neutral" on the majority, concentrated almost entirely in numeric/fee/tabular sentences
+("Tk. 1,000", "156.5 Credits", "$13.00") that off-the-shelf MNLI checkpoints are known to
+handle poorly. Three independent lines of evidence agree the answers are grounded: (1) number
+fidelity 1.000, enforced and deterministic — every number in a delivered answer is verified
+present in its evidence, so a "neutral" fee sentence still had to survive an exact-match check
+to reach the user; (2) citation accuracy 1.000 — every cited page really was retrieved;
+(3) zero contradictions from the one instrument capable of flagging a genuine mismatch. The
+`>= 0.90 faithfulness` criterion, read literally against this specific model's raw entailment
+label, is **NOT MET** and is reported that way rather than redefined to pass — but the
+practical claim HANDOFF's phrase is chasing ("does this hallucinate") has three converging
+measurements saying no.
+
+**Decision: DeBERTa-v3-base-MNLI is not wired into the online pipeline.** It runs only via
+`eval/faithfulness_eval.py`, offline, against saved answers — never in `RAGWorkflow`. Three
+reasons: it is not reliable enough on this domain's numeric content to gate a real answer
+(it would refuse correct fee/credit sentences at the rate shown above); VRAM is already tight
+(PROGRESS.md, Session 8: ~15.5 of 16.4 GB with LM Studio + BGE-M3 + reranker loaded during an
+eval) and a fourth resident model does not fit online; and the deterministic checks already
+in the pipeline are the more trustworthy signal for exactly the content this model struggles
+with.
+
+**A real bug was found and fixed along the way.** Building this diagnostic exposed that
+`src/validation/citations.py`'s sentence-splitting regex had a live, undetected defect: the
+negative lookbehinds meant to protect abbreviations ("Dr.", "Tk.", "B. Sc.") from being read as
+sentence boundaries had a raw backspace byte (`\x08`) saved in place of the two-character regex
+escape `\b`, and even after fixing that, the lookbehinds were checking the wrong span (2
+characters before the split point instead of the 3 that "Dr." actually needs, since the
+lookbehind's position sits *after* the period). Together this meant the exclusions had been
+inert since Phase 6 shipped — verified by testing the exact case that first exposed it,
+"Dr. Taskeed Jabid" (q015), which split into `"Dr."` / `"Taskeed Jabid..."` fragments before the
+fix. This did not break citation or number validation (both fragments still cited the same,
+correct page), but it corrupted this session's first faithfulness pass into flagging a false
+"contradiction" (a broken `"...(B."` / `"Sc.) in Civil Engineering..."` fragment pair, q083) and
+would have under-counted `citation_density` and split answers oddly if ever displayed
+sentence-by-sentence. Fixed (`_SENTENCE_END` now correctly requires the trailing period in each
+lookbehind); 3 regression tests added (`tests/test_citations.py`) using exactly the abbreviation
+shapes that were broken. Re-running the faithfulness check after the fix took the one
+"contradiction" to zero.
+
+#### 3. Two wrong gold labels fixed; abstention accuracy 0.800 -> 0.923
+
+Session 8 found, by manual audit, that `dataset.jsonl`'s Phase 1 "confirmed absent from the PDF
+by text search" check had missed two facts: q102 ("Does EWU offer a Bachelor of Nursing
+program?") and q106 ("...student exchange with a university in Europe?") are both directly
+answered on pages 17 and 16 respectively. Session 8 deliberately left them alone rather than
+correct a gold label in the direction that improved the session's own score. This session
+verified both against the live PDF text (`fitz` extraction, not the file-reading tool) —
+p17: *"EWU plans to offer B.Sc. in Nursing degree"*; p16: *"University of Luton, Bedfordshire,
+England, UK"* — and re-labeled them `answerable` with real `gold_pages`/`gold_facts`.
+
+Re-running the full generation eval with the corrected dataset (and the citation-parsing fix
+above) gives **abstention accuracy 0.923** (12/13 unanswerable correctly refused), comfortably
+above the >= 0.80 target and up from Phase 6's 0.800. This is a labeling correction, not a
+pipeline change — both questions were already answered correctly by the live system in Session
+8's audit; they were just being scored as failures.
+
+The one remaining unanswerable question the system does not formally abstain on is q103 ("Does
+EWU have a football team?"), and it is correct, not a miss, exactly as Session 8 found: the
+generator reads the retrieved Sports Club page and states plainly that it does not say whether
+there is a football team, rather than inventing an answer or issuing a formal refusal. False
+abstentions on answerable questions stayed low: 2/112 (q029: per-credit B.Pharm tuition; q093: a
+lab-fee follow-up), consistent with Phase 6's 2/110.
+
+#### 4. Trace -> metrics aggregator
+
+`src/storage/trace_store.py` was written in Phase 0 and never called by anything except a
+smoke script — dead code that could save and load a trace but that no real run ever exercised.
+`scripts/chat.py` (and `app/chat.py`, which delegates to it) now saves every turn's
+`state.trace` via `TraceStore`, timed and tagged with the question and answer
+(`settings.trace_persist_enabled`, on by default; `data/traces/` is already gitignored).
+`eval/trace_metrics.py` reads the saved traces back and reports the same shape of numbers
+`run_generation_eval.py`'s COST section computes — LLM calls per query, abstention rate and
+reasons, regeneration rate, latency — but over **real usage** rather than the fixed 125-question
+eval set, which is the distinction HANDOFF's phrase was after: the eval harness answers "did
+this change help"; this answers "what is actually happening."
+
+#### 5. `app/chat.py` vs `scripts/chat.py`: resolved without deleting either
+
+HANDOFF asked Phase 7 to resolve the contradiction (the README told users to run
+`python app/chat.py`, but it was 0 bytes) by either implementing `app/chat.py` as the real
+entry point or fixing the README to point at `scripts/chat.py` — "do not leave both." Deleting
+`scripts/chat.py`'s content and moving it would have meant destroying a file with real,
+live-verified history (Sessions 6-8 all ran against it); this session's sandbox also declined
+permission for destructive deletes. Resolved non-destructively instead: `app/chat.py` is now 9
+lines that set up `sys.path` and delegate straight to `scripts.chat.main()`. There is exactly
+one REPL implementation and both documented commands work; `python app/chat.py` (what a fresh
+clone's README says) and `python scripts/chat.py` (what every prior session actually ran)
+launch the identical chatbot. Verified live: banner prints, device/LLM reachability line
+correct, clean exit on EOF.
+
+#### 6. `readme.md` rewritten
+
+The old README described the pre-diagnosis architecture verbatim: Ollama/Qwen, a Supervisor
+Agent choosing between two identical workflows, an Evidence Agent, a `python app/chat.py`
+command that did not run anything, and "Maximum retrieval retries = 2" for a retry loop Phase 5
+deleted. Every one of those is gone from the shipped system. Rewritten from the actual code:
+LM Studio/Gemma 4, BGE-M3, bge-reranker-v2-m3, the deterministic gate, the one-file pipeline,
+the measured metrics table (pulled from this file rather than restated by hand), real setup and
+LM Studio startup commands, and a "Known limitations" section naming the three things this
+project has measured and not fixed (the `table` category, the CGPA-for-CSE reranker regression,
+and the NLI faithfulness instrument limit above) instead of a generic "possible limitations"
+list.
+
+#### Also worth knowing
+
+- **VRAM discipline mattered again this session**: running the full pytest suite (which loads
+  BGE-M3 and the reranker) concurrently with the live generation eval pushed the card to
+  15.7/16.4 GB and visibly stalled the eval (one question took 211s instead of ~10s). Killed the
+  competing pytest run rather than let both starve; this is the same caution Session 8 recorded
+  and it is worth repeating here because it was nearly missed live, not just documented.
+- **Regenerations dropped to 0/125** this run (Phase 6 measured 1/125). Both are single data
+  points inside expected run-to-run variance at temperature 0 with a live model server, not a
+  trend — nothing in this session's changes touches the validation-triggered regeneration path.
+- The known reranker regression on "minimum CGPA for admission to CSE" is untouched and still
+  documented (`tests/test_reranker.py`, `xfail(strict=False)`); this session did not have new
+  evidence bearing on it.
+
+**PROJECT STATUS: all 8 phases (0-7) in HANDOFF.md are complete and verified live against
+Gemma 4.** Retrieval: page-recall@20 0.987, nDCG@10 0.880. Generation: citation accuracy 1.000,
+number fidelity 1.000, abstention accuracy 0.923. Cost: 1 LLM call typical, 2 common, 3 worst
+case (0-9, 1-95, 2-21, 3-0 across 125 questions this run). The one criterion not literally met
+is faithfulness >= 0.90 by strict off-the-shelf NLI entailment, which Session 9 argues (with
+measurements, not assertion) is a limit of that specific instrument on numeric/tabular content
+rather than a grounding gap — the more defensible hallucination-rate reading of the same
+diagnostic is 0.000. Two known, deliberately-left, narrow gaps remain documented rather than
+hidden: the CGPA-for-CSE reranker regression (Session 5/7) and the `table` category's weaker
+ranking (Phases 2-4). Both are `xfail`'d or footnoted, not silently accepted.

@@ -8,7 +8,9 @@ device and whether the LLM endpoint is reachable, so a CPU regression or a
 stopped LM Studio is visible immediately instead of being felt as unexplained
 slowness or as a wall of errors.
 """
+import logging
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -28,8 +30,11 @@ from src.config.settings import settings  # noqa: E402
 from src.generation.lmstudio_client import LMStudioClient  # noqa: E402
 from src.orchestration.state import ConversationTurn, RAGState  # noqa: E402
 from src.orchestration.workflow import RAGWorkflow  # noqa: E402
+from src.storage.trace_store import TraceStore  # noqa: E402
 
 GREETINGS = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}
+
+logger = logging.getLogger(__name__)
 
 HELP = """Commands:
   clear          start a new conversation
@@ -68,6 +73,24 @@ def print_banner(workflow: RAGWorkflow) -> None:
     print("=" * 72)
     print(HELP)
     print("=" * 72)
+
+
+def _save_trace(state: RAGState, question: str, elapsed_s: float) -> None:
+    """Persist this turn's trace, so real usage -- not just the eval set --
+    can be read back later with ``eval/trace_metrics.py``.
+
+    Best-effort: a disk error here must not take down the REPL over
+    something that is purely observability.
+    """
+    try:
+        TraceStore().save({
+            **state.trace,
+            "question": question,
+            "answer": state.draft_answer,
+            "elapsed_s": elapsed_s,
+        })
+    except OSError as exc:
+        logger.warning("Could not persist trace: %s", exc)
 
 
 def print_trace(state: RAGState) -> None:
@@ -166,14 +189,21 @@ def main() -> None:
             conversation_history=conversation_history.copy(),
         )
 
+        started = time.perf_counter()
+
         try:
             final_state = workflow.run(state)
         except Exception as exc:  # noqa: BLE001 - the REPL must survive anything
             print(f"\nError: {exc}")
             continue
 
+        elapsed_s = round(time.perf_counter() - started, 2)
+
         last_state = final_state
         evidence = final_state.evidence_status
+
+        if settings.trace_persist_enabled:
+            _save_trace(final_state, user_input, elapsed_s)
 
         print("\nEWU RAG:")
         print("-" * 72)

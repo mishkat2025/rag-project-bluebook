@@ -35,8 +35,8 @@ _PAGE_NUMBER = re.compile(r"\d+")
 #: capital after the space handles the numbers; the abbreviation lookbehinds
 #: handle the titles.
 _SENTENCE_END = re.compile(
-    r"(?<!Tk)(?<!Dr)(?<!Mr)(?<!Ms)(?<!No)(?<!vs)"
-    r"(?<!Prof)(?<!approx)"
+    r"(?<!\bTk\.)(?<!\bDr\.)(?<!\bMr\.)(?<!\bMs\.)(?<!\bNo\.)(?<!\bvs\.)"
+    r"(?<!\bProf\.)(?<!\bapprox\.)(?<!\bSc\.)(?<!\bB\.)(?<!\bM\.)"
     r"(?<=[.!?])\s+(?=[\"“\[(A-Z])"
 )
 

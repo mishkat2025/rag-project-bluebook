@@ -34,6 +34,16 @@ class Settings(BaseSettings):
 
     trace_dir: Path = data_dir / "traces"
 
+    #: Persist every REPL turn's ``state.trace`` to ``trace_dir``. It was
+    #: written in Phase 0 and exercised only by a smoke script until now --
+    #: dead code that could save and load a trace but that nothing ever
+    #: called during a real run, which is the "trace -> metrics aggregator"
+    #: gap HANDOFF names for Phase 7. Wired into ``scripts/chat.py``; read it
+    #: back with ``eval/trace_metrics.py``. Off by default in eval scripts,
+    #: which already build and report their own per-run metrics from the
+    #: results file they save.
+    trace_persist_enabled: bool = True
+
     # ---------------------------------------------------------
     # Device
     # ---------------------------------------------------------
@@ -180,9 +190,28 @@ class Settings(BaseSettings):
     #: the phase exists to cut LLM calls per query to 1-2, and the verifier
     #: was structurally unable to catch the dominant failure mode anyway --
     #: it judged the answer against the same chunks that produced it
-    #: (diagnosis #11). Deterministic citation and number validation arrives
-    #: in Phase 6; Phase 7 decides what, if anything, the LLM verifier becomes.
+    #: (diagnosis #11). Deterministic citation and number validation arrived
+    #: in Phase 6 and, measured over all 125 questions, already hit citation
+    #: accuracy 1.000 and number fidelity 1.000 on its own (PROGRESS.md,
+    #: Session 8). Phase 7 restructured the verifier to see the full reranked
+    #: pool rather than only the 5 chunks the generator used (diagnosis #11,
+    #: properly closed -- see ``RAGState.all_reranked_chunks``), so it no
+    #: longer judges an answer against the evidence that produced it. It
+    #: stays off by default anyway: the ablation it exists to catch
+    #: (evidence retrieved but not selected) is already closed by the gate
+    #: seeing the same pool, and Session 8 showed the mechanism that fixes
+    #: real grounding gaps is the deterministic check below, not an LLM
+    #: opinion. Flip this on to add a second, independent LLM read when the
+    #: extra latency and VRAM are worth it for a specific deployment.
     llm_verification_enabled: bool = False
+
+    #: How much of the full reranked pool the verifier reads, when enabled.
+    #: The generator only ever sees ``rerank_top_k`` (5); giving the verifier
+    #: more of the pool is what makes it independent rather than circular,
+    #: but the full pool (50) is too much prompt for one more LLM call to
+    #: pay for. 15 covers 3x what the generator saw while staying well under
+    #: the context budget that caused diagnosis #9.
+    verification_max_chunks: int = 15
 
     # ---------------------------------------------------------
     # Grounding (Phase 6)
