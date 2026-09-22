@@ -31,11 +31,17 @@ the retrieval retry loop
 ``VerificationAgent``
     Judged the answer against the same chunks that produced it, so it was
     structurally incapable of catching wrongly-retrieved evidence
-    (diagnosis #11). Off by default via ``settings.llm_verification_enabled``;
-    Phase 6 adds deterministic citation and number validation in its place.
+    (diagnosis #11). Off by default via ``settings.llm_verification_enabled``.
+    Phase 6 put deterministic citation and number validation in its place,
+    inside :mod:`src.agents.answer_agent` -- no model, and it cannot be wrong
+    about the thing it checks.
 
-Budget per query: 0 or 1 rewrite calls + 1 generation call = 1 typical, 2
-maximum, against 5-11 before.
+Budget per query, after Phase 6: 0-1 rewrite + 1 generation + 0-1
+regeneration. 1 typical, 2 common, **3 worst case** -- up from Phase 5's 2,
+because HANDOFF's Phase 6 mandates one regeneration carrying the explicit
+failure reason. An abstention costs 0 or 1: the gate abstains before any
+generation call, and the generator's own abstention costs the single call it
+took to read the evidence.
 """
 from __future__ import annotations
 
@@ -43,19 +49,18 @@ from typing import Any
 
 from src.agents.answer_agent import AnswerAgent
 from src.config.settings import settings
+from src.generation import prompts
 from src.orchestration.state import RAGState
 from src.retrieval import evidence_gate
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.retrieval.query_rewriter import QueryRewriter
 from src.retrieval.reranker import Reranker
 
-#: What the chatbot says when the gate abstains. Phase 6 replaces this with a
-#: prompt-side abstention path; for now it is a constant, which is the point --
-#: no LLM is asked to decide whether it knows something.
-ABSTENTION_MESSAGE = (
-    "I could not find this in the EWU Undergraduate Bulletin. "
-    "The bulletin does not appear to cover this topic."
-)
+#: One message for both abstention paths -- the deterministic gate below, and
+#: the generator reading the evidence and reporting that it does not answer
+#: the question (:data:`src.generation.prompts.NOT_IN_BULLETIN`). The user does
+#: not need to know which one fired; the trace records it.
+ABSTENTION_MESSAGE = prompts.ABSTENTION_MESSAGE
 
 
 def trim_history(state: RAGState) -> None:
@@ -230,10 +235,16 @@ def expand_context(
 
 
 def generate(state: RAGState, generator: AnswerAgent) -> int:
-    """The one LLM call every answered query makes."""
+    """Generate, validate deterministically, regenerate at most once.
+
+    Returns the LLM calls actually spent -- 1 normally, 2 when the citation or
+    number check rejected the first attempt. The generator reports it rather
+    than the caller assuming it, so the trace's ``llm_calls`` stays true when
+    a regeneration happens.
+    """
     generator.answer(state)
 
-    return 1
+    return int(state.trace.get("answer", {}).get("llm_calls", 1))
 
 
 def run(

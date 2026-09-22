@@ -7,9 +7,14 @@ scores the ranked chunks against the gold pages, prints a one-screen report and
 saves per-question results to eval/results/<label>.json.
 
 Follow-up questions are retrieved with the last user turn of their conversation
-context prepended (a stand-in for the conditional LLM query rewriter, Phase 5).
-Unanswerable questions are excluded from retrieval metrics; abstention, citation,
-number-fidelity and faithfulness metrics arrive with the generation phases.
+context prepended -- a cheap stand-in for the conditional LLM query rewriter.
+``--real-rewriter`` runs the actual one instead, which is slower (it costs an
+LLM call on the ~17% of questions that need rewriting) but is what production
+does.
+
+Unanswerable questions are excluded from retrieval metrics. The generation
+criteria -- citation accuracy, number fidelity, abstention accuracy -- live in
+eval/run_generation_eval.py, which runs the whole pipeline against a live LLM.
 """
 import argparse
 import json
@@ -42,6 +47,52 @@ def build_query(row: dict) -> str:
     context = row.get("conversation_context") or []
     last_user = next((m["content"] for m in reversed(context) if m["role"] == "user"), "")
     return f"{last_user} {row['question']}".strip()
+
+
+def history_of(row: dict):
+    """Rebuild conversation turns from the dataset's flat message list."""
+    from src.orchestration.state import ConversationTurn
+
+    turns, pending = [], None
+
+    for message in row.get("conversation_context") or []:
+        if message["role"] == "user":
+            pending = message["content"]
+        elif pending is not None:
+            turns.append(ConversationTurn(user=pending, assistant=message["content"]))
+            pending = None
+
+    return turns
+
+
+def merge_search(retriever, queries: list[str], pool: int) -> list[dict]:
+    """Fuse one or more retrieval queries, the way pipeline.retrieve does.
+
+    A multi-part question produces several queries; a chunk found by two of
+    them keeps its better RRF score.
+    """
+    if len(queries) == 1:
+        return retriever.search(queries[0], dense_top_k=pool,
+                                bm25_top_k=pool, fusion_top_k=pool)
+
+    merged: dict[str, dict] = {}
+
+    for query in queries:
+        for result in retriever.search(query, dense_top_k=pool,
+                                       bm25_top_k=pool, fusion_top_k=pool):
+            chunk_id = result.get("chunk_id")
+
+            if not chunk_id:
+                continue
+
+            existing = merged.get(chunk_id)
+
+            if existing is None or result.get("rrf_score", 0.0) > existing.get(
+                    "rrf_score", 0.0):
+                merged[chunk_id] = result
+
+    return sorted(merged.values(), key=lambda item: item.get("rrf_score", 0.0),
+                  reverse=True)
 
 
 def chunk_page(result: dict) -> int | None:
@@ -79,10 +130,19 @@ def main() -> None:
     parser.add_argument("--rerank-text", choices=("breadcrumb", "body"), default=None,
                         help="what the cross-encoder scores: the indexed text with its "
                              "breadcrumb line (default) or the body alone")
+    parser.add_argument("--real-rewriter", action="store_true",
+                        help="rewrite follow-ups with the production QueryRewriter "
+                             "instead of prepending the last user turn, and rerank on "
+                             "the query it derives -- so the harness scores the input "
+                             "the pipeline actually uses (Session 7, defect 4). "
+                             "Needs LM Studio.")
     args = parser.parse_args()
 
     if args.rescore and args.rerank:
         parser.error("--rescore replays saved page rankings; it cannot rerank.")
+
+    if args.rescore and args.real_rewriter:
+        parser.error("--rescore replays saved rankings; it cannot rewrite.")
 
     rows = load_dataset(args.limit)
 
@@ -98,6 +158,14 @@ def main() -> None:
         retriever = HybridRetriever(expansion_mode=args.expansion)
         rankings = None
         counts = page_chunk_counts()
+
+    rewriter = None
+    if args.real_rewriter:
+        from src.retrieval.query_rewriter import QueryRewriter
+
+        rewriter = QueryRewriter()
+        print("rewriting follow-ups with the production QueryRewriter ...",
+              flush=True)
 
     reranker = None
     if args.rerank:
@@ -127,18 +195,32 @@ def main() -> None:
             ranked = rankings[row["qid"]]
             n_results = len(ranked)
         else:
-            query = build_query(row)
-            results = retriever.search(query, dense_top_k=args.pool,
-                                       bm25_top_k=args.pool, fusion_top_k=args.pool)
+            if rewriter is None:
+                query = build_query(row)
+                queries, rerank_query = [query], query
+            else:
+                # What the pipeline does: decide deterministically whether a
+                # rewrite is needed, call the LLM only if so, and derive the
+                # reranking sentence from the resulting queries.
+                rewritten = rewriter.rewrite(row["question"], history_of(row))
+                queries = rewritten.queries
+                rerank_query = rewritten.rerank_query
+                entry_queries = queries
+
+            results = merge_search(retriever, queries, args.pool)
+
             if reranker is not None:
-                # Rerank the query as asked, not the expanded form: the
-                # cross-encoder reads natural language, and expansion exists
-                # only to give BM25 tokens it would otherwise lack.
-                results = reranker.rerank(query, results, top_k=args.rerank_top_k)
+                # Rerank the query as asked, not the acronym-expanded form:
+                # the cross-encoder reads natural language, and expansion
+                # exists only to give BM25 tokens it would otherwise lack.
+                results = reranker.rerank(rerank_query, results,
+                                          top_k=args.rerank_top_k)
             ranked = [p for p in (chunk_page(r) for r in results) if p is not None]
             n_results = len(results)
         entry = {
             "qid": row["qid"],
+            **({"queries": entry_queries, "rerank_query": rerank_query}
+               if rewriter is not None else {}),
             "category": row["category"],
             "answerable": row["answerable"],
             "retrieved_pages": ranked,

@@ -32,6 +32,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from src.config.settings import settings
+from src.generation import prompts
 from src.generation.lmstudio_client import LLMError, LMStudioClient
 from src.orchestration.state import ConversationTurn
 
@@ -172,6 +173,40 @@ def needs_rewrite(
     return RewriteDecision(False, "self_contained")
 
 
+def rerank_query_for(queries: list[str]) -> str:
+    """The sentence the cross-encoder scores against, derived not invented.
+
+    Until Phase 6 this was a separate free-form field the rewrite LLM filled
+    in -- "one natural-language sentence stating the COMPLETE information
+    need". Session 7 measured what that costs. Asked the same follow-up in two
+    conversations that differed only in an earlier unrelated turn, the
+    *retrieval* queries came out byte-identical both times, but the invented
+    rerank sentence did not, and that alone changed which pages survived
+    ``top_k=5``: one conversation answered correctly and the other did not.
+    Four phrasings of a single information need put the grading table (p216)
+    in the top 5 twice and lost it twice, with no variant dominating.
+
+    Two problems, one cause. The pipeline was ranking against a string nothing
+    could reproduce, and ``eval/run_eval.py`` -- which reranks the query as
+    asked -- had therefore never scored the reranking input production
+    actually used (Session 7, defect 4). Deriving the string from the
+    retrieval queries fixes both: the same question now ranks the same way
+    twice, and the harness can reproduce the input exactly.
+    """
+    usable = [query.strip() for query in queries if query and query.strip()]
+
+    if not usable:
+        return ""
+
+    if len(usable) == 1:
+        return usable[0]
+
+    # A multi-part question has several retrieval queries and one pool to
+    # rank. Joining them states the whole need, which is what the invented
+    # sentence was for.
+    return " ".join(usable)
+
+
 class QueryRewriter:
     """Rewrite a query into self-contained retrieval queries, when needed."""
 
@@ -184,9 +219,8 @@ class QueryRewriter:
                 "items": {"type": "string"},
                 "minItems": 1,
             },
-            "rerank_query": {"type": "string"},
         },
-        "required": ["queries", "rerank_query"],
+        "required": ["queries"],
     }
 
     def __init__(self, llm_client: LMStudioClient | None = None):
@@ -221,7 +255,7 @@ class QueryRewriter:
             )
 
         try:
-            queries, rerank_query = self._call(query, history, decision.reason)
+            queries = self._call(query, history, decision.reason)
         except (LLMError, ValueError) as exc:
             logger.warning("Query rewrite failed (%s): %s", decision.reason, exc)
 
@@ -242,7 +276,7 @@ class QueryRewriter:
 
         return RewriteResult(
             queries=queries,
-            rerank_query=rerank_query,
+            rerank_query=rerank_query_for(queries),
             rewritten=True,
             reason=decision.reason,
             llm_calls=1,
@@ -271,7 +305,7 @@ class QueryRewriter:
         query: str,
         history: list[ConversationTurn],
         reason: str,
-    ) -> tuple[list[str], str]:
+    ) -> list[str]:
         response = self.llm.generate(
             prompt=self._build_prompt(query, history, reason),
             temperature=0.0,
@@ -286,55 +320,16 @@ class QueryRewriter:
         history: list[ConversationTurn],
         reason: str,
     ) -> str:
-        if history:
-            conversation = "\n".join(
-                f"User: {turn.user}\nAssistant: {turn.assistant}"
-                for turn in history
-            )
-        else:
-            conversation = "No previous conversation."
-
-        if reason == "follow_up":
-            task = (
-                "This question refers back to the conversation. Rewrite it as "
-                "ONE self-contained question that names its subject "
-                "explicitly, so it can be understood with no conversation "
-                "history. Return exactly one query."
-            )
-        else:
-            task = (
-                "This question asks for more than one independent piece of "
-                "information, and they live in different parts of the "
-                "bulletin. Split it into one self-contained retrieval query "
-                f"per information need, at most {settings.max_subqueries}. "
-                "Do not split a single need into paraphrases."
-            )
-
-        return f"""
-You prepare retrieval queries for a question-answering system over the East
-West University Undergraduate Bulletin. You do NOT answer questions.
-
-{task}
-
-Rules:
-- Preserve exact program names, course codes, numbers and terminology.
-- Do not add facts, requirements or subjects that are not in the question or
-  the conversation history.
-- Do not invent a program or department that was never mentioned.
-- Keep the wording natural; do not produce keyword soup.
-
-Also return "rerank_query": one natural-language sentence stating the COMPLETE
-information need, used to rank evidence after retrieval.
-
-CONVERSATION HISTORY:
-{conversation}
-
-QUESTION:
-{query}
-""".strip()
+        """Delegates: both of this system's prompts live in one file."""
+        return prompts.build_rewrite_prompt(
+            question=query,
+            history=history,
+            reason=reason,
+            max_subqueries=settings.max_subqueries,
+        )
 
     @staticmethod
-    def _parse(response: str, original: str) -> tuple[list[str], str]:
+    def _parse(response: str, original: str) -> list[str]:
         cleaned = (response or "").strip()
 
         try:
@@ -372,11 +367,4 @@ QUESTION:
         if not queries:
             raise ValueError("Query rewriter returned no usable queries.")
 
-        rerank_query = data.get("rerank_query")
-
-        if not isinstance(rerank_query, str) or not rerank_query.strip():
-            # Recoverable: the queries are the part retrieval needs. Rank
-            # against the question as asked rather than failing the rewrite.
-            rerank_query = original
-
-        return queries, rerank_query.strip()
+        return queries

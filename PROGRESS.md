@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 6 — Grounding + deterministic validation (Phases 0–5 done)**
+**Current phase: 7 — Verification, terminal app, observability (Phases 0–6 done)**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -16,8 +16,8 @@ Read HANDOFF.md for the full plan before working.
 | 3 | Retrieval (BGE-M3, persisted BM25, expansion) | done (acceptance met; see the expansion caveat) |
 | 4 | Reranking (bge-reranker-v2-m3, enforce top_k=5) | done (acceptance NOT met; see below) |
 | 5 | Collapse the agent layer | done + **verified end to end against live Gemma 4** (Session 7) |
-| 6 | Grounding + deterministic validation | next |
-| 7 | Verification, terminal app, observability | not started |
+| 6 | Grounding + deterministic validation | done (**all three criteria met, live Gemma 4, Session 8**) |
+| 7 | Verification, terminal app, observability | next |
 
 ---
 
@@ -46,7 +46,7 @@ saved run, which is how the Phase 1 baseline was restated below without rebuildi
 | page-P@5 | 0.195 | 0.187 | 0.193 | 0.200 | 0.209 | - |
 | Citation accuracy | - | - | - | - | - | >= 0.95 |
 | Number fidelity | - | - | - | - | - | 1.00 |
-| Abstention accuracy | - | - | - | - | **0.600** (see Session 6) | >= 0.80 |
+| Abstention accuracy | - | - | - | - | 0.600 (gate only, Session 6) | >= 0.80 |
 | Faithfulness | - | - | - | - | - | >= 0.90 |
 | LLM calls / query | 5-11 | - | - | - | **1 typical, 2 max** | 1-2 |
 
@@ -96,6 +96,26 @@ of *pages*; it is the apples-to-apples comparison, while pool 50 is the operatio
 | Corpus tokens unreachable by dense retrieval | 17.9% | 0% |
 | Chunks with an unsupported program label | 116 | 0 (test-enforced) |
 | Chunks starting or ending mid-word | present | 0 (test-enforced) |
+
+Phase 6 changed no ranking, and the retrieval eval confirms it rather than assuming it:
+re-running `run_eval.py --rerank --label phase6` reproduces Phase 4/5 **exactly** --
+page-recall@5 0.926, @10 0.983, @20 0.986, @50 0.986, nDCG@10 0.878, MRR@10 0.855, P@5 0.209,
+same single zero-recall question (q034), same 0/10 adversarial top-1 on a distractor.
+
+**Generation metrics (Phase 6, 125 questions, live Gemma 4, `eval/run_generation_eval.py`).**
+These need the whole pipeline and an LLM, which is why they are absent above: `run_eval.py`
+scores rankings and stops there.
+
+| Generation metric | Phase 6 | Target | |
+|---|---|---|---|
+| Citation accuracy | **1.000** | >= 0.95 | MET |
+| Number fidelity | **1.000** | = 1.00 | MET |
+| Abstention accuracy | **0.800** (12/15) | >= 0.80 | MET |
+| False abstentions on answerable | 2/110 | - | |
+| Citation density (factual sentences cited) | 0.965 | - | |
+| Gold values reaching the answer | 0.843 | - | |
+| LLM calls / query | 0 -> 9, 1 -> 94, 2 -> 22, 3 -> 0 | 1-2 (+1 regen) | |
+| Latency | mean 16.7s, median 15.0s, p95 30.2s | - | |
 
 ---
 
@@ -618,3 +638,162 @@ threshold provably cannot**, and it is vocabulary-independent. Phase 6 should le
 accuracy 0.600 vs the >= 0.80 target, which Session 6 showed needs grounding rather than
 threshold tuning; and `readme.md`, which still documents Ollama/Qwen and `app/chat.py`
 (0 bytes) - that is the Phase 7 contradiction HANDOFF asks to be resolved.
+
+### Session 8 — Phase 6 (grounding + deterministic validation)
+
+**All three Phase 6 criteria are met, measured against live Gemma 4 over all 125 questions:
+citation accuracy 1.000 (>= 0.95), number fidelity 1.000 (= 1.00), abstention accuracy
+0.800 (>= 0.80).** 242 tests pass, 1 xfail (up from 173). Retrieval metrics are unchanged
+from Phases 4/5 — re-measured, not assumed.
+
+**Files.** New: `src/validation/{citations,numbers}.py`, `eval/run_generation_eval.py`,
+`tests/test_{citations,numbers,answer_agent,generation_eval}.py`. Written for the first time:
+`src/generation/prompts.py` (0 bytes since the project began). Rewritten:
+`src/agents/answer_agent.py`. Changed: `pipeline.py`, `query_rewriter.py`, `settings.py`,
+`run_eval.py`, `scripts/chat.py`, `tests/test_{pipeline,query_rewriter,llm_fallbacks}.py`.
+
+- **Sentence-level citations.** The old prompt asked for a page reference somewhere in the
+  answer, which is unverifiable: a paragraph ending `[Page 176]` says nothing about which of
+  its four claims came from there. The prompt now asks for a citation per factual sentence,
+  and 0.965 of factual sentences carry one.
+- **`prompts.py` holds both prompts this system sends.** The answer prompt also lost rules
+  6-8 — "do not treat a passage as supporting evidence merely because it contains similar
+  words", "prefer evidence specifically relevant to the entity asked about", "do not combine
+  unrelated passages". Those were hand-patches written against Phase 0 retrieval, which
+  returned scholarship passages falsely labelled "Bachelor of Pharmacy" (HANDOFF's KEY
+  INSIGHT). Phases 2-4 fixed that at the source; the rules now describe a failure mode the
+  retriever no longer produces and push the model to refuse evidence that is correct.
+- **One regeneration, carrying the reason.** A validation failure feeds the specific
+  violation back into the prompt ("it cited page 41, which is not in the evidence").
+  Regenerating without it is diagnosis #10 — the deleted retrieval loop re-ran an unchanged
+  prompt at temperature 0.0 and reproduced its own failure four calls deep.
+- **Abstention now has three paths and one message.** The calibrated gate (unchanged, 0.02),
+  the generator emitting `NOT_IN_BULLETIN` after reading the evidence, and an answer that
+  fails validation twice being withheld. The trace and the REPL say which one fired.
+
+#### The abstention gap Sessions 6 and 7 identified is closed, and grounding is what closed it
+
+Session 6 measured the gate at **0.600** and showed no threshold could do better: the same
+correct chunk scores 0.9913 and 0.0652 for two phrasings of one question, so raising the
+threshold refuses real questions without catching more fake ones. Session 7 then watched
+Gemma refuse the signature query unprompted and recommended leaning on that.
+
+It works. **0.600 -> 0.800.** The gate still catches 9 of 15 on score alone; the generator
+catches 3 more by reading the retrieved pages and reporting that they do not answer the
+question — exactly the "Is there a nursing degree?" shape no score threshold can express,
+because retrieval is *correct* there and the right answer is to read the Degrees Offered page
+and say no. **False abstentions stayed at 2/110**, so this was not bought by refusing more.
+
+#### The three remaining "misses" are correct answers, and two gold labels are wrong
+
+Audited by hand against the PDF rather than accepted as failures:
+
+| qid | question | what the pipeline said | verdict |
+|---|---|---|---|
+| q102 | Does EWU offer a Bachelor of Nursing program? | "EWU plans to offer B.Sc. in Nursing degree [Page 17]" | p17 says exactly that — **gold label wrong** |
+| q106 | ...student exchange with a university in Europe? | names the University of Luton, England [Page 16] | p16 lists it — **gold label wrong** |
+| q103 | Does EWU have a football team? | "mentions a Sports Club [Page 213], but does not state whether EWU has a football team" | correct, and it declines *inside* the answer |
+
+`dataset.jsonl` was built in Phase 1 with unanswerable topics "confirmed absent from the PDF
+by text search"; that search missed these two. **The labels were deliberately left alone** —
+correcting a gold label in the direction that improves your own score needs a separate,
+visible decision, and the criterion is met at 0.800 without it. Phase 7 should fix them and
+re-measure; the honest reading of 12/15 is that all 15 responses were appropriate.
+
+#### Ablation: the checks are cheap insurance, not the source of the result
+
+`--no-validation` measures the checks without acting on them (no regeneration, no guard):
+
+| | checks off | shipped (checks + 1 regeneration) |
+|---|---|---|
+| citation accuracy | 0.998 | **1.000** |
+| number fidelity | 1.000 | **1.000** |
+| answers citing an unretrieved page | 1 (q047) | 0 |
+| answers with an ungrounded number | 0 | 0 |
+| abstention accuracy | 0.800 | 0.800 |
+| regenerations | 0 | 1 of 125 |
+
+**Stated plainly: given this prompt, Gemma almost never violates grounding on its own.** One
+citation error in 111 delivered answers, which the regeneration fixed; number fidelity was
+already 1.000 unenforced. The mechanism costs one extra LLM call across 125 questions and
+closes the one gap, but the result comes from the prompt and from Phases 2-4's retrieval
+work, not from the validator. It stays because the failure it guards against — an invented
+fee in a document people act on — is the expensive one, and it is free when nothing is wrong.
+
+#### THE VALIDATOR'S FIRST VERSION WITHHELD THREE CORRECT ANSWERS. READ THIS BEFORE EDITING IT.
+
+The first `normalise()` dropped any separator sitting between two digits, so `Tk.15, 000/-`
+would match an answer's `Tk. 15,000`. That is right for the fee and wrong for everything else
+in a serialised table: page 216 runs `A-` / `3.70` / `83 - below 87` down consecutive lines,
+and collapsing the newline produced `3.7083`. The grade point then did not appear as a whole
+number, so **q041, q044 and q123 were refused as inventions when they had copied the bulletin
+correctly** — and that run reported number fidelity 1.000 while doing it.
+
+A guard that reports perfection by silently refusing good answers is worse than no guard.
+`_SEPARATORS` now requires an actual comma followed by exactly three digits, which cannot
+weld two numbers together. Five regression tests pin it, including the grading table itself.
+The first run's "4 ungrounded numbers" were all this bug; every number above is post-fix.
+
+#### Defect 4 (Session 7) is closed: the reranking input is derived, not invented
+
+The rewrite LLM used to return a free-form `rerank_query` alongside its retrieval queries.
+Session 7 measured two runs of one follow-up producing byte-identical retrieval queries but
+different rerank sentences, and that alone changed which pages survived `top_k=5` — one
+conversation answered correctly, the next did not. It also meant `run_eval.py` had never
+scored the string production actually reranked with.
+
+`rerank_query` is now derived from the returned queries (the single rewritten question, or
+all of them joined for a multi-part), the field is gone from the schema and the prompt, and
+`run_eval.py --real-rewriter` runs the production rewriter so the harness can reproduce the
+pipeline's input exactly. Same question, same ranking, twice.
+
+#### Parent expansion was measured and stays OFF, which deviates from HANDOFF
+
+HANDOFF's TARGET ARCHITECTURE puts parent expansion in the ONLINE path. It has been
+implemented since Phase 3, but `settings.parent_expansion_enabled` has defaulted to False, so
+the shipped chatbot hands the generator 250-token children rather than their sections. That
+looked like the cause of the withheld grading-table answers, so it was measured rather than
+assumed — and after the validator fix those answers ground correctly *without* it.
+
+Turning it on over the full set is worse on the criterion that matters:
+
+| | children (shipped) | parent sections |
+|---|---|---|
+| abstention accuracy | **0.800** | 0.733 — **fails the >= 0.80 criterion** |
+| false abstentions on answerable | **2/110** | 4/110 (q001 and q005 previously answered) |
+| latency, mean / p95 | **16.7s / 30.2s** | 25.5s / 46.8s |
+| LLM errors | **0** | 1 (q039) |
+| gold values reaching the answer | 0.843 | 0.852 |
+
+Roughly 8k tokens of section text per query dilutes the evidence: the generator says "not in
+the bulletin" more often, not less. **This is a stated deviation from the plan, not an
+oversight.** Two HANDOFF requirements conflict here and the acceptance criterion is the
+measurable one, so it ships off. Flip `parent_expansion_enabled` to overrule this, and re-run
+`eval/run_generation_eval.py` when you do.
+
+#### Also worth knowing
+
+- **The gold-fact proxy in the eval report was misleading and now reports both forms.** Gold
+  facts are PDF text as typeset, so "The B.Sc. in CSE requires a minimum of 140 credits"
+  scored 0 against gold `"Total 140"`. Verbatim containment reads **0.500**; matching on the
+  gold fact's *numbers* instead reads **0.843**, and that is the one to quote. Neither is
+  faithfulness — Phase 7 owns that. `--rescore LABEL` backfills new measures onto saved runs
+  without paying for the LLM again.
+- **The LLM-call ceiling rose from 2 to 3** (rewrite + generate + regenerate), which HANDOFF's
+  Phase 6 requires. Measured: 3 never actually occurred across 125 questions (0 -> 9,
+  1 -> 94, 2 -> 22). `tests/test_pipeline.py` pins both the Phase 5 budget and the new ceiling.
+- **`table` is still the weakest category**, as it has been since Phase 2: gold values reach
+  the answer 0.333 of the time against 0.9+ everywhere else. Citation accuracy and number
+  fidelity are 1.000 there — when it answers it answers correctly — so this is the same
+  ranking-among-near-identical-pages problem Phases 3 and 4 recorded, not a grounding one.
+- **VRAM is tight but holds**: LM Studio ~9GB + BGE-M3 + reranker reaches ~15.5GB of 16.4GB
+  during an eval. Do not run the test suite (which loads both local models) against a live
+  eval run.
+
+**Next — Phase 7:** restructure `VerificationAgent` to see the FULL reranked set rather than
+the filtered one, and decide whether it earns its LLM call at all given citation accuracy
+1.000 and number fidelity 1.000 without it; add DeBERTa-MNLI entailment only if a
+faithfulness gap survives; trace -> metrics aggregator; resolve `app/chat.py` (still 0 bytes)
+vs `scripts/chat.py` and rewrite `readme.md`, which still documents Ollama/Qwen, a supervisor
+agent and an evidence-selection stage that no longer exist. Also fix the two wrong
+`unanswerable` labels (q102, q106) and re-measure abstention accuracy.

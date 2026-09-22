@@ -185,6 +185,26 @@ class Settings(BaseSettings):
     llm_verification_enabled: bool = False
 
     # ---------------------------------------------------------
+    # Grounding (Phase 6)
+    # ---------------------------------------------------------
+    #: Check the generated answer against the evidence before delivering it:
+    #: every cited page must be in the retrieved set, and every number must
+    #: appear in the evidence text. Both checks are deterministic -- no LLM,
+    #: unlike the VerificationAgent they replace, which spent a call judging
+    #: an answer against the same chunks that produced it (diagnosis #11).
+    #: Off only for measuring what the checks are worth; the eval harness
+    #: flips it, nothing else should.
+    answer_validation_enabled: bool = True
+
+    #: What to do when the ONE regeneration still fails validation: abstain
+    #: (True) or deliver the answer with the violation recorded in the trace
+    #: (False). True ships, because the criterion for number fidelity is 1.00
+    #: and an invented fee is worse than a refusal in a document people act
+    #: on. eval/run_generation_eval.py reports how often this fires and what
+    #: the numbers look like without it, so the cost stays visible.
+    abstain_on_failed_validation: bool = True
+
+    # ---------------------------------------------------------
     # RRF
     # ---------------------------------------------------------
     rrf_k: int = 60
@@ -193,6 +213,12 @@ class Settings(BaseSettings):
     # Workflow limits
     # ---------------------------------------------------------
     max_subqueries: int = 5
+
+    #: HANDOFF's Phase 6: "on failure: ONE regeneration, WITH the explicit
+    #: failure reason in the prompt". The reason is the operative part --
+    #: diagnosis #10 is a retry loop that re-ran an unchanged prompt at
+    #: temperature 0.0 and reproduced its own failure four calls in a row.
+    #: Raising this above 1 raises the worst-case LLM calls per query.
     max_answer_regenerations: int = 1
     max_conversation_exchanges: int = 6
 

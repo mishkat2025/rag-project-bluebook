@@ -117,7 +117,6 @@ def test_an_empty_query_is_not_rewritten():
 def test_the_rewrite_replaces_the_retrieval_queries():
     llm = FakeLLM(json.dumps({
         "queries": ["Bachelor of Pharmacy admission requirements"],
-        "rerank_query": "admission requirements for the Pharmacy program",
     }))
 
     result = QueryRewriter(llm).rewrite("What about for Pharmacy?", HISTORY)
@@ -125,11 +124,58 @@ def test_the_rewrite_replaces_the_retrieval_queries():
     assert llm.calls == 1
     assert result.rewritten
     assert result.queries == ["Bachelor of Pharmacy admission requirements"]
-    assert result.rerank_query == "admission requirements for the Pharmacy program"
+
+
+def test_the_rerank_query_is_derived_from_the_queries_not_invented():
+    """Defect 4 (Session 7): the reranking input must be reproducible.
+
+    It used to be a separate free-form field the rewrite LLM filled in. Two
+    runs of one question produced different sentences, and that alone changed
+    which pages survived top_k=5 -- so the same follow-up answered correctly
+    in one conversation and wrongly in another, and eval/run_eval.py had never
+    scored the string production actually reranked with.
+    """
+    llm = FakeLLM(json.dumps({
+        "queries": ["Bachelor of Pharmacy admission requirements"],
+    }))
+
+    result = QueryRewriter(llm).rewrite("What about for Pharmacy?", HISTORY)
+
+    assert result.rerank_query == "Bachelor of Pharmacy admission requirements"
+
+
+def test_the_rerank_query_is_the_bare_question_when_nothing_was_rewritten():
+    result = QueryRewriter(FakeLLM("unused")).rewrite(
+        "What is the one-time admission fee?", []
+    )
+
+    assert result.rerank_query == "What is the one-time admission fee?"
+
+
+def test_a_multi_part_rerank_query_states_the_whole_need():
+    llm = FakeLLM(json.dumps({
+        "queries": ["CSE total credit requirement", "EEE total credit requirement"],
+    }))
+
+    result = QueryRewriter(llm).rewrite("Compare CSE and EEE credits", [])
+
+    assert result.rerank_query == (
+        "CSE total credit requirement EEE total credit requirement"
+    )
+
+
+def test_the_rewriter_no_longer_asks_the_llm_for_a_rerank_query():
+    assert "rerank_query" not in QueryRewriter.RESPONSE_SCHEMA["properties"]
+    assert QueryRewriter.RESPONSE_SCHEMA["required"] == ["queries"]
+
+    llm = FakeLLM(json.dumps({"queries": ["x"]}))
+    QueryRewriter(llm).rewrite("What about for Pharmacy?", HISTORY)
+
+    assert "rerank_query" not in llm.last_prompt
 
 
 def test_the_prompt_carries_the_conversation_history():
-    llm = FakeLLM(json.dumps({"queries": ["x"], "rerank_query": "y"}))
+    llm = FakeLLM(json.dumps({"queries": ["x"]}))
 
     QueryRewriter(llm).rewrite("What about for Pharmacy?", HISTORY)
 
@@ -139,7 +185,6 @@ def test_the_prompt_carries_the_conversation_history():
 def test_multi_part_rewriting_can_return_several_queries():
     llm = FakeLLM(json.dumps({
         "queries": ["CSE total credit requirement", "EEE total credit requirement"],
-        "rerank_query": "credit requirements for CSE and EEE",
     }))
 
     result = QueryRewriter(llm).rewrite("Compare CSE and EEE credits", [])
@@ -152,7 +197,6 @@ def test_subqueries_are_capped_by_settings():
 
     llm = FakeLLM(json.dumps({
         "queries": [f"q{i}" for i in range(20)],
-        "rerank_query": "everything",
     }))
 
     result = QueryRewriter(llm).rewrite("Compare a and what about b?", [])
@@ -163,7 +207,6 @@ def test_subqueries_are_capped_by_settings():
 def test_blank_queries_from_the_llm_are_dropped():
     llm = FakeLLM(json.dumps({
         "queries": ["", "   ", "real query"],
-        "rerank_query": "r",
     }))
 
     result = QueryRewriter(llm).rewrite("Compare a and what about b?", [])

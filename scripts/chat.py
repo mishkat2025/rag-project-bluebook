@@ -93,6 +93,26 @@ def print_trace(state: RAGState) -> None:
           f"top={gate.get('top_score', 0):.3f} "
           f"threshold={gate.get('threshold', 0):.2f}")
 
+    answer = trace.get("answer", {})
+    if answer:
+        print(f"  generation      : {answer.get('llm_calls', 0)} call(s)"
+              f"{', regenerated' if answer.get('regenerated') else ''}")
+
+    validation = trace.get("validation")
+    if validation:
+        # Deterministic, so this line is a fact about the answer above rather
+        # than a second model's opinion of it.
+        print(f"  validation      : "
+              f"{'passed' if validation['valid'] else 'FAILED'} | "
+              f"cited {validation['cited_pages']} "
+              f"(invalid {validation['invalid_pages']}) | "
+              f"numbers {validation['numbers']} "
+              f"(ungrounded {validation['unsupported_numbers']})")
+
+    abstained = trace.get("abstained")
+    if abstained:
+        print(f"  abstained       : {abstained.get('reason')}")
+
     print(f"  LLM calls       : {trace.get('llm_calls')}")
 
 
@@ -163,10 +183,21 @@ def main() -> None:
 
         if evidence.get("abstained"):
             # Say why, rather than leaving the user guessing whether the
-            # question was understood.
-            print(f"(no supporting passage scored above "
-                  f"{evidence.get('threshold', 0):.2f}; "
-                  f"best was {evidence.get('top_score', 0):.2f})")
+            # question was understood. There are three ways to get here now:
+            # the gate never saw a passage worth using, the generator read the
+            # passages and reported that they do not answer the question, or
+            # the answer failed deterministic validation twice.
+            reason = evidence.get("abstention_reason")
+
+            if reason == "generator_not_in_bulletin":
+                print("(the retrieved pages do not contain this information)")
+            elif reason == "failed_validation":
+                print("(the draft answer could not be grounded in the "
+                      "retrieved pages, so it was withheld)")
+            else:
+                print(f"(no supporting passage scored above "
+                      f"{evidence.get('threshold', 0):.2f}; "
+                      f"best was {evidence.get('top_score', 0):.2f})")
         else:
             pages = evidence.get("source_pages") or []
 

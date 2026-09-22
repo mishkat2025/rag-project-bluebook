@@ -76,6 +76,19 @@ class CountingLLM:
         return self.reply
 
 
+class _ScriptedLLM:
+    """Returns each scripted reply in turn. Used for the regeneration tests."""
+
+    def __init__(self, *replies):
+        self.replies = list(replies)
+        self.calls = 0
+
+    def generate(self, prompt, temperature=None, json_schema=None):
+        self.calls += 1
+
+        return self.replies.pop(0) if len(self.replies) > 1 else self.replies[0]
+
+
 class FakeGenerator:
     def __init__(self, llm):
         self.llm = llm
@@ -93,8 +106,7 @@ def build(scores=None, results=None):
     return {
         "retriever": FakeRetriever(results),
         "reranker": FakeReranker(scores),
-        "rewriter": QueryRewriter(CountingLLM('{"queries": ["rewritten"], '
-                                              '"rerank_query": "rewritten"}')),
+        "rewriter": QueryRewriter(CountingLLM('{"queries": ["rewritten"]}')),
         "generator": FakeGenerator(llm),
     }, llm
 
@@ -139,7 +151,8 @@ def test_an_abstention_costs_zero_generation_calls():
     assert state.trace["llm_calls"] == 0
 
 
-def test_no_query_ever_exceeds_two_llm_calls():
+def test_no_query_ever_exceeds_two_llm_calls_before_regeneration():
+    """Phase 5's budget, which still holds whenever the answer validates."""
     for query, history in [
         ("What is the CGPA requirement?", []),
         ("What about Pharmacy?", [ConversationTurn(user="CSE?", assistant="Yes.")]),
@@ -151,6 +164,57 @@ def test_no_query_ever_exceeds_two_llm_calls():
         pipeline.run(state, **parts)
 
         assert state.trace["llm_calls"] <= 2, query
+
+
+def test_a_regeneration_makes_the_worst_case_three_calls():
+    """Phase 6 raises the ceiling, and the trace must say so.
+
+    HANDOFF's Phase 6 mandates ONE regeneration carrying the failure reason,
+    so a follow-up whose first answer fails validation costs rewrite +
+    generate + regenerate. This uses the real AnswerAgent rather than the
+    FakeGenerator, because the regeneration lives inside it.
+    """
+    from src.agents.answer_agent import AnswerAgent
+
+    parts, _ = build()
+    # The first answer cites a page that was never retrieved; the second is
+    # clean, so the regeneration is what makes the query succeed.
+    parts["generator"] = AnswerAgent(_ScriptedLLM(
+        "The requirement is a CGPA of 2.5 [Page 41].",
+        "The requirement is a CGPA of 2.5 [Page 176].",
+    ))
+
+    state = RAGState(
+        original_query="How many credits does it need?",
+        conversation_history=[
+            ConversationTurn(user="Tell me about CSE.", assistant="A department.")
+        ],
+    )
+
+    pipeline.run(state, **parts)
+
+    assert state.trace["answer"]["regenerated"] is True
+    assert state.trace["llm_calls"] == 3
+    assert "[Page 176]" in state.draft_answer
+
+
+def test_an_answer_that_cannot_be_grounded_is_replaced_by_an_abstention():
+    """Deterministic validation, not a second model's opinion of the answer."""
+    from src.agents.answer_agent import AnswerAgent
+
+    parts, _ = build()
+    parts["generator"] = AnswerAgent(_ScriptedLLM(
+        "Admission costs Tk. 99,000 [Page 176].",
+        "Admission costs Tk. 88,000 [Page 176].",
+    ))
+
+    state = RAGState(original_query="What does admission cost?")
+
+    pipeline.run(state, **parts)
+
+    assert state.draft_answer == pipeline.ABSTENTION_MESSAGE
+    assert "99,000" not in state.draft_answer
+    assert state.evidence_status["abstention_reason"] == "failed_validation"
 
 
 # ---------------------------------------------------------------------------

@@ -96,15 +96,15 @@ def test_a_self_contained_query_never_reaches_the_llm():
     assert result.queries == ["What is the minimum CGPA for admission to CSE?"]
 
 
-def test_a_rewrite_that_returns_no_rerank_query_still_succeeds():
-    """A missing rerank_query is recoverable -- the queries are what matters."""
+def test_the_rerank_query_survives_an_llm_that_returns_only_queries():
+    """Phase 6 derives it, so the LLM cannot omit it or vary it."""
     llm = FakeLLM(reply='{"queries": ["CSE admission GPA"]}')
 
     result = QueryRewriter(llm).rewrite("What about CSE and how many credits?", [])
 
     assert result.rewritten is True
     assert result.queries == ["CSE admission GPA"]
-    assert result.rerank_query == "What about CSE and how many credits?"
+    assert result.rerank_query == "CSE admission GPA"
 
 
 # ---------------------------------------------------------------------------
