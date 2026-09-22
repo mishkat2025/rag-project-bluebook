@@ -22,8 +22,13 @@ evaluation set with gold page numbers, not assumed. The current numbers (see
 | page-nDCG@10 | 0.878 | (reranker: +0.10 over no-rerank; got +0.071) |
 | citation accuracy | 1.000 | >= 0.95 |
 | number fidelity | 1.000 | = 1.00 |
-| abstention accuracy | see PROGRESS.md Session 9 | >= 0.80 |
-| LLM calls / query | 1 typical, 2 common, 3 worst case | 1-2 |
+| abstention accuracy | 0.923 | >= 0.80 |
+| hallucination rate | 0.000 | <= 0.05 |
+| LLM calls / query | 1 typical, 2 common | 1-2 |
+
+A third LLM call is structurally possible (rewrite + generation + one
+regeneration) but was never reached across the 125-question set. An
+abstention costs zero calls.
 
 ## 2. Architecture
 
@@ -43,7 +48,7 @@ OFFLINE (one-time, deterministic)
        missing id/page/parent
     -> ChromaDB (BGE-M3 embeddings) + BM25 (persisted) + parent store (JSON)
 
-ONLINE (1 LLM call typical, 2 common, 3 worst case)
+ONLINE (1 LLM call typical, 2 common)
 
   user query
     -> deterministic acronym expansion (CSE <-> Computer Science and
@@ -120,7 +125,7 @@ rag-project/
 ├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
-├── tests/                pytest suite (245+ tests)
+├── tests/              pytest suite (250 tests)
 ├── .env
 └── requirements.txt
 ```
@@ -247,7 +252,7 @@ EWU has a football team.
 .\.venv\Scripts\python.exe eval\faithfulness_eval.py --label mylabel
 ```
 
-`pytest` runs the full test suite (245+ tests, one xfail documenting a known,
+`pytest` runs the full test suite (250 tests, one xfail documenting a known,
 narrow reranker regression on the "CGPA for admission to CSE" phrasing --
 see `tests/test_reranker.py`).
 
