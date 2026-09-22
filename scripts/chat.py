@@ -1,85 +1,252 @@
-from src.orchestration.state import ConversationTurn, RAGState
-from src.orchestration.workflow import RAGWorkflow
+r"""The EWU Bulletin terminal chatbot.
 
-def main():
-    print("=" * 60)
-    print("EWU ADVANCED RAG")
-    print("=" * 60)
-    print("Ask questions about the EWU Undergraduate Bulletin.")
-    print("Type 'clear' to start a new conversation.")
-    print("Type 'exit' or 'quit' to end the chat.")
-    print("=" * 60)
+    .\.venv\Scripts\python.exe scripts\chat.py
 
+Loads the retriever, the cross-encoder and the LM Studio client once, then
+answers questions until told to stop. The startup banner reports the resolved
+device and whether the LLM endpoint is reachable, so a CPU regression or a
+stopped LM Studio is visible immediately instead of being felt as unexplained
+slowness or as a wall of errors.
+"""
+import logging
+import sys
+import time
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+# The bulletin uses curly quotes and en-dashes, and the chunks store them as
+# proper UTF-8. The Windows console defaults to cp1252, which renders them as
+# "?" -- so an answer quoting 'GCE "O" Level' came out mangled. Reconfigure
+# rather than strip: the text is correct, only the terminal's default is not.
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")
+    except (AttributeError, OSError):  # redirected to something unreconfigurable
+        pass
+
+from src.config.settings import settings  # noqa: E402
+from src.generation.lmstudio_client import LMStudioClient  # noqa: E402
+from src.orchestration.state import ConversationTurn, RAGState  # noqa: E402
+from src.orchestration.workflow import RAGWorkflow  # noqa: E402
+from src.storage.trace_store import TraceStore  # noqa: E402
+
+GREETINGS = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}
+
+logger = logging.getLogger(__name__)
+
+HELP = """Commands:
+  clear          start a new conversation
+  trace          show how the last answer was produced
+  exit / quit    end the chat"""
+
+
+def llm_status() -> str:
+    """Whether LM Studio is up, checked once at startup.
+
+    Gemma's own GPU usage is LM Studio's "GPU Offload" setting, not anything
+    in this repo -- fixing torch does nothing for the LLM -- so all this can
+    honestly report is reachability.
+    """
+    if LMStudioClient().health_check():
+        return "ok"
+
+    return "UNREACHABLE - start LM Studio and load the model"
+
+
+def print_banner(workflow: RAGWorkflow) -> None:
+    print("=" * 72)
+    print("EWU UNDERGRADUATE BULLETIN - RAG CHATBOT")
+    print("=" * 72)
+
+    print("Loading models ...", flush=True)
+    devices = workflow.warm_up()
+
+    print(
+        f"embedder/reranker: {devices['reranker']} | "
+        f"LLM: LM Studio @ {settings.llm_base_url} [{llm_status()}]"
+    )
+    print(f"index: {workflow.retriever.dense_retriever.count()} chunks | "
+          f"rerank top_k={settings.rerank_top_k} | "
+          f"abstain below {settings.abstention_threshold:.2f}")
+    print("=" * 72)
+    print(HELP)
+    print("=" * 72)
+
+
+def _save_trace(state: RAGState, question: str, elapsed_s: float) -> None:
+    """Persist this turn's trace, so real usage -- not just the eval set --
+    can be read back later with ``eval/trace_metrics.py``.
+
+    Best-effort: a disk error here must not take down the REPL over
+    something that is purely observability.
+    """
+    try:
+        TraceStore().save({
+            **state.trace,
+            "question": question,
+            "answer": state.draft_answer,
+            "elapsed_s": elapsed_s,
+        })
+    except OSError as exc:
+        logger.warning("Could not persist trace: %s", exc)
+
+
+def print_trace(state: RAGState) -> None:
+    trace = state.trace
+
+    rewrite = trace.get("query_rewrite", {})
+    print(f"  query rewrite   : {rewrite.get('reason')} "
+          f"(llm_calls={rewrite.get('llm_calls', 0)})")
+
+    if rewrite.get("queries") not in (None, [state.original_query]):
+        for query in rewrite.get("queries", []):
+            print(f"                    -> {query}")
+
+    print(f"  retrieved       : {trace.get('retrieval', {}).get('candidate_count')} chunks")
+
+    reranking = trace.get("reranking", {})
+    scores = reranking.get("scores") or []
+    print(f"  reranked        : top {len(scores)} on {reranking.get('device')} "
+          f"scores={[round(s, 3) for s in scores]}")
+
+    gate = trace.get("evidence_gate", {})
+    print(f"  gate            : {gate.get('reason')} "
+          f"top={gate.get('top_score', 0):.3f} "
+          f"threshold={gate.get('threshold', 0):.2f}")
+
+    answer = trace.get("answer", {})
+    if answer:
+        print(f"  generation      : {answer.get('llm_calls', 0)} call(s)"
+              f"{', regenerated' if answer.get('regenerated') else ''}")
+
+    validation = trace.get("validation")
+    if validation:
+        # Deterministic, so this line is a fact about the answer above rather
+        # than a second model's opinion of it.
+        print(f"  validation      : "
+              f"{'passed' if validation['valid'] else 'FAILED'} | "
+              f"cited {validation['cited_pages']} "
+              f"(invalid {validation['invalid_pages']}) | "
+              f"numbers {validation['numbers']} "
+              f"(ungrounded {validation['unsupported_numbers']})")
+
+    abstained = trace.get("abstained")
+    if abstained:
+        print(f"  abstained       : {abstained.get('reason')}")
+
+    print(f"  LLM calls       : {trace.get('llm_calls')}")
+
+
+def main() -> None:
     workflow = RAGWorkflow()
-    conversation_history = []
+    print_banner(workflow)
+
+    conversation_history: list[ConversationTurn] = []
+    last_state: RAGState | None = None
 
     while True:
         try:
             user_input = input("\nYou: ").strip()
         except (KeyboardInterrupt, EOFError):
-            print("\n\nExiting...")
+            print("\n\nExiting.")
             break
 
         if not user_input:
             continue
 
-        if user_input.lower() in {"exit", "quit"}:
+        command = user_input.lower()
+
+        if command in {"exit", "quit"}:
             print("Goodbye.")
             break
 
-        if user_input.lower() == "clear":
+        if command == "clear":
             conversation_history.clear()
+            last_state = None
             print("Conversation history cleared.")
             continue
-        if user_input.lower() in {"hi", "hello", "hey", "good morning", "good afternoon"}:
-            print("\nEWU RAG: Hello! Ask me anything about the EWU Undergraduate Bulletin.")
+
+        if command in {"help", "?"}:
+            print(HELP)
             continue
+
+        if command == "trace":
+            if last_state is None:
+                print("No question has been answered yet.")
+            else:
+                print_trace(last_state)
+            continue
+
+        if command in GREETINGS:
+            print("\nEWU RAG: Hello. Ask me anything about the EWU "
+                  "Undergraduate Bulletin.")
+            continue
+
         state = RAGState(
             original_query=user_input,
             conversation_history=conversation_history.copy(),
         )
 
+        started = time.perf_counter()
+
         try:
             final_state = workflow.run(state)
+        except Exception as exc:  # noqa: BLE001 - the REPL must survive anything
+            print(f"\nError: {exc}")
+            continue
 
-            print("\nEWU RAG:")
-            print("-" * 60)
+        elapsed_s = round(time.perf_counter() - started, 2)
 
-            if final_state.draft_answer:
-                print(final_state.draft_answer)
+        last_state = final_state
+        evidence = final_state.evidence_status
+
+        if settings.trace_persist_enabled:
+            _save_trace(final_state, user_input, elapsed_s)
+
+        print("\nEWU RAG:")
+        print("-" * 72)
+        print(final_state.draft_answer or
+              "No answer was produced from the available bulletin evidence.")
+        print("-" * 72)
+
+        if evidence.get("abstained"):
+            # Say why, rather than leaving the user guessing whether the
+            # question was understood. There are three ways to get here now:
+            # the gate never saw a passage worth using, the generator read the
+            # passages and reported that they do not answer the question, or
+            # the answer failed deterministic validation twice.
+            reason = evidence.get("abstention_reason")
+
+            if reason == "generator_not_in_bulletin":
+                print("(the retrieved pages do not contain this information)")
+            elif reason == "failed_validation":
+                print("(the draft answer could not be grounded in the "
+                      "retrieved pages, so it was withheld)")
             else:
-                print(
-                    "The system could not generate a grounded answer "
-                    "from the available EWU Bulletin evidence."
-                )
-
-            print("-" * 60)
-
-            if final_state.verification_result:
-                print(
-                    f"Verification: "
-                    f"{'Approved' if final_state.verification_result.get('approved') else 'Not approved'}"
-                )
-
-            pages = final_state.evidence_status.get("source_pages", [])
+                print(f"(no supporting passage scored above "
+                      f"{evidence.get('threshold', 0):.2f}; "
+                      f"best was {evidence.get('top_score', 0):.2f})")
+        else:
+            pages = evidence.get("source_pages") or []
 
             if pages:
-                unique_pages = sorted(set(pages))
-                print(f"Source pages: {unique_pages}")
+                print(f"Source pages: {sorted(set(pages))}")
 
-            conversation_history.append(
-                ConversationTurn(
-                    user=user_input,
-                    assistant=final_state.draft_answer,
-                )
+        if final_state.verification_result.get("approved") is False:
+            print("Note: the verifier did not approve this answer.")
+
+        conversation_history.append(
+            ConversationTurn(
+                user=user_input,
+                assistant=final_state.draft_answer,
             )
+        )
 
-            # Keep only the most recent 6 exchanges.
-            conversation_history = conversation_history[-6:]
-
-        except Exception as exc:
-            print("\nRAG Error:")
-            print(exc)
+        conversation_history = conversation_history[
+            -settings.max_conversation_exchanges:
+        ]
 
 
 if __name__ == "__main__":

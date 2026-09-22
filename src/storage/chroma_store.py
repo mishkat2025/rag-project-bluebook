@@ -4,6 +4,7 @@ from typing import Any
 import chromadb
 from sentence_transformers import SentenceTransformer
 
+from src.config.device import describe_device, resolve_device
 from src.config.settings import settings
 from src.storage.vector_store import VectorStore
 
@@ -17,6 +18,7 @@ class ChromaVectorStore(VectorStore):
         self,
         persist_directory: Path | None = None,
         embedding_model: str | None = None,
+        device: str | None = None,
     ):
         self.persist_directory = Path(
             persist_directory or settings.chroma_dir
@@ -32,9 +34,26 @@ class ChromaVectorStore(VectorStore):
             or settings.embedding_model
         )
 
+        # Explicit, never auto-detected. Constructed without this argument,
+        # SentenceTransformer silently picked the CPU for all of Phases 1-4
+        # because torch was the "+cpu" wheel. resolve_device() raises instead
+        # of falling back when settings.require_gpu is set.
+        self.device = resolve_device(device)
+
         self.embedding_model = SentenceTransformer(
-            model_name
+            model_name,
+            device=self.device,
         )
+
+        # BGE-M3 ships an 8192-token window. Chunks are ~250 tokens, but a
+        # wide table can run past 4,000; the limit is set explicitly so the
+        # silent 256-token truncation that broke the MiniLM index (diagnosis
+        # #1) cannot reappear unnoticed if the model is swapped again.
+        self.embedding_model.max_seq_length = (
+            settings.embedding_max_seq_length
+        )
+
+        self.device_description = describe_device(self.device)
 
         self.client = chromadb.PersistentClient(
             path=str(self.persist_directory)
@@ -49,6 +68,7 @@ class ChromaVectorStore(VectorStore):
                 )
             },
         )
+
     def reset(self) -> None:
         """Delete and recreate the EWU bulletin collection."""
 
@@ -65,11 +85,14 @@ class ChromaVectorStore(VectorStore):
                 )
             },
         )
+
     def add(
         self,
         ids: list[str],
         texts: list[str],
         metadatas: list[dict[str, Any]],
+        batch_size: int | None = None,
+        show_progress: bool = True,
     ) -> None:
 
         if not (
@@ -85,23 +108,46 @@ class ChromaVectorStore(VectorStore):
         if not ids:
             return
 
-        embeddings = self.embedding_model.encode(
-            texts,
-            normalize_embeddings=True,
-            show_progress_bar=True,
+        size = (
+            batch_size
+            if batch_size is not None
+            else settings.embedding_batch_size
         )
 
-        self.collection.upsert(
-            ids=ids,
-            documents=texts,
-            metadatas=metadatas,
-            embeddings=embeddings.tolist(),
+        # Encode and upsert in slices: a full-corpus encode of a 568M-parameter
+        # model on CPU holds every embedding in memory before a single record
+        # is written, and a crash halfway through loses all of it.
+        for start in range(0, len(ids), size):
+            stop = start + size
+
+            embeddings = self.embedding_model.encode(
+                texts[start:stop],
+                normalize_embeddings=True,
+                batch_size=settings.embedding_encode_batch_size,
+                show_progress_bar=show_progress,
+            )
+
+            self.collection.upsert(
+                ids=ids[start:stop],
+                documents=texts[start:stop],
+                metadatas=metadatas[start:stop],
+                embeddings=embeddings.tolist(),
+            )
+
+    def embed_query(self, query: str) -> list[float]:
+        """Embed a single query with the collection's model."""
+        vector = self.embedding_model.encode(
+            query,
+            normalize_embeddings=True,
         )
+
+        return vector.tolist()
 
     def search(
         self,
         query: str,
         top_k: int,
+        where: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
 
         if not query.strip():
@@ -113,22 +159,22 @@ class ChromaVectorStore(VectorStore):
         if self.count() == 0:
             return []
 
-        query_embedding = self.embedding_model.encode(
-            query,
-            normalize_embeddings=True,
-        )
+        query_embedding = self.embed_query(query)
 
-        results = self.collection.query(
-            query_embeddings=[
-                query_embedding.tolist()
-            ],
-            n_results=min(top_k, self.count()),
-            include=[
+        query_kwargs: dict[str, Any] = {
+            "query_embeddings": [query_embedding],
+            "n_results": min(top_k, self.count()),
+            "include": [
                 "documents",
                 "metadatas",
                 "distances",
             ],
-        )
+        }
+
+        if where:
+            query_kwargs["where"] = where
+
+        results = self.collection.query(**query_kwargs)
 
         documents = results.get("documents", [[]])[0]
         metadatas = results.get("metadatas", [[]])[0]

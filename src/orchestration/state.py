@@ -45,17 +45,22 @@ class RAGState:
         default_factory=list
     )
 
+    #: The full cross-encoder ranking of the fused pool, before the
+    #: ``rerank_top_k`` cut. ``reranked_chunks`` above is what the generator
+    #: sees; this is what an independent verifier should see, so it is not
+    #: judging the answer against the same narrow slice that produced it
+    #: (diagnosis #11). Same scores, no extra model call -- the cross-encoder
+    #: already scores every candidate before any cut is applied.
+    all_reranked_chunks: list[dict[str, Any]] = field(
+        default_factory=list
+    )
+
     # ---------------------------------------------------------
     # Evidence
     # ---------------------------------------------------------
     evidence_status: dict[str, Any] = field(
         default_factory=dict
     )
-
-    # ---------------------------------------------------------
-    # Retry control
-    # ---------------------------------------------------------
-    retry_count: int = 0
 
     # ---------------------------------------------------------
     # Answer generation
@@ -70,13 +75,11 @@ class RAGState:
     )
 
     # ---------------------------------------------------------
-    # Workflow information
+    # Trace
     # ---------------------------------------------------------
-    workflow_type: str = "simple"
-
+    #: Which components ran. ``workflow_type`` and the router that read it are
+    #: gone: SIMPLE_WORKFLOW and COMPLEX_WORKFLOW were identical lists, and
+    #: choosing between them cost an LLM call (diagnosis #7).
     agents_used: list[str] = field(default_factory=list)
 
-    # ---------------------------------------------------------
-    # Retrieval trace
-    # ---------------------------------------------------------
     trace: dict[str, Any] = field(default_factory=dict)

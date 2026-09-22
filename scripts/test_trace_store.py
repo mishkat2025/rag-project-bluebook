@@ -27,7 +27,7 @@ def main() -> None:
             "reranked": 6,
         },
         "source_pages": [144, 176, 177],
-        "retry_count": 0,
+        "llm_calls": 1,
         "verification_result": {
             "approved": False,
             "unsupported_claims": [],

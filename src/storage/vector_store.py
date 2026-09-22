@@ -25,8 +25,13 @@ class VectorStore(ABC):
         self,
         query: str,
         top_k: int,
+        where: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
-        """Search the vector store and return ranked results."""
+        """Search the vector store and return ranked results.
+
+        ``where`` is an optional metadata equality filter applied before
+        ranking.
+        """
         raise NotImplementedError
 
     @abstractmethod

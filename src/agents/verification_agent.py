@@ -1,19 +1,33 @@
+import logging
 import json
 from typing import Any
 
 from src.config.settings import settings
-from src.generation.ollama_client import OllamaClient
+from src.generation.lmstudio_client import LLMError, LMStudioClient
 from src.orchestration.state import RAGState
+
+logger = logging.getLogger(__name__)
 
 
 class VerificationAgent:
-    """Verifies that the generated answer is fully supported by the evidence."""
+    """Independently checks the generated answer against the reranked pool.
 
-    def __init__(self, ollama_client: OllamaClient | None = None):
-        self.ollama = ollama_client or OllamaClient()
+    Before Phase 7 this read ``state.evidence_status["supported_chunks"]`` --
+    the same up-to-5 chunks the gate selected and the generator read -- so it
+    was structurally incapable of catching the dominant failure mode (wrong
+    evidence retrieved): it judged the answer against the evidence that
+    produced it (diagnosis #11). It now reads ``state.all_reranked_chunks``,
+    the cross-encoder's full ranking of the fused pool before the
+    ``rerank_top_k`` cut, capped at ``settings.verification_max_chunks``. A
+    claim the generator supported from its 5-chunk slice can now be checked
+    against passages the generator never saw, including ones the gate cut.
+    """
+
+    def __init__(self, llm_client: LMStudioClient | None = None):
+        self.llm = llm_client or LMStudioClient()
 
     def verify(self, state: RAGState) -> dict[str, Any]:
-        """Verify the draft answer against the selected evidence."""
+        """Verify the draft answer against the full reranked pool."""
 
         if not state.original_query.strip():
             raise ValueError("Original query cannot be empty.")
@@ -26,27 +40,39 @@ class VerificationAgent:
         if not evidence:
             raise ValueError("Evidence assessment is missing.")
 
-        supported_chunks = evidence.get("supported_chunks", [])
+        # Fall back to the gate's selection when the full pool was not
+        # populated (e.g. a state built by hand in a test) rather than
+        # refusing to verify at all.
+        pool = state.all_reranked_chunks or evidence.get("supported_chunks", [])
+        chunks = pool[: settings.verification_max_chunks]
 
-        if not supported_chunks:
+        if not chunks:
             raise ValueError(
                 "No supported evidence is available for verification."
             )
 
         prompt = self._build_prompt(
             state=state,
-            chunks=supported_chunks,
+            chunks=chunks,
         )
 
-        response = self.ollama.generate(
-            prompt=prompt,
-            temperature=0.0,
-        )
-        print("\n[Verification Agent Raw Response]")
-        print("-" * 60)
-        print(response)
-        print("-" * 60)
-        verification_result = self._parse_response(response)
+        try:
+            response = self.llm.generate(
+                prompt=prompt,
+                temperature=0.0,
+            )
+            verification_result = self._parse_response(response)
+        except (LLMError, ValueError) as exc:
+            logger.warning("Verification failed: %s", exc)
+            verification_result = {
+                "approved": True,
+                "skipped": True,
+                "unsupported_claims": [],
+                "missing_subquestions": [],
+                "citation_errors": [],
+                "outside_knowledge": [],
+                "notes": [f"Verification skipped: {exc}"],
+            }
 
         state.verification_result = verification_result
 

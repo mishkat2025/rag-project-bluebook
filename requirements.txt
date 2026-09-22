@@ -1,10 +1,19 @@
-PyMuPDF
-sentence-transformers
-chromadb
-rank-bm25
-pydantic
-pydantic-settings
-python-dotenv
-requests
-numpy
-scikit-learn
+PyMuPDF==1.28.2
+sentence-transformers==6.0.1
+# CUDA build. The plain 'torch==2.14.0' on PyPI is the +cpu wheel, which
+# reports cuda.is_available()==False on a machine that has a GPU -- a fresh
+# clone would silently reproduce the Phase 1-4 CPU regression. Install with:
+#   pip install --index-url https://download.pytorch.org/whl/cu130 \
+#               --extra-index-url https://pypi.org/simple -r requirements.txt
+# (cu128 stops at torch 2.11; cu130 is the lowest index carrying 2.14.0.)
+torch==2.14.0+cu130
+transformers==5.17.0
+chromadb==1.5.9
+rank-bm25==0.2.2
+pydantic==2.13.5
+pydantic-settings==2.15.0
+python-dotenv==1.2.3
+requests==2.34.2
+numpy==2.5.3
+scikit-learn==1.9.1
+pytest==9.1.1
