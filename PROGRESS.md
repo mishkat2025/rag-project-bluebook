@@ -1000,3 +1000,72 @@ rather than a grounding gap — the more defensible hallucination-rate reading o
 diagnostic is 0.000. Two known, deliberately-left, narrow gaps remain documented rather than
 hidden: the CGPA-for-CSE reranker regression (Session 5/7) and the `table` category's weaker
 ranking (Phases 2-4). Both are `xfail`'d or footnoted, not silently accepted.
+
+---
+
+## Session 10 -- follow-up pronoun gap in `needs_rewrite`
+
+**Reported live, not by eval.** "who is the chairperson of cse department" answered
+correctly; "tell me more about him" abstained.
+
+**Cause: one word.** `_BACKREFERENCE_WORDS` in `src/retrieval/query_rewriter.py` listed
+`he`, `his`, `she`, `her`, `hers`, `they`, `them`, `their`, `theirs` -- and not `him`. So
+`needs_rewrite("tell me more about him", history)` returned `self_contained`, no rewrite
+fired, and retrieval ran on that literal string.
+
+Measured, same index, reranker on GPU:
+
+| query as retrieved | top rerank score | gate (thr 0.02) | top hit |
+|---|---|---|---|
+| `who is the chairperson of cse department` | 0.8894 | pass | p13, correct |
+| `tell me more about him` (shipped behaviour) | **0.0005** | **abstain** | p185, fee-structure table |
+| `who is the chairperson ... tell me more about him` (fallback rewrite) | 0.2620 | pass | p13, correct |
+
+The same question with **"her" worked**, which is what kept this invisible: only the
+objective form was missing.
+
+**Why history did not save it.** History is used in two places -- the rewrite step and the
+generator's `CONVERSATION SO FAR` block (`prompts.build_answer_prompt`). The gate sits
+between them. When the rewrite does not fire, retrieval degrades, the gate abstains, and
+the generator is never called, so its access to history is irrelevant. History reaching the
+generator does not make the pipeline conversational; only the rewrite step does.
+
+**Fix.** Added `him`. Regression test is parametrised over the whole third-person paradigm
+(`test_every_third_person_pronoun_is_a_backreference`) so a future edit cannot reintroduce
+a one-word hole. Tests 250 -> 262, all passing, 1 xfail (the unrelated CGPA-for-CSE
+reranker case) unchanged.
+
+**Verified end to end against live Gemma 4:**
+
+```
+Q: who is the chairperson of cse department
+   rewrite self_contained | gate 0.8894 | 1 LLM call
+   "The chairperson of the Department of Computer Science and Engineering is
+    Dr. Taskeed Jabid [Page 13]."
+
+Q: tell me more about him
+   rewrite follow_up -> "Provide more information about Dr. Taskeed Jabid, the
+   chairperson of the Department of Computer Science and Engineering."
+   gate 0.9744 | 2 LLM calls
+   "... Associate Professor [Page 122] ... Ph.D. in Computer Vision and Image
+    Processing from Kyung Hee University, South Korea [Page 122] ..."
+```
+
+Gate score on the follow-up went 0.0005 -> 0.9744.
+
+**No retrieval metrics re-run.** This changes which query string reaches the retriever in a
+conversation; `eval/dataset.jsonl` questions are scored standalone, so the retrieval and
+generation numbers above are unaffected by construction.
+
+### Also this session
+
+- **`.env.example` regenerated from `Settings`.** It still declared `OLLAMA_BASE_URL`,
+  `OLLAMA_MODEL`, `OLLAMA_TIMEOUT`, `MAX_RETRIEVAL_RETRIES`, `FINAL_CONTEXT_TOP_K` and
+  `EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2` -- every one of them dead. With
+  `extra="ignore"`, setting them raised no error and did nothing, and readme.md 5 tells you
+  to create `.env` from it. Now 40 variables, all verified against `Settings.model_fields`,
+  grouped by blast radius (restart / measured-value / requires-rebuild), only `LLM_MODEL`
+  uncommented.
+- **Known gap, not fixed:** the REPL banner prints the LLM base URL and reachability but not
+  `settings.llm_model`. Because LM Studio matches by prefix, you can swap models and the
+  banner looks identical. `eval/run_generation_eval.py` prints it; `scripts/chat.py` does not.

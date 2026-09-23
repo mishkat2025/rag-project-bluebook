@@ -41,9 +41,18 @@ logger = logging.getLogger(__name__)
 
 #: Words that can only refer to something already said. A query containing one
 #: of these, in a conversation that has history, is leaning on that history.
+#:
+#: Third-person pronouns are listed in full paradigms on purpose. "him" was
+#: missing while "he", "his", "she", "her", "hers", "they" and "them" were all
+#: present, so "tell me more about him" was classified self_contained, no
+#: rewrite fired, and retrieval ran on that literal string -- top rerank score
+#: 0.0005 against a 0.02 gate, i.e. a guaranteed abstention on the single most
+#: natural way to ask a follow-up about a person. Only the objective form was
+#: affected; the same question with "her" worked.
 _BACKREFERENCE_WORDS = frozenset({
     "it", "its", "they", "them", "their", "theirs",
-    "that", "this", "those", "these", "he", "she", "his", "her", "hers",
+    "that", "this", "those", "these",
+    "he", "him", "his", "she", "her", "hers",
     "there", "then", "same", "one", "ones", "another", "other", "others",
     "both", "either", "such",
 })

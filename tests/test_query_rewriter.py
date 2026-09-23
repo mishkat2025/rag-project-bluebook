@@ -85,6 +85,23 @@ def test_a_follow_up_triggers_a_rewrite(query):
     assert decision.reason == "follow_up"
 
 
+@pytest.mark.parametrize("pronoun", [
+    "he", "him", "his", "she", "her", "hers",
+    "it", "its", "they", "them", "their", "theirs",
+])
+def test_every_third_person_pronoun_is_a_backreference(pronoun):
+    """No gap in the paradigm.
+
+    "him" was absent while every other third-person form was present, so
+    "tell me more about him" retrieved on the literal string and scored
+    0.0005 against the 0.02 gate -- a guaranteed abstention on the most
+    natural follow-up about a person, while the same question with "her"
+    worked. Parametrised over the whole paradigm so a future edit cannot
+    reintroduce a one-word hole.
+    """
+    assert needs_rewrite(f"Tell me more about {pronoun}", HISTORY).reason == "follow_up"
+
+
 @pytest.mark.parametrize("query", [
     "What are the admission requirements and how many credits are needed?",
     "Compare the CSE and EEE credit requirements",

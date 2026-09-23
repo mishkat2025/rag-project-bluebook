@@ -125,7 +125,7 @@ rag-project/
 ├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
-├── tests/              pytest suite (250 tests)
+├── tests/              pytest suite (262 tests)
 ├── .env
 └── requirements.txt
 ```
@@ -252,7 +252,7 @@ EWU has a football team.
 .\.venv\Scripts\python.exe eval\faithfulness_eval.py --label mylabel
 ```
 
-`pytest` runs the full test suite (250 tests, one xfail documenting a known,
+`pytest` runs the full test suite (262 tests, one xfail documenting a known,
 narrow reranker regression on the "CGPA for admission to CSE" phrasing --
 see `tests/test_reranker.py`).
 
