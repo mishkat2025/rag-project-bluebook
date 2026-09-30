@@ -45,7 +45,7 @@ took to read the evidence.
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 from src.agents.answer_agent import AnswerAgent
 from src.config.settings import settings
@@ -85,6 +85,19 @@ def rewrite(state: RAGState, rewriter: QueryRewriter) -> int:
 
     state.rewritten_queries = result.queries
     state.subqueries = result.queries
+
+    # A self-contained question is answered without the conversation, just
+    # as it is retrieved without it (see RAGState.answer_with_history).
+    state.answer_with_history = bool(result.rewritten or result.fallback)
+
+    # A follow-up is answered as the standalone question it was rewritten
+    # into. A multi-part question keeps the user's wording: its rewrite is a
+    # list of retrieval queries, and the original states the whole need.
+    state.answer_query = (
+        result.rerank_query
+        if result.rewritten and result.reason == "follow_up"
+        else ""
+    )
     state.rerank_query = result.rerank_query
     state.information_needs = result.information_needs
 
@@ -279,7 +292,11 @@ def expand_context(
     return expanded
 
 
-def generate(state: RAGState, generator: AnswerAgent) -> int:
+def generate(
+    state: RAGState,
+    generator: AnswerAgent,
+    on_token: Callable[[str], None] | None = None,
+) -> int:
     """Generate, validate deterministically, regenerate at most once.
 
     Returns the LLM calls actually spent -- 1 normally, 2 when the citation or
@@ -287,7 +304,10 @@ def generate(state: RAGState, generator: AnswerAgent) -> int:
     than the caller assuming it, so the trace's ``llm_calls`` stays true when
     a regeneration happens.
     """
-    generator.answer(state)
+    if on_token is None:
+        generator.answer(state)
+    else:
+        generator.answer(state, on_token=on_token)
 
     return int(state.trace.get("answer", {}).get("llm_calls", 1))
 
@@ -299,8 +319,12 @@ def run(
     rewriter: QueryRewriter,
     generator: AnswerAgent,
     verifier: Any | None = None,
+    on_token: Callable[[str], None] | None = None,
 ) -> RAGState:
     """Answer one query end to end.
+
+    ``on_token`` streams the answer as it is generated (see
+    ``AnswerAgent.answer``); ``state.draft_answer`` is still the final word.
 
     The whole control flow is this function. There is no router, no workflow
     list and no retry loop -- if a step needs to be skipped, it is an ``if``
@@ -335,7 +359,7 @@ def run(
 
     expand_context(state, retriever)
 
-    llm_calls += generate(state, generator)
+    llm_calls += generate(state, generator, on_token)
 
     if settings.llm_verification_enabled and verifier is not None:
         state.verification_result = verifier.verify(state)

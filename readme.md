@@ -28,30 +28,30 @@ hand against the gold answer and the PDF. Full history and method in
 
 | | bulletin wording | natural wording |
 |---|---|---|
-| answerable, answered correctly | **111 / 113 (0.982)** | **39 / 43 (0.907)** |
+| answerable, answered correctly | **112 / 113 (0.991)** | **39 / 43 (0.907)** |
 | answerable, refused | 0 | 2 |
 | answerable, wrongly says "the bulletin does not provide it" | 0 | 2 |
-| answerable, wrong or partly wrong | 2 | 0 |
+| answerable, partly right | 1 | 0 |
 | unanswerable, refused or declined without inventing anything | 12 / 12 | 40 / 41 |
 | unanswerable, answered with an invented fact | **0** | **0** |
 
-Audits: `eval/results/phase9_audit.json`, `natural1_audit.json`, and PROGRESS
-Session 11 for the gate-off runs. The one unanswerable miss in natural
+Audits: `eval/results/phase12_audit.json` and `natural3_audit.json` (every
+answer that changed between runs re-read), and PROGRESS Session 11. The one unanswerable miss in natural
 wording declined correctly but claimed the bulletin has no CSE minor (it has
 one, with groups A and B; the question asked for group C).
 
 By category (bulletin wording): single fact 28/28, exact number 15/15,
 table 15/15, program-specific 15/15, comparison 10/10, adversarial near-miss
-10/10, multi-hop 9/10, follow-up 9/10.
+10/10, follow-up 10/10, multi-hop 9/10.
 
 **The chatbot errs by refusing, not by inventing.** The remaining failures
 on natural wording are "Who's the head of CSE?" (the bulletin says
 "chairperson") and three like it: the right page is not retrieved or not
 recognised under the student's word. The failures the checks below cannot
 see are a real number attached to the wrong rule: before page-split tables
-were fixed, 3 answers did that and passed every check. The one wrong answer
-left (a follow-up answered with the programme total instead of the
-per-semester minimum) is of that kind.
+were fixed, 3 answers did that and passed every check. None is left in the
+audited runs; the one partly-right answer misses half of a two-part question
+because one of its pages is not retrieved.
 
 **Guardrails.** These are deterministic checks run on every answer. A pass
 means the check found nothing to reject, not that the answer is right:
@@ -174,7 +174,7 @@ rag-project/
 ├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
-├── tests/              pytest suite (305 tests)
+├── tests/              pytest suite (333 tests)
 ├── .env
 └── requirements.txt
 ```
@@ -244,13 +244,26 @@ reasoning tokens and time out. This is already the shipped default.
 .\.venv\Scripts\python.exe app\chat.py
 ```
 
-The startup banner reports the resolved device and whether LM Studio is reachable, so a
-CPU regression or a stopped server is visible immediately:
+The startup banner reports the resolved device, the model, and whether LM
+Studio is reachable, so a CPU regression, a swapped model or a stopped server
+is visible immediately:
 
 ```
-embedder/reranker: cuda (NVIDIA GeForce RTX 4060 Ti) | LLM: LM Studio @ http://localhost:1234/v1 [ok]
+embedder/reranker: cuda (NVIDIA GeForce RTX 4060 Ti) | LLM: gemma-4-12b-it-qat @ http://localhost:1234/v1 [ok]
 index: 2855 chunks | rerank top_k=5 | score gate off (the model decides)
 ```
+
+Answers **stream** as the model writes them. The citation and number checks
+run on the finished answer; in the rare case the streamed draft fails them
+(about 1 answer in 125) it is marked as withdrawn and the checked answer is
+printed below it, so unchecked text is never left looking like the answer.
+"Source pages" lists the pages the answer cites.
+
+Greetings, "thanks", "ok" and "bye" are answered directly, without a model
+call. Follow-ups ("tell me more about him", "what about EEE?", "and the lab
+fee?") are rewritten into standalone questions using the conversation; a
+question that is already standalone is answered without the conversation, so
+an earlier topic cannot pull the answer off course.
 
 Commands inside the REPL:
 
@@ -258,31 +271,33 @@ Commands inside the REPL:
 |---|---|
 | `clear` | start a new conversation |
 | `trace` | show how the last answer was produced -- rewrite, retrieval, reranking, the gate, generation, validation |
-| `exit` / `quit` | end the chat |
+| `exit` / `quit` / `bye` | end the chat |
 
 Example:
 
 ```
-You: What is the minimum GPA required for admission?
+You: What is the minimum CGPA for admission to CSE?
 
 EWU RAG:
 ------------------------------------------------------------------------
-Candidates must have a minimum GPA of 3.00 in both SSC and HSC (or
-equivalent) examinations [Page 176]. ...
+The minimum qualifications for admission to undergraduate programs include a
+minimum GPA of 3.00 in both SSC and HSC Examinations [Page 176]. The bulletin
+does not provide a specific minimum CGPA requirement for admission to CSE.
 ------------------------------------------------------------------------
-Source pages: [176, 177]
+Source pages: [176]
 ```
 
-A question the bulletin does not cover is refused rather than answered from
-weak evidence, with a reason:
+A question the bulletin does not cover is refused, or declined with what the
+bulletin does say, rather than answered from weak evidence:
 
 ```
-You: Does EWU have a football team?
+You: is there a gym?
 
 EWU RAG:
 ------------------------------------------------------------------------
-The bulletin mentions a Sports Club [Page 213], but does not state whether
-EWU has a football team.
+The bulletin does not state whether there is a gym; however, it mentions that
+there are separate male and female common rooms with indoor game facilities
+and television [Page 212]. ...
 ------------------------------------------------------------------------
 ```
 
@@ -303,7 +318,7 @@ EWU has a football team.
 .\.venv\Scripts\python.exe eval\faithfulness_eval.py --label mylabel
 ```
 
-`pytest` runs the full test suite (305 tests).
+`pytest` runs the full test suite (333 tests).
 
 ## 10. Known limitations
 
@@ -319,6 +334,8 @@ EWU has a football team.
   change to the prompt, the index or the model.
 - A student's word for something the bulletin names differently ("head" vs
   "chairperson", "attested" vs "verification") can still lose the answer.
+- About 3% of answers copy a section path ("Grades, Rules and Regulations >
+  Grading System > ...") into the text. Cosmetic; the content is right.
 - Off-the-shelf sentence-level NLI (DeBERTa-v3-base-MNLI) is a weak
   instrument for this domain's numeric and tabular sentences -- it hedges to
   "neutral" on facts independently confirmed correct, so it is used only as

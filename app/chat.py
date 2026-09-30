@@ -9,6 +9,7 @@ stopped LM Studio is visible immediately instead of being felt as unexplained
 slowness or as a wall of errors.
 """
 import logging
+import re
 import sys
 import time
 from pathlib import Path
@@ -32,7 +33,13 @@ from src.orchestration.state import ConversationTurn, RAGState  # noqa: E402
 from src.orchestration.workflow import RAGWorkflow  # noqa: E402
 from src.storage.trace_store import TraceStore  # noqa: E402
 
-GREETINGS = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}
+GREETINGS = {"hi", "hello", "hey", "hi there", "hello there", "good morning",
+             "good afternoon", "good evening", "salam", "assalamu alaikum"}
+THANKS = {"thanks", "thank you", "thanks a lot", "thank you so much", "thx",
+          "ty", "ok thanks", "okay thanks", "thanks a lot", "many thanks"}
+ACKNOWLEDGEMENTS = {"ok", "okay", "k", "cool", "great", "got it", "nice",
+                    "alright", "i see"}
+FAREWELLS = {"bye", "goodbye", "good bye", "see you", "see ya", "bye bye"}
 
 logger = logging.getLogger(__name__)
 
@@ -166,8 +173,13 @@ def main() -> None:
             continue
 
         command = user_input.lower()
+        # Small talk is matched on the whole message, ignoring punctuation,
+        # so "thanks!" is small talk but "thanks, and what is the fee?" is a
+        # question. Sent through the pipeline, "bye" was answered "I could
+        # not find this in the bulletin" and "thanks!" listed six pages.
+        chat = re.sub(r"[^\w\s']", "", command).strip()
 
-        if command in {"exit", "quit"}:
+        if command in {"exit", "quit"} or chat in FAREWELLS:
             print("Goodbye.")
             break
 
@@ -188,9 +200,17 @@ def main() -> None:
                 print_trace(last_state)
             continue
 
-        if command in GREETINGS:
+        if chat in GREETINGS:
             print("\nEWU RAG: Hello. Ask me anything about the EWU "
                   "Undergraduate Bulletin.")
+            continue
+
+        if chat in THANKS:
+            print("\nEWU RAG: You're welcome. Anything else about the bulletin?")
+            continue
+
+        if chat in ACKNOWLEDGEMENTS:
+            print("\nEWU RAG: Okay. Ask me anything else about the bulletin.")
             continue
 
         state = RAGState(
@@ -200,10 +220,22 @@ def main() -> None:
 
         started = time.perf_counter()
 
+        print("\nEWU RAG:")
+        print("-" * 72, flush=True)
+
+        # The answer is printed as the model writes it. Only the first
+        # attempt streams; draft_answer below is the final word.
+        shown: list[str] = []
+
+        def stream(piece: str) -> None:
+            shown.append(piece)
+            print(piece, end="", flush=True)
+
         try:
-            final_state = workflow.run(state)
+            final_state = workflow.run(state, on_token=stream)
         except Exception as exc:  # noqa: BLE001 - the REPL must survive anything
-            print(f"\nError: {exc}")
+            print(f"\n\nError: {exc}")
+            print("-" * 72)
             continue
 
         elapsed_s = round(time.perf_counter() - started, 2)
@@ -214,10 +246,24 @@ def main() -> None:
         if settings.trace_persist_enabled:
             _save_trace(final_state, user_input, elapsed_s)
 
-        print("\nEWU RAG:")
-        print("-" * 72)
-        print(final_state.draft_answer or
-              "No answer was produced from the available bulletin evidence.")
+        answer = (final_state.draft_answer or
+                  "No answer was produced from the available bulletin evidence.")
+        streamed = "".join(shown).strip()
+
+        if not streamed:
+            print(answer)
+        elif streamed == answer.strip():
+            print()
+        else:
+            # Rare: the streamed draft failed a citation/number check and was
+            # regenerated or withheld, or the model stopped mid-answer. Never
+            # leave unchecked text on screen looking like the answer.
+            why = ("the model stopped responding"
+                   if final_state.trace.get("answer_error")
+                   else "it failed an automatic check")
+            print(f"\n\n[The text above was withdrawn -- {why}. Final answer:]")
+            print(answer)
+
         print("-" * 72)
 
         if evidence.get("abstained"):
@@ -240,10 +286,13 @@ def main() -> None:
                       f"{evidence.get('threshold', 0):.2f}; "
                       f"best was {evidence.get('top_score', 0):.2f})")
         else:
-            pages = evidence.get("source_pages") or []
+            # The pages the answer cites, not every page that was retrieved.
+            cited = (final_state.trace.get("validation") or {}).get("cited_pages") or []
+            pages = cited or evidence.get("source_pages") or []
 
             if pages:
-                print(f"Source pages: {sorted(set(pages))}")
+                label = "Source pages" if cited else "Retrieved pages"
+                print(f"{label}: {sorted(set(pages))}")
 
         if final_state.verification_result.get("approved") is False:
             print("Note: the verifier did not approve this answer.")

@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 7 DONE (Session 9). Post-plan work: Session 11 parts 1-4 (university-wide rules, cleanup, honest metrics, page-split tables, abstention + score gate OFF). Next steps: the "Open" list at the end of Session 11 part 4.**
+**Current phase: 7 DONE (Session 9). Post-plan work: Session 11 parts 1-5 -- university-wide rules, cleanup, honest metrics, page-split tables, abstention (score gate off), streaming and conversation fixes. Remaining work: the "Known, not fixed" list at the end of part 5.**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -1380,3 +1380,79 @@ Tests: 296 -> **305**.
 **Open, in order:** retrieval under student vocabulary ("head" -> chairperson, "attested" ->
 verification; n009 credit transfer) is now the main failure mode; q100 follow-up; a question
 set written by students who have not read the PDF; streaming output.
+
+## Session 11, part 5 -- streaming, conversation fixes, final verification
+
+Every change below was driven by driving the real REPL (`app/chat.py`) through a realistic
+conversation, not by the eval set; each was then measured on both eval sets.
+
+**Streaming.** `LMStudioClient.generate(on_token=...)` streams SSE and decodes UTF-8 itself
+(LM Studio sends `text/event-stream` with no charset; requests would read it as Latin-1 and
+mangle the bulletin's curly quotes). `AnswerAgent` streams the first attempt only, through
+`_HoldBackSentinel`, which never lets `NOT_IN_BULLETIN` reach the screen. If the final answer
+differs from what streamed (a failed check was regenerated/withheld, or the model stopped),
+the REPL marks the streamed text withdrawn and prints the checked answer. The eval passes no
+callback, so it measures exactly what it did before. `tests/test_streaming.py` (15).
+
+**q100 -- elliptical follow-ups.** "What is the minimum for Pharmacy students?" has no pronoun
+and is too long for the short-query rule, so it was never rewritten and was answered with the
+programme total (158). `_ELLIPTICAL_SUPERLATIVE`: a bare "the minimum/maximum/least/most/
+lowest/highest/limit" followed by for/in/at/with or the end of the question is a follow-up;
+"the minimum CGPA for ..." names its noun and does not match. Now 12 credits/semester.
+
+**History distracted the generator on self-contained questions.** After two turns about the
+CSE chairperson, "What is the minimum CGPA for admission to CSE?" was refused 11 of 12 times
+(0 of 8 without that history). The rewriter had already judged it self-contained and
+retrieval ignored the history; the generator now does too (`RAGState.answer_with_history`,
+off unless the query was rewritten). A real follow-up ("What is his highest degree?") keeps it.
+
+**Follow-ups are answered as their rewritten question.** "what about pharmacy?" after a
+per-credit question was rewritten correctly ("What is the tuition fee per credit for ...
+Pharmacy?") but the generator was still asked the three bare words, and listed labs and
+fees without the tuition. `RAGState.answer_query` = the rewrite, for follow-ups only; the
+number check accepts numbers from either wording. Follow-up answers got tighter
+(`followup_answerquery`: 10/10 correct).
+
+**University-wide slots: a near-tie, fixed with the section tree, not a third slot.**
+"and for EEE?" was rewritten to "minimum CGPA **requirement** for admission to EEE"; for that
+wording p223 (a sibling-discount clause, 0.857) beat the admission rule on p176 (0.847) for
+the second slot, and the answer was refused or gave the graduation CGPA. A third slot fixed
+EEE but made "minimum CGPA for admission to CSE" refused **8 of 8** (the third extra was a
+p220 scholarship-GPA clause); evidence order (extras first vs last) changed nothing. Shipped:
+2 slots + `university_scope_heading_bonus = 0.1` for a chunk whose own heading contains a
+topic word of the question. All three phrasings answered 5/5 in a harness before shipping.
+The rejected 3-slot runs are kept (`phase11_*`, `natural2_*`).
+
+**Small talk in the REPL.** "thanks!" went through the pipeline and listed six pages; "bye" was
+answered "I could not find this in the bulletin". Greetings/thanks/acknowledgements/
+farewells are matched on the whole message, punctuation ignored, and answered directly.
+"Source pages" now lists the pages the answer cites, not everything retrieved.
+
+**Final measurement (shipped configuration, every changed answer re-read):**
+
+| | result | audit |
+|---|---|---|
+| dataset.jsonl answerable correct | **112/113** (q071 partial) | `phase12_audit.json` |
+| dataset.jsonl unanswerable handled | 12/12 | |
+| natural answerable correct | **39/43** | `natural3_audit.json` |
+| natural unanswerable handled | 40/41 (u022) | |
+| unanswerable answered with an invented fact | **0/53** | |
+| citation validity / number grounding | 1.000 / 1.000 | |
+| retrieval context-recall | 0.956 (`phase12_retrieval`) | |
+| latency (dataset) | mean 8.6 s, p95 14.8 s | |
+
+natural3's u032/u033 were LLM errors while the LM Studio server was stopped by the owner
+mid-run; re-run (`natural3_retry`), both handled. Tests: 305 -> **333**.
+
+Final REPL conversation (verbatim outcomes): greeting; CSE chairperson -> Dr. Taskeed Jabid;
+"tell me more about him" -> rank and degrees; CSE admission -> GPA 3.00 [p176]; "and for
+EEE?" -> GPA 3.00 [p176]; "thanks!" -> direct reply; CSE per credit -> 5,500; "what about
+pharmacy?" -> 6,000; "and the lab fee?" -> 3,750; gym -> declines, lists common rooms and
+Sports Club; A- -> 3.70; "bye" -> exits.
+
+**Known, not fixed:** 5/162 answers copy a section path into the text (cosmetic; stripping it
+after the fact conflicts with streaming, a prompt change needs a full re-audit). Student
+vocabulary ("head" for chairperson, "attested" for verification, credit transfer from
+"another uni") -- 4 natural-wording misses, deliberately not tuned against the 43 questions
+that measure it; needs questions from real students. The bulletin PDF is still committed to
+a public repository (owner's decision).

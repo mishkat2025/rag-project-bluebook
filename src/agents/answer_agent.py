@@ -30,6 +30,7 @@ fires, and what the numbers look like without it, is reported by
 from __future__ import annotations
 
 import logging
+from typing import Callable
 
 from src.config.settings import settings
 from src.generation import prompts
@@ -48,13 +49,65 @@ UNAVAILABLE_MESSAGE = (
 )
 
 
+class _HoldBackSentinel:
+    """Pass streamed pieces through, unless the reply is the refusal sentinel.
+
+    The generator refuses by replying ``NOT_IN_BULLETIN``. Streamed as-is,
+    the user would watch the sentinel appear before it is swapped for the
+    abstention message. So the opening of the reply is held until it can no
+    longer become the sentinel (ignoring the whitespace, quotes and code
+    fences the model sometimes wraps it in); from then on pieces flow
+    straight through. A reply that IS the sentinel is never shown.
+    """
+
+    _WRAPPING = " \n\t`'\"*"
+
+    def __init__(self, sink: Callable[[str], None]):
+        self.sink = sink
+        self.held = ""
+        self.passing = False
+        self.suppressed = False
+
+    def __call__(self, piece: str) -> None:
+        if self.passing:
+            self.sink(piece)
+            return
+
+        if self.suppressed:
+            return
+
+        self.held += piece
+        probe = self.held.strip(self._WRAPPING).upper()
+
+        if not probe or prompts.NOT_IN_BULLETIN.startswith(probe):
+            return  # could still turn out to be the sentinel
+
+        if probe.startswith(prompts.NOT_IN_BULLETIN):
+            self.suppressed = True
+            return
+
+        self.passing = True
+        self.sink(self.held)
+
+
 class AnswerAgent:
     """Answer from the gated evidence, then check the answer against it."""
 
     def __init__(self, llm_client: LMStudioClient | None = None):
         self.llm = llm_client or LMStudioClient()
 
-    def answer(self, state: RAGState) -> str:
+    def answer(
+        self,
+        state: RAGState,
+        on_token: Callable[[str], None] | None = None,
+    ) -> str:
+        """Generate, validate, regenerate at most once.
+
+        ``on_token`` streams the FIRST attempt only. A regeneration exists
+        because the first attempt failed a check, and is not streamed on top
+        of it; ``state.draft_answer`` is always the final word, and a caller
+        that streamed must compare it with what it showed.
+        """
         if not state.original_query.strip():
             raise ValueError("Original query cannot be empty.")
 
@@ -88,14 +141,25 @@ class AnswerAgent:
         # One generation, plus settings.max_answer_regenerations retries.
         for attempt in range(1 + max(0, settings.max_answer_regenerations)):
             prompt = prompts.build_answer_prompt(
-                question=state.original_query,
+                question=state.answer_query or state.original_query,
                 chunks=chunks,
-                history=state.conversation_history,
+                history=(
+                    state.conversation_history
+                    if state.answer_with_history
+                    else []
+                ),
                 failure_reason=failure_reason,
             )
 
             try:
-                raw = self.llm.generate(prompt=prompt, temperature=0.1)
+                if on_token is not None and attempt == 0:
+                    raw = self.llm.generate(
+                        prompt=prompt,
+                        temperature=0.1,
+                        on_token=_HoldBackSentinel(on_token),
+                    )
+                else:
+                    raw = self.llm.generate(prompt=prompt, temperature=0.1)
                 llm_calls += 1
             except LLMError as exc:
                 logger.warning("Answer generation failed: %s", exc)
@@ -201,7 +265,8 @@ class AnswerAgent:
     ) -> dict:
         citation_report = citations.validate(answer, allowed_pages)
         number_report = numbers.validate(
-            answer, context, question=state.original_query
+            answer, context,
+            question=f"{state.original_query} {state.answer_query}".strip(),
         )
 
         reasons = []

@@ -146,6 +146,30 @@ def is_university_wide(chunk: dict[str, Any]) -> bool:
     return bool(root.strip()) and not root.startswith(PROGRAM_CHAPTERS)
 
 
+#: Words that say nothing about a question's topic.
+_QUESTION_WORDS = frozenset({
+    "what", "which", "who", "when", "where", "why", "how", "much", "many",
+    "is", "are", "was", "were", "do", "does", "did", "can", "could", "will",
+    "the", "a", "an", "of", "for", "to", "in", "on", "at", "and", "or", "i",
+    "my", "me", "there", "any", "minimum", "maximum", "required",
+    "requirement", "requirements", "need", "needed",
+})
+
+
+def _topic_words(question: str) -> set[str]:
+    return {
+        word for word in re.findall(r"[a-z]+", question.lower())
+        if len(word) > 2 and word not in _QUESTION_WORDS
+    }
+
+
+def _heading_words(chunk: dict[str, Any]) -> set[str]:
+    """Words of the chunk's own heading and its parent, not the chapter."""
+    path = (chunk.get("metadata") or {}).get("section_path") or ""
+    heading = " ".join(path.split(" > ")[-2:])
+    return set(re.findall(r"[a-z]+", heading.lower()))
+
+
 def university_wide_extras(
     query: str,
     pool: list[dict[str, Any]],
@@ -202,14 +226,27 @@ def university_wide_extras(
     if not eligible:
         return general, []
 
-    ranked = reranker.rerank(query=general, candidates=eligible, top_k=slots)
+    ranked = [
+        chunk
+        for chunk in reranker.rerank(query=general, candidates=eligible, top_k=None)
+        if float(chunk.get("rerank_score") or 0.0) >= min_score
+    ]
+
+    # Near-ties are broken by the section tree: a chunk filed under a heading
+    # that names the question's topic ("Admission Requirements" for an
+    # admission question) beats one that merely shares its words.
+    topic = _topic_words(general)
+    bonus = settings.university_scope_heading_bonus
+
+    ranked.sort(
+        key=lambda chunk: float(chunk.get("rerank_score") or 0.0)
+        + (bonus if topic & _heading_words(chunk) else 0.0),
+        reverse=True,
+    )
 
     extras = []
 
-    for chunk in ranked:
-        if float(chunk.get("rerank_score") or 0.0) < min_score:
-            continue
-
+    for chunk in ranked[:slots]:
         chunk = dict(chunk)
         chunk["scope_query"] = general
         extras.append(chunk)

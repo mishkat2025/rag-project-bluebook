@@ -129,6 +129,16 @@ class Settings(BaseSettings):
     #: states university-wide.
     university_scope_enabled: bool = True
     university_scope_slots: int = 2
+    #: Added to a university-wide chunk's score when a word of the question
+    #: appears in its own section heading. A tie-breaker, not a lift: for
+    #: "minimum CGPA requirement for admission" the admission rule on p176
+    #: (heading "Admission Requirements", 0.847) lost its slot to a
+    #: sibling-discount clause on p223 (0.857) that also says "minimum ...
+    #: CGPA", and the EEE follow-up was refused. A third slot fixed that but
+    #: made "minimum CGPA for admission to CSE" refused 8 times in 8 (the
+    #: extra chunk was a scholarship-GPA clause). 2 slots + this bonus
+    #: answered all three phrasings 5 times in 5.
+    university_scope_heading_bonus: float = 0.1
     #: Below this, an appended chunk is noise: useful ones scored 0.14-0.97 on
     #: the eval set, unrelated ones 0.001-0.03.
     university_scope_min_score: float = 0.1

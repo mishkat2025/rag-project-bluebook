@@ -142,3 +142,33 @@ def test_a_question_naming_no_program_costs_no_extra_rerank():
 
     assert (general, extras) == (None, [])
     assert reranker.queries == []
+
+
+def test_a_heading_that_names_the_topic_breaks_a_near_tie():
+    """p176 'Admission Requirements' 0.847 vs a p223 scholarship clause 0.857
+    for an admission question: the admission rule must win the slot."""
+    admission = _chunk("p176", "Undergraduate Studies > Admission > Admission Requirements", 176)
+    sibling = _chunk("p223", "Scholarships and Financial Assistance > Sibling Benefit", 223)
+    general = "What is the minimum CGPA requirement for admission?"
+    reranker = ScoreByQuery({(general, "p223"): 0.857, (general, "p176"): 0.847})
+
+    _, extras = university_wide_extras(
+        "What is the minimum CGPA requirement for admission to EEE?",
+        [sibling, admission], [], reranker, slots=1, min_score=0.1,
+    )
+
+    assert [c["chunk_id"] for c in extras] == ["p176"]
+
+
+def test_a_heading_match_does_not_lift_a_weak_chunk_over_a_strong_one():
+    weak = _chunk("weak", "Undergraduate Studies > Admission", 176)
+    strong = _chunk("strong", "Grades, Rules and Regulations > CGPA", 217)
+    general = "What is the minimum CGPA for admission?"
+    reranker = ScoreByQuery({(general, "weak"): 0.30, (general, "strong"): 0.90})
+
+    _, extras = university_wide_extras(
+        "What is the minimum CGPA for admission to CSE?",
+        [weak, strong], [], reranker, slots=1, min_score=0.1,
+    )
+
+    assert [c["chunk_id"] for c in extras] == ["strong"]

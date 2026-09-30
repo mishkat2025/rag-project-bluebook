@@ -1,0 +1,407 @@
+[
+ {
+  "qid": "q091",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "And for CSE?",
+  "answer": "The tuition fee for B. Sc. in CSE is 5, 500/- per credit [Page 179]. The lab fee for the CSE program is Tk. 2, 500/-(non refundable) per semester [Page 180].",
+  "error": null,
+  "elapsed_s": 14.04,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   179,
+   121,
+   180,
+   24,
+   162,
+   181
+  ],
+  "gate_top_score": 0.7588946223258972,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   179,
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "5500",
+   "2500"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   179
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q092",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "What about B.Pharm?",
+  "answer": "The tuition fee for B.Pharm. is 6,000/- per credit [Page 180]. Students in the B.Pharm. Program are required to register at least 12 credits in a semester [Page 177] [Page 180] [Page 219] [Page 220].",
+  "error": null,
+  "elapsed_s": 15.1,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   180,
+   220,
+   219,
+   177,
+   179,
+   181
+  ],
+  "gate_top_score": 0.8732848167419434,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180,
+   177,
+   219,
+   220
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "6000",
+   "12"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q093",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "Is there also a lab fee for it?",
+  "answer": "Yes, there is a Lab Fee of Tk. 2,500/-(non refundable) per semester for CSE programs [Page 180].",
+  "error": null,
+  "elapsed_s": 11.92,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   180,
+   179,
+   121,
+   279,
+   270,
+   181
+  ],
+  "gate_top_score": 0.8970228433609009,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   180
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2500"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   180
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q094",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "What happens if I don't raise it in time?",
+  "answer": "Failure to raise your CGPA to at least 2 after the probation period will lead to dismissal from the university [Page 217]. Students who fail to raise their CGPA to satisfactory levels during the probation period will face dismissal from the university [Page 217].",
+  "error": null,
+  "elapsed_s": 13.35,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   217,
+   226,
+   227,
+   190
+  ],
+  "gate_top_score": 0.9408570528030396,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   217
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   217
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q095",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "Can I still get a scholarship if I do that?",
+  "answer": "No, students availing the advantage of retaking any course any time will not be eligible for any scholarship [Page 219].",
+  "error": null,
+  "elapsed_s": 11.39,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   219,
+   218,
+   26,
+   217
+  ],
+  "gate_top_score": 0.8920014500617981,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   219
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   219
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q096",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "How many credits is that program?",
+  "answer": "The B.Sc. in Computer Science and Engineering (CSE) program is 140 Credits [Page 24].",
+  "error": null,
+  "elapsed_s": 9.95,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   24,
+   117,
+   26,
+   114,
+   177
+  ],
+  "gate_top_score": 0.985627293586731,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   24
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "140"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   24,
+   114
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q097",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "What about for graduate students?",
+  "answer": "A student of a graduate program graduating with a CGPA of 3.99 or above (out of 4.00) within the stipulated time for the respective degree (1 to 2 years, as the case may be) will be eligible for getting a gold medal [Page 26]. A student admitted in this university on waiver/transfer of credits from other university(s) and/or availing himself or herself of the advantage of retaking any course any time, will not be eligible for this award [Page 26].",
+  "error": null,
+  "elapsed_s": 12.81,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   26,
+   218,
+   220
+  ],
+  "gate_top_score": 0.9974015951156616,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   26
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "3.99",
+   "4.00",
+   "1",
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   26
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q098",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "And how much is the urgent one?",
+  "answer": "The fee for an urgent official transcript is Tk. 700.00 [Page 181].",
+  "error": null,
+  "elapsed_s": 9.2,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   181,
+   214,
+   179,
+   178,
+   176
+  ],
+  "gate_top_score": 0.9174298644065857,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   181
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "700.00"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   181
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q099",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "And on Fridays?",
+  "answer": "On Fridays, the library hours are 08:30 am \u2013 5:00 pm (1:00 pm-2:00 pm break) [Page 208].",
+  "error": null,
+  "elapsed_s": 9.89,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   208,
+   211,
+   207
+  ],
+  "gate_top_score": 0.9234999418258667,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   208
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "08",
+   "30",
+   "5",
+   "00",
+   "1",
+   "2"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   208
+  ],
+  "gold_fact_recall": 0.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q100",
+  "category": "follow_up",
+  "answerable": true,
+  "question": "What is the minimum for Pharmacy students?",
+  "answer": "Students of the B.Pharm. program must take 4 (four) courses (12 credits) every semester [Page 215]. This credit requirement is also specified as 12 credits in a semester for the students of B.Pharm. Program in several sections regarding scholarships and financial aid [Page 177] [Page 178] [Page 219] [Page 220].",
+  "error": null,
+  "elapsed_s": 15.81,
+  "llm_calls": 2,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   220,
+   177,
+   219,
+   178,
+   215
+  ],
+  "gate_top_score": 0.9758825302124023,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   215,
+   177,
+   178,
+   219,
+   220
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 0.6666666666666666,
+  "numbers": [
+   "4",
+   "12"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   220
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ }
+]

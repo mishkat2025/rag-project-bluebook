@@ -389,3 +389,98 @@ def test_the_trace_records_how_the_answer_was_produced():
     for key in ("query_rewrite", "retrieval", "reranking", "evidence_gate",
                 "llm_calls"):
         assert key in state.trace, key
+
+
+# ---------------------------------------------------------------------------
+# Conversation history reaches the generator only for follow-ups
+# ---------------------------------------------------------------------------
+
+CHAIR_HISTORY = [
+    ConversationTurn(
+        user="who is the chairperson of cse department",
+        assistant="Dr. Taskeed Jabid [Page 22].",
+    ),
+]
+
+
+def test_a_self_contained_question_is_answered_without_the_conversation():
+    """Two turns about the CSE chairperson made Gemma refuse the CSE
+    admission question 11 times in 12; without the history, 0 in 8."""
+    parts, _ = build()
+    state = RAGState(
+        original_query="What is the minimum CGPA for admission to CSE?",
+        conversation_history=list(CHAIR_HISTORY),
+    )
+
+    pipeline.run(state, **parts)
+
+    assert state.trace["query_rewrite"]["reason"] == "self_contained"
+    assert state.answer_with_history is False
+
+
+def test_a_follow_up_is_answered_with_the_conversation():
+    parts, _ = build()
+    state = RAGState(
+        original_query="tell me more about him",
+        conversation_history=list(CHAIR_HISTORY),
+    )
+
+    pipeline.run(state, **parts)
+
+    assert state.answer_with_history is True
+
+
+def test_the_answer_prompt_leaves_out_history_when_told_to():
+    from src.agents.answer_agent import AnswerAgent
+
+    class Recording:
+        def __init__(self):
+            self.prompt = ""
+
+        def generate(self, prompt, temperature=None, json_schema=None):
+            self.prompt = prompt
+            return "The fee is Tk. 15,000 [Page 176]."
+
+    for with_history, expected in ((True, True), (False, False)):
+        llm = Recording()
+        state = RAGState(
+            original_query="What is the fee?",
+            conversation_history=list(CHAIR_HISTORY),
+            answer_with_history=with_history,
+        )
+        state.evidence_status = {
+            "sufficient": True,
+            "supported_chunks": [{"chunk_id": "c", "text": "Tk. 15,000 fee.",
+                                  "metadata": {"page": 176}}],
+        }
+
+        AnswerAgent(llm).answer(state)
+
+        assert ("Taskeed Jabid" in llm.prompt) is expected
+
+
+def test_a_follow_up_is_answered_as_its_rewritten_question():
+    """'what about pharmacy?' is asked of the generator as the standalone
+    question the rewriter produced, not as the bare three words."""
+    parts, _ = build()
+    state = RAGState(
+        original_query="what about pharmacy?",
+        conversation_history=[ConversationTurn(
+            user="how much does it cost per credit for cse",
+            assistant="5,500 per credit [Page 179].",
+        )],
+    )
+
+    pipeline.run(state, **parts)
+
+    assert state.trace["query_rewrite"]["reason"] == "follow_up"
+    assert state.answer_query == "rewritten"
+
+
+def test_a_self_contained_question_is_answered_in_the_users_words():
+    parts, _ = build()
+    state = RAGState(original_query="What is the minimum CGPA for admission?")
+
+    pipeline.run(state, **parts)
+
+    assert state.answer_query == ""
