@@ -255,6 +255,11 @@ def report(records: list[dict], label: str) -> None:
           f"{mean([r.get('gold_number_recall') for r in delivered_answerable]):.3f}"
           f"   (verbatim gold phrasing: "
           f"{mean([r.get('gold_fact_recall') for r in delivered_answerable]):.3f})")
+    # A proxy in both directions: gold facts copied from a table row carry
+    # every number in the row, so "A- carries 3.70" scores 0; and a right
+    # number stated about the wrong rule scores 1. Session 11 read all 112
+    # answers: 0.848 here, 0.929 actually correct (tables 0.333 vs 0.80).
+    print("  (numeric proxy, not correctness -- see eval/results/phase8_audit.json)")
 
     print("\nABSTENTION")
     print(f"  unanswerable refused : {correct_abstain}/{len(unanswerable)}")

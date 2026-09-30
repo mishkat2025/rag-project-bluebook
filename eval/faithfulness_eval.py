@@ -237,6 +237,12 @@ def main() -> None:
           f"{'MET' if faithfulness >= 0.90 else 'NOT MET'}")
     print(f"  hallucination rate   {hallucination_rate:>7.3f}   target <= 0.05   "
           f"{'MET' if hallucination_rate <= 0.05 else 'NOT MET'}")
+    # Session 11 hand audit: 3 answers stated something false (a real number
+    # attached to the wrong rule, or the right fact for the wrong question).
+    # This model judged two "neutral" and one "entailed", so a low rate here
+    # is not evidence the answers are right. Only a human audit measures that.
+    print("  (NLI contradiction only -- it does not catch a true number attached "
+          "to the wrong claim;\n   see eval/results/phase8_audit.json)")
 
     if contradictions:
         print(f"\n  CONTRADICTED (no candidate chunk entails it, and at "

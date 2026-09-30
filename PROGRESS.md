@@ -1178,7 +1178,7 @@ Tests: 262 (1 xfail) -> **290 passed, 0 xfail.**
 
 ### Open, in priority order
 
-1. README metrics table leads with the guardrail metrics (citation accuracy = cited page is
+1. **DONE in part 2 below.** README metrics table leads with the guardrail metrics (citation accuracy = cited page is
    among those retrieved; number fidelity = number appears somewhere in the evidence) and
    omits answer correctness (gold values 0.848; table 0.333) and NLI faithfulness 0.467.
 2. Tables: q029-style misses -- the value is in the retrieved evidence and the generator
@@ -1189,3 +1189,42 @@ Tests: 262 (1 xfail) -> **290 passed, 0 xfail.**
 6. Not done, needs the owner's decision: the full bulletin PDF is committed to a PUBLIC repo;
    `data/backup_phase1/` and `data/backup_phase2_chroma_minilm/` (62 MB, untracked) are
    snapshots of the pre-rebuild index.
+
+## Session 11, part 2 -- README metrics rewritten around a hand audit
+
+**Every one of the 112 answerable answers in `phase8_generation.json` was read against the
+gold answer and the PDF.** Saved as `eval/results/phase8_audit.json` (verdict + note per qid).
+
+| | numeric proxy (`gold_number_recall`) | hand audit |
+|---|---|---|
+| answerable, correct | 0.848 mean; 94 scored 1.0 | **104/112 = 0.929** (1 partial, 7 wrong) |
+| table | 0.333 | **12/15** |
+
+**The proxy was wrong in both directions.** Gold facts copied from table rows carry every
+number in the row ("87 - below 90 A- 3.70"), so "An A- carries 3.70 [Page 216]" scored 0:
+11 correct answers were scored below 1.0. And q090 scored 1.0 while stating "35 credits in
+EACH of the last three semesters" (p220: earned in the last three semesters, in total).
+The earlier "tables are right 33% of the time" -- in this project's README and in the
+Session 11 review -- came from the proxy and was wrong.
+
+**The 7 wrong answers all passed citation validation and number grounding.**
+- 4 say "the bulletin does not provide it" when it does: q029, q047, q092 had the table in
+  the evidence; q046's p221 was not retrieved. A table-reading problem in generation.
+- 3 state something false using a real number from the right page: q055 (continuation rule
+  given as the qualifying rule), q090 (per-semester vs total), q100 (a follow-up about the
+  per-semester minimum answered with the programme total, 158).
+
+**NLI re-run on this run (`phase8_faithfulness.json`): entailment 0.434, contradiction
+0.000.** It rated q055 and q090 "neutral" and q100 *entailed* (the sentence is true, it just
+answers a different question). "Hallucination rate 0.000" therefore says nothing about
+whether answers are right; the README no longer presents it as if it did.
+
+**README section 1 is restructured**: the wording caveat first; hand-audited correctness
+(overall, per category, failure modes); then the guardrails, each with what it does and
+does not verify; then retrieval and cost. The table limitation is corrected (12/15, and
+why). `run_generation_eval.py` and `faithfulness_eval.py` now print a one-line caveat under
+the proxy and the contradiction rate, pointing at the audit.
+
+The audit is one reader's judgement ("correct" = answers the question asked with the
+bulletin's value; extra true detail allowed). It is a snapshot of one run: re-audit after
+any change to the prompt or the generator, or the 0.929 goes stale.

@@ -11,24 +11,54 @@ that document, not as current official university information.
 
 ## 1. What this is
 
-Retrieval, reranking and grounding are all measured against a 125-question
-evaluation set with gold page numbers, not assumed. The current numbers (see
-`PROGRESS.md` for the full history and how each was obtained):
+Measured on a 125-question evaluation set (112 answerable, 13 not covered by
+the bulletin) against live Gemma 4. Full history and method in `PROGRESS.md`.
 
-| Metric | Value | Target |
+**Read the caveat first.** The questions were written from the PDF and reuse
+its wording. Rewritten the way a student would ask them, the share of
+questions whose gold page reaches the model fell from 0.975 to 0.875 on a
+40-question sample, and the gate refused 17.5% of them. Treat everything
+below as an upper bound until the chatbot is tested on questions from people
+who have not read the bulletin.
+
+**Is the answer right?** Every answer read by hand against the gold answer
+and the PDF (`eval/results/phase8_audit.json`):
+
+| | Result |
+|---|---|
+| answerable questions answered correctly | **104 / 112 (0.929)** |
+| partly correct | 1 |
+| wrong | 7 -- 4 say "the bulletin does not provide it" when the answer was in the evidence; 3 state something false |
+| unanswerable questions refused | 12 / 13 (the 13th declines inside its answer) |
+| answerable questions refused outright | 0 / 112 |
+
+By category: single fact 27/27, program-specific 15/15, adversarial near-miss
+10/10, exact number 14/15, multi-hop 9/10, comparison 9/10, follow-up 8/10,
+**table 12/15** (the weakest).
+
+The 3 false answers are the kind to watch for. Each one quotes a real number
+from the right page: the continuation rule given as the qualification rule,
+"35 credits" per semester instead of across three semesters, and a programme
+total given for a per-semester question. None of them was caught by the
+checks below.
+
+**Guardrails.** These are deterministic checks run on every answer. A pass
+means the check found nothing to reject, not that the answer is right:
+
+| Check | Result | What it verifies, and what it does not |
 |---|---|---|
-| page-recall@20 | 0.986 | >= 0.90 |
-| page-recall@50 | 0.986 | >= 0.95 |
-| page-nDCG@10 | 0.878 | (reranker: +0.10 over no-rerank; got +0.071) |
-| citation accuracy | 1.000 | >= 0.95 |
-| number fidelity | 1.000 | = 1.00 |
-| abstention accuracy | 0.923 | >= 0.80 |
-| hallucination rate | 0.000 | <= 0.05 |
-| LLM calls / query | 1 typical, 2 common | 1-2 |
+| citation validity | 1.000 | every cited page is one the model was given; not that the page supports the sentence |
+| number grounding | 1.000 | every number in the answer appears somewhere in the evidence; not that it is attached to the right fact |
+| NLI entailment (offline) | 0.434 | share of cited sentences an off-the-shelf NLI model judges entailed; it rates most correct numeric sentences "neutral", so it is too weak to gate on |
+| NLI contradiction (offline) | 0.000 | the same model found no contradictions, including among the 3 false answers above, one of which it judged entailed |
 
-A third LLM call is structurally possible (rewrite + generation + one
-regeneration) but was never reached across the 125-question set. An
-abstention costs zero calls.
+**Retrieval** (`eval/run_eval.py --rerank`): a gold page is among the chunks
+the model receives for 0.946 of answerable questions; page-recall@20 0.987;
+page-nDCG@10 0.882.
+
+**Cost:** 1 LLM call for a typical question, 2 for follow-ups and multi-part
+questions, 0 when the gate refuses. Median latency 7.5 s, p95 14 s on an
+RTX 4060 Ti.
 
 ## 2. Architecture
 
@@ -259,10 +289,10 @@ EWU has a football team.
 
 ## 10. Known limitations
 
-- The `table` category is the weakest in retrieval (nDCG@10 0.687) and in
-  generation (gold values reach the answer 33% of the time) -- correct when
-  it answers, but still the hardest category to rank correctly among
-  near-identical bulletin pages.
+- Tables are the weakest category: 12/15 correct, retrieval nDCG@10 0.688.
+  Two of the three misses had the table in the evidence and the model still
+  said the value was not provided -- it reads the serialised fee and
+  scholarship tables less reliably than prose.
 - The evaluation questions reuse the bulletin's own wording. Rewritten the way
   a student would ask them, the share of questions whose gold page reaches
   the generator falls from 0.975 to 0.875 on a 40-question sample, and 17.5%
