@@ -28,9 +28,9 @@ hand against the gold answer and the PDF. Full history and method in
 
 | | bulletin wording | natural wording |
 |---|---|---|
-| answerable, answered correctly | **112 / 113 (0.991)** | **39 / 43 (0.907)** |
+| answerable, answered correctly | **112 / 113 (0.991)** | **40 / 43 (0.930)** |
 | answerable, refused | 0 | 2 |
-| answerable, wrongly says "the bulletin does not provide it" | 0 | 2 |
+| answerable, wrongly says "the bulletin does not provide it" | 0 | 1 |
 | answerable, partly right | 1 | 0 |
 | unanswerable, refused or declined without inventing anything | 12 / 12 | 40 / 41 |
 | unanswerable, answered with an invented fact | **0** | **0** |
@@ -46,7 +46,7 @@ table 15/15, program-specific 15/15, comparison 10/10, adversarial near-miss
 
 **The chatbot errs by refusing, not by inventing.** The remaining failures
 on natural wording are "Who's the head of CSE?" (the bulletin says
-"chairperson") and three like it: the right page is not retrieved or not
+"chairperson") and two like it: the right page is not retrieved or not
 recognised under the student's word. The failures the checks below cannot
 see are a real number attached to the wrong rule: before page-split tables
 were fixed, 3 answers did that and passed every check. None is left in the
@@ -174,7 +174,7 @@ rag-project/
 ├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
-├── tests/              pytest suite (333 tests)
+├── tests/              pytest suite (340 tests)
 ├── .env
 └── requirements.txt
 ```
@@ -318,7 +318,7 @@ and television [Page 212]. ...
 .\.venv\Scripts\python.exe eval\faithfulness_eval.py --label mylabel
 ```
 
-`pytest` runs the full test suite (333 tests).
+`pytest` runs the full test suite (340 tests).
 
 ## 10. Known limitations
 
@@ -332,6 +332,9 @@ and television [Page 212]. ...
   and 0.91 on natural wording; questions from students who have not read the
   bulletin are the missing test. The hand audits must be redone after any
   change to the prompt, the index or the model.
+- Questions that name the university ("admission requirements for EWU") are
+  searched as "... for the university": the name is on every page, and it
+  pulled retrieval toward pages that happen to print it.
 - A student's word for something the bulletin names differently ("head" vs
   "chairperson", "attested" vs "verification") can still lose the answer.
 - About 3% of answers copy a section path ("Grades, Rules and Regulations >

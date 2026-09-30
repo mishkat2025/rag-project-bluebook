@@ -103,6 +103,29 @@ def expansion_terms(query: str) -> list[str]:
     return added
 
 
+#: The university's own name, with an optional "the" and possessive.
+_UNIVERSITY_NAME = re.compile(
+    r"\b(?:the\s+)?(?:EWU|East\s+West\s+University)(?=(?:['’]s)?\b)",
+    re.IGNORECASE,
+)
+
+
+def neutralize_university_name(query: str) -> str:
+    """Replace "EWU" / "East West University" with "the university".
+
+    Every page of the bulletin is about EWU, so the name tells retrieval
+    nothing -- but it is printed on some pages and not others, and a query
+    carrying it is pulled toward the pages that happen to say it. "tell me
+    the admission requirement for ewu" ranked the minimum-GPA rule on p176
+    (which never says "EWU") outside the top 50, below "criteria for EWU"
+    (p150) and "the EWU website" (p178); without the name it ranks first.
+    Replaced rather than deleted so the question stays grammatical ("What is
+    EWU's policy" -> "What is the university's policy"). For retrieval and
+    reranking only; the generator is still asked the user's words.
+    """
+    return _UNIVERSITY_NAME.sub("the university", query)
+
+
 def expand_query(query: str) -> str:
     """Return the query with its implied surface forms appended.
 

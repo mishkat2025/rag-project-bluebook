@@ -1,0 +1,205 @@
+[
+ {
+  "qid": "n008",
+  "category": "natural_answerable",
+  "answerable": true,
+  "question": "How much of my degree actually has to be done at EWU?",
+  "answer": "The residency requirement requires that at least 75% of courses must be completed at EWU [Page 25].",
+  "error": null,
+  "elapsed_s": 12.15,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   25,
+   24,
+   29,
+   168
+  ],
+  "gate_top_score": 0.20206138491630554,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   25
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "75"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   25
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "n042",
+  "category": "natural_answerable",
+  "answerable": true,
+  "question": "How many students go to EWU?",
+  "answer": "The University has over 10177 students who enroll after a rigorous process of selection [Page 15]. The current enrollment is 10177 (attending classes currently) [Page 15]. Additionally, there are about 3685 students currently enrolled in the B.B.A. program [Page 29].",
+  "error": null,
+  "elapsed_s": 24.86,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   15,
+   29,
+   228,
+   219
+  ],
+  "gate_top_score": 0.7553848028182983,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   15,
+   29
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "10177",
+   "3685"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   15,
+   18
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "u002",
+  "category": "unanswerable_absent_facility",
+  "answerable": false,
+  "question": "Does EWU have a gym I can use?",
+  "answer": "The bulletin does not state whether East West University has a gym. It does mention that there are separate male and female common rooms with indoor game facilities and television [Page 212].",
+  "error": null,
+  "elapsed_s": 11.83,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": true,
+  "retrieved_pages": [
+   212,
+   211,
+   197,
+   16,
+   201
+  ],
+  "gate_top_score": 0.009087595157325268,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   212
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0
+ },
+ {
+  "qid": "u007",
+  "category": "unanswerable_absent_facility",
+  "answerable": false,
+  "question": "Does EWU run a bus service for students?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 7.74,
+  "llm_calls": 1,
+  "abstained": true,
+  "abstention_reason": "generator_not_in_bulletin",
+  "declined_in_text": false,
+  "retrieved_pages": [
+   250,
+   21,
+   182,
+   179,
+   15
+  ],
+  "gate_top_score": 0.024517139419913292,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ },
+ {
+  "qid": "u016",
+  "category": "unanswerable_absent_program",
+  "answerable": false,
+  "question": "Does EWU offer an MBBS degree?",
+  "answer": "The bulletin does not state that EWU offers an MBBS degree [Page 17] [Page 16]. While some faculty members and staff hold an MBBS degree, it is not listed as one of the degrees currently offered by the university [Page 73] [Page 22].",
+  "error": null,
+  "elapsed_s": 15.72,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": true,
+  "retrieved_pages": [
+   73,
+   22,
+   17,
+   27,
+   16
+  ],
+  "gate_top_score": 0.6003299951553345,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   17,
+   16,
+   73,
+   22
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0
+ },
+ {
+  "qid": "u020",
+  "category": "unanswerable_absent_program",
+  "answerable": false,
+  "question": "Can I do a PhD in Computer Science at EWU?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 9.31,
+  "llm_calls": 1,
+  "abstained": true,
+  "abstention_reason": "generator_not_in_bulletin",
+  "declined_in_text": false,
+  "retrieved_pages": [
+   122,
+   123
+  ],
+  "gate_top_score": 0.3821582496166229,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ }
+]

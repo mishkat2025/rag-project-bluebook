@@ -526,3 +526,42 @@ def test_parent_expansion_returns_section_text(retriever):
         len(result.get("context_text", "")) > len(result["text"])
         for result in results[:10]
     )
+
+
+# ---------------------------------------------------------------------------
+# The university's own name is not a search term
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("query, expected", [
+    ("tell me the admission requirment for ewu",
+     "tell me the admission requirment for the university"),
+    ("What are EWU's admission requirements?",
+     "What are the university's admission requirements?"),
+    ("what does it take to get into East West University",
+     "what does it take to get into the university"),
+    ("Does the EWU library open on Friday?",
+     "Does the university library open on Friday?"),
+    ("What is the grading scale?", "What is the grading scale?"),
+    ("How do I apply for NEWU?", "How do I apply for NEWU?"),  # not a word match
+])
+def test_the_university_name_is_neutralized(query, expected):
+    from src.retrieval.query_expansion import neutralize_university_name
+
+    assert neutralize_university_name(query) == expected
+
+
+def test_searches_and_reranks_without_the_name_but_answers_the_users_words():
+    from src.orchestration import pipeline
+    from src.orchestration.state import RAGState
+    from src.retrieval.query_rewriter import QueryRewriter
+
+    class NoLLM:
+        def generate(self, *a, **k):
+            raise AssertionError("a self-contained query must not call the LLM")
+
+    state = RAGState(original_query="tell me the admission requirement for ewu")
+    pipeline.rewrite(state, QueryRewriter(NoLLM()))
+
+    assert state.subqueries == ["tell me the admission requirement for the university"]
+    assert state.rerank_query == "tell me the admission requirement for the university"
+    assert state.original_query == "tell me the admission requirement for ewu"
