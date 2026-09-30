@@ -10,7 +10,7 @@ about the *answer*, so they need the whole pipeline and a live LLM:
     abstention accuracy >= 0.80    unanswerable questions are refused
 
 This runs all 125 questions -- including the 15 unanswerable ones the retrieval
-eval excludes -- through ``RAGWorkflow``, exactly as ``scripts/chat.py`` does,
+eval excludes -- through ``RAGWorkflow``, exactly as ``app/chat.py`` does,
 and reports what came back. LM Studio must be running with the model loaded.
 
 Two flags exist to keep the headline numbers honest rather than tautological:

@@ -56,6 +56,10 @@ ONLINE (1 LLM call typical, 2 common)
     -> [LLM query rewrite, only if the query is a follow-up or multi-part]
     -> dense(30) || BM25(30) -> RRF(k=60) -> 50
     -> bge-reranker-v2-m3 -> top 5 (enforced cut)
+    -> if the question names a program: + up to 2 university-wide rules
+       (admission, fees, grading...) ranked against the question with the
+       program removed -- the bulletin states most policy once, for everyone
+       (src/retrieval/scope.py)
     -> deterministic evidence gate: top rerank score below a calibrated
        threshold -> abstain, no LLM call spent
     -> [optional parent expansion: child chunk -> its section]
@@ -106,26 +110,26 @@ separately; nothing in this repo affects it.
 rag-project/
 ├── data/
 │   ├── raw/ewu_bulletin.pdf
-│   ├── processed/{chunks.json, metadata.json, parents.json, tree.json}
+│   ├── processed/{chunks.json, metadata.json, parents.json, section_tree.json}
 │   └── indexes/{chroma/, bm25/}
 ├── src/
 │   ├── ingestion/       pdf_parser, structure_analyzer, chunker,
 │   │                    metadata_builder, validator
 │   ├── retrieval/       dense_retriever, bm25_retriever, hybrid_retriever,
 │   │                    fusion, reranker, query_expansion, query_rewriter,
-│   │                    evidence_gate, parent_store
+│   │                    evidence_gate, parent_store, scope
 │   ├── storage/         vector_store (ABC), chroma_store, trace_store
 │   ├── agents/          answer_agent, verification_agent (off by default)
 │   ├── orchestration/   pipeline (the control flow), state, workflow
 │   ├── generation/      lmstudio_client, prompts
 │   ├── validation/      citations, numbers, faithfulness (offline-only)
 │   └── config/          settings, device
-├── scripts/chat.py      the terminal REPL
-├── app/chat.py          documented entry point; delegates to scripts/chat.py
+├── app/chat.py          the terminal REPL
+├── scripts/             build_ingestion, build_chroma, build_bm25 (offline index build)
 ├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
-├── tests/              pytest suite (262 tests)
+├── tests/              pytest suite (290 tests)
 ├── .env
 └── requirements.txt
 ```
@@ -195,8 +199,7 @@ reasoning tokens and time out. This is already the shipped default.
 .\.venv\Scripts\python.exe app\chat.py
 ```
 
-(equivalently, `scripts\chat.py` -- both run the same REPL). The startup
-banner reports the resolved device and whether LM Studio is reachable, so a
+The startup banner reports the resolved device and whether LM Studio is reachable, so a
 CPU regression or a stopped server is visible immediately:
 
 ```
@@ -252,9 +255,7 @@ EWU has a football team.
 .\.venv\Scripts\python.exe eval\faithfulness_eval.py --label mylabel
 ```
 
-`pytest` runs the full test suite (262 tests, one xfail documenting a known,
-narrow reranker regression on the "CGPA for admission to CSE" phrasing --
-see `tests/test_reranker.py`).
+`pytest` runs the full test suite (290 tests).
 
 ## 10. Known limitations
 
@@ -262,12 +263,11 @@ see `tests/test_reranker.py`).
   generation (gold values reach the answer 33% of the time) -- correct when
   it answers, but still the hardest category to rank correctly among
   near-identical bulletin pages.
-- A cross-encoder trained for query-relevance ranking can be strict about
-  qualifiers the corpus cannot satisfy: "minimum CGPA for admission **to
-  CSE**" drops the correct university-wide admission page out of the top 5,
-  even though the generator itself declines to invent an answer from the
-  wrong pages it is handed. See `tests/test_reranker.py` and PROGRESS.md
-  Session 5/7.
+- The evaluation questions reuse the bulletin's own wording. Rewritten the way
+  a student would ask them, the share of questions whose gold page reaches
+  the generator falls from 0.975 to 0.875 on a 40-question sample, and 17.5%
+  are refused by the gate
+  (PROGRESS.md Session 11). Treat the numbers above as an upper bound.
 - Off-the-shelf sentence-level NLI (DeBERTa-v3-base-MNLI) is a weak
   instrument for this domain's numeric and tabular sentences -- it hedges to
   "neutral" on facts independently confirmed correct, so it is used only as

@@ -51,7 +51,7 @@ from src.agents.answer_agent import AnswerAgent
 from src.config.settings import settings
 from src.generation import prompts
 from src.orchestration.state import RAGState
-from src.retrieval import evidence_gate
+from src.retrieval import evidence_gate, scope
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.retrieval.query_rewriter import QueryRewriter
 from src.retrieval.reranker import Reranker
@@ -153,8 +153,13 @@ def retrieve(
     return candidates
 
 
-def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
-    """Cross-encode the fused pool and cut it to ``settings.rerank_top_k``.
+def rerank(
+    state: RAGState,
+    reranker: Reranker,
+    retriever: HybridRetriever | None = None,
+) -> list[dict[str, Any]]:
+    """Cross-encode the fused pool, cut it to ``settings.rerank_top_k``, and
+    append the university-wide rules a program-specific question inherits.
 
     Scores every candidate exactly once, regardless of the cut: the
     cross-encoder scores the whole pool internally either way, so asking for
@@ -162,6 +167,9 @@ def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
     extra. The full ranking is kept on ``state.all_reranked_chunks`` so a
     verifier can see everything the reranker judged, not just the slice the
     generator reads -- see the field's docstring for why that matters.
+
+    The appended chunks come from :func:`src.retrieval.scope.
+    university_wide_extras` and never displace the top ``rerank_top_k``.
     """
     query = state.rerank_query.strip() or state.original_query
 
@@ -172,6 +180,19 @@ def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
     )
 
     reranked = full[: settings.rerank_top_k]
+
+    general, extras = None, []
+
+    if settings.university_scope_enabled:
+        general, extras = scope.university_wide_extras(
+            query,
+            pool=state.retrieved_chunks,
+            selected=reranked,
+            reranker=reranker,
+            retriever=retriever,
+        )
+
+    reranked = reranked + extras
 
     state.all_reranked_chunks = full
     state.reranked_chunks = reranked
@@ -185,6 +206,12 @@ def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
         "output_candidate_count": len(reranked),
         "full_pool_size": len(full),
         "scores": [item.get("rerank_score") for item in reranked],
+        "university_scope": {
+            "general_query": general,
+            "added_pages": [
+                (item.get("metadata") or {}).get("page") for item in extras
+            ],
+        },
     }
 
     return reranked
@@ -194,7 +221,13 @@ def gate(state: RAGState) -> evidence_gate.GateResult:
     """Decide whether the bulletin actually answers this. No LLM."""
     query = state.rerank_query.strip() or state.original_query
 
-    result = evidence_gate.assess(query, state.reranked_chunks)
+    # Every chunk rerank() kept, including appended university-wide ones --
+    # the gate's default cut of rerank_top_k would silently drop them.
+    result = evidence_gate.assess(
+        query,
+        state.reranked_chunks,
+        max_chunks=len(state.reranked_chunks),
+    )
 
     state.evidence_status = result.to_evidence_status()
 
@@ -291,7 +324,7 @@ def run(
         _record_calls(state, llm_calls)
         return state
 
-    rerank(state, reranker)
+    rerank(state, reranker, retriever)
 
     decision = gate(state)
 

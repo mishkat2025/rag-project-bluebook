@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     #: written in Phase 0 and exercised only by a smoke script until now --
     #: dead code that could save and load a trace but that nothing ever
     #: called during a real run, which is the "trace -> metrics aggregator"
-    #: gap HANDOFF names for Phase 7. Wired into ``scripts/chat.py``; read it
+    #: gap HANDOFF names for Phase 7. Wired into ``app/chat.py``; read it
     #: back with ``eval/trace_metrics.py``. Off by default in eval scripts,
     #: which already build and report their own per-run metrics from the
     #: results file they save.
@@ -121,6 +121,17 @@ class Settings(BaseSettings):
     #: the reranker reordered 50 candidates and truncated none of them
     #: (diagnosis #8).
     rerank_top_k: int = 5
+
+    #: When a question names a program, also rank university-wide chunks
+    #: against the question with the program removed, and append the best of
+    #: them to the top ``rerank_top_k``. See src/retrieval/scope.py -- this is
+    #: what answers "admission requirements for CSE", which the bulletin only
+    #: states university-wide.
+    university_scope_enabled: bool = True
+    university_scope_slots: int = 2
+    #: Below this, an appended chunk is noise: useful ones scored 0.14-0.97 on
+    #: the eval set, unrelated ones 0.001-0.03.
+    university_scope_min_score: float = 0.1
 
     #: Deterministic acronym expansion (CSE <-> Computer Science and
     #: Engineering, CGPA <-> GPA). No LLM involved.

@@ -29,13 +29,15 @@ from eval.retrieval_metrics import (  # noqa: E402
     evaluate_ranking,
     evaluate_ranking_by_page,
 )
+from src.config.settings import settings  # noqa: E402
+from src.retrieval.scope import university_wide_extras  # noqa: E402
 
 DATASET = ROOT / "eval" / "dataset.jsonl"
 RESULTS = ROOT / "eval" / "results"
 CHUNKS = ROOT / "data" / "processed" / "chunks.json"
 METRICS = ["recall@5", "recall@10", "recall@20", "recall@50", "ndcg@10", "mrr@10", "p@5"]
 PAGE_METRICS = ["page-recall@5", "page-recall@10", "page-recall@20", "page-recall@50",
-                "page-ndcg@10", "page-mrr@10", "page-p@5"]
+                "page-ndcg@10", "page-mrr@10", "page-p@5", "context-recall"]
 
 
 def load_dataset(limit: int | None = None) -> list[dict]:
@@ -136,6 +138,9 @@ def main() -> None:
                              "the query it derives -- so the harness scores the input "
                              "the pipeline actually uses (Session 7, defect 4). "
                              "Needs LM Studio.")
+    parser.add_argument("--no-scope", action="store_true",
+                        help="with --rerank: do not append university-wide chunks "
+                             "for program-specific questions (src/retrieval/scope.py)")
     args = parser.parse_args()
 
     if args.rescore and args.rerank:
@@ -151,6 +156,8 @@ def main() -> None:
         # added later can be applied to earlier phases without their index.
         saved = json.loads((RESULTS / f"{args.rescore}.json").read_text(encoding="utf-8"))
         rankings = {entry["qid"]: entry["retrieved_pages"] for entry in saved}
+        contexts = {entry["qid"]: entry["context_pages"] for entry in saved
+                    if "context_pages" in entry}
         counts = None
     else:
         from src.retrieval.hybrid_retriever import HybridRetriever
@@ -194,6 +201,7 @@ def main() -> None:
                 continue
             ranked = rankings[row["qid"]]
             n_results = len(ranked)
+            context_pages = contexts.get(row["qid"])
         else:
             if rewriter is None:
                 query = build_query(row)
@@ -208,13 +216,31 @@ def main() -> None:
                 entry_queries = queries
 
             results = merge_search(retriever, queries, args.pool)
+            context_pages = None
 
             if reranker is not None:
                 # Rerank the query as asked, not the acronym-expanded form:
                 # the cross-encoder reads natural language, and expansion
                 # exists only to give BM25 tokens it would otherwise lack.
-                results = reranker.rerank(rerank_query, results,
-                                          top_k=args.rerank_top_k)
+                full = reranker.rerank(rerank_query, results, top_k=None)
+                context = full[:settings.rerank_top_k]
+
+                # What pipeline.rerank hands the generator: the top 5 plus
+                # any university-wide rules a program-specific question
+                # inherits. The extras go right after the top 5 so the
+                # ranking metrics see them where the generator does.
+                if settings.university_scope_enabled and not args.no_scope:
+                    _, extras = university_wide_extras(
+                        rerank_query, results, context, reranker, retriever)
+                    context = context + extras
+
+                taken = {c["chunk_id"] for c in context}
+                results = context + [c for c in full if c["chunk_id"] not in taken]
+
+                if args.rerank_top_k:
+                    results = results[:args.rerank_top_k]
+
+                context_pages = sorted({p for p in map(chunk_page, context) if p is not None})
             ranked = [p for p in (chunk_page(r) for r in results) if p is not None]
             n_results = len(results)
         entry = {
@@ -225,11 +251,16 @@ def main() -> None:
             "answerable": row["answerable"],
             "retrieved_pages": ranked,
             "n_retrieved": n_results,
+            **({"context_pages": context_pages} if context_pages is not None else {}),
         }
         if row["answerable"]:
             gold = set(row["gold_pages"])
             entry["gold_pages"] = sorted(gold)
             entry["scores"] = evaluate_ranking_by_page(ranked, gold)
+            if context_pages is not None:
+                # Did a gold page reach the generator at all? The number
+                # that decides whether an answer is possible.
+                entry["scores"]["context-recall"] = float(bool(gold & set(context_pages)))
             if counts is not None:
                 entry["scores"].update(
                     evaluate_ranking(ranked, gold, sum(counts[p] for p in gold))
@@ -259,7 +290,7 @@ def main() -> None:
         if names:
             print(f"\n{family}")
             print("  " + "  ".join(f"{m}={overall[m]:.3f}" for m in names))
-    cat_metrics = [m for m in ("page-recall@5", "page-recall@20", "page-ndcg@10", "page-mrr@10", "page-p@5") if m in overall]
+    cat_metrics = [m for m in ("page-recall@5", "context-recall", "page-recall@20", "page-ndcg@10", "page-mrr@10", "page-p@5") if m in overall]
     print(f"\n{'category':<18}{'n':>3}  " + "".join(f"{m:>15}" for m in cat_metrics))
     for cat, items in by_cat.items():
         vals = [mean([e["scores"][m] for e in items]) for m in cat_metrics]

@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 7 — Verification, terminal app, observability. DONE (Session 9).**
+**Current phase: 7 DONE (Session 9). Post-plan fixes: Session 11 (university-wide rules for program questions, cleanup). See its "Open" list for what is next.**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -1069,3 +1069,123 @@ generation numbers above are unaffected by construction.
 - **Known gap, not fixed:** the REPL banner prints the LLM base URL and reachability but not
   `settings.llm_model`. Because LM Studio matches by prefix, you can swap models and the
   banner looks identical. `eval/run_generation_eval.py` prints it; `scripts/chat.py` does not.
+
+---
+
+## Session 11 -- university-wide rules for program questions; wording probe; cleanup
+
+### 1. The eval set's wording hides a real gap (measured, not fixed)
+
+40 answerable questions from `dataset.jsonl` were rewritten the way a student would type
+them ("How many classes can I skip before I get in trouble?" for q001), keeping the same
+gold pages. Shipped retrieval (hybrid -> rerank -> top 5), same session, GPU:
+
+| | dataset wording | natural wording |
+|---|---|---|
+| a gold page reaches the generator | 0.950 | **0.825** |
+| page-nDCG@10 | 0.874 | 0.774 |
+| gate abstains on an answerable question | 0.000 | **0.200** |
+| median top rerank score | 0.982 | **0.257** |
+
+This generalises Session 6's single grading-scale example: the headline retrieval numbers
+hold for questions phrased the way the bulletin is written. The phase-1 baseline already
+scored page-recall@20 0.964 while HANDOFF's diagnosis showed retrieval broken, for the same
+reason. **A held-out set written by people who have not read the PDF is the missing
+instrument.** The probe script is not committed (it lives in the session scratchpad); the 40
+paraphrases should become `eval/dataset_natural.jsonl` if this is pursued.
+
+### 2. "Admission requirements for CSE" -- the signature failure is closed
+
+**Cause, precisely.** CSE and EEE have no "Admission Requirements" section of their own
+(Law p90, Civil p157, GEB p150, ISLM p83 do). Their answer is the university-wide rule on
+p176-177. Retrieval found it; the cross-encoder then demoted it because it never says "CSE":
+
+| question | rank of p176 "Minimum GPA of 3.00 in both SSC and HSC" |
+|---|---|
+| admission requirements for undergraduate programs | 1 (0.999) |
+| admission requirements for CSE | 20 (0.027) |
+| minimum CGPA for admission to CSE | 7 (0.080) |
+| admission requirements for EEE | 24 (0.044) |
+
+**Fix: `src/retrieval/scope.py`, wired into `pipeline.rerank`.** When the query names a
+program, rerank *university-wide* chunks against the query with the program removed
+("What is the minimum CGPA for admission?") and **append** up to
+`university_scope_slots=2` scoring >= `university_scope_min_score=0.1` after the top 5.
+Nothing in the top 5 is displaced, so a department's own section still wins (Law is
+answered from p90). University-wide = section-tree root is not `Faculty of ...`,
+`List of Courses` or `EWU Academic Departments` -- so the general query cannot hand the
+generator another department's rule. The gate now reads every chunk rerank() kept. One
+prompt rule (6) says university-wide sections apply to every program unless a department
+section differs. No LLM call added; one extra cross-encoder pass on GPU.
+
+`run_eval.py --rerank` mirrors the pipeline and gains `context-recall` (a gold page is among
+the chunks the generator receives) and `--no-scope` for the ablation.
+
+**Retrieval, 112 answerable, same session:**
+
+| | no scope | **scope (shipped)** |
+|---|---|---|
+| context-recall | 0.920 | **0.946** |
+| page-recall@5 / @20 | 0.927 / 0.987 | 0.936 / 0.987 |
+| page-nDCG@10 | 0.880 | 0.882 |
+
+No category's context-recall fell. On the 40 natural-wording questions context-recall went
+0.825 -> **0.875** and false gate abstentions 0.200 -> 0.175.
+
+**Generation, 125 questions, live Gemma 4 (`phase8_generation.json` vs `phase7_generation.json`):**
+
+| | Phase 7 | **Session 11** |
+|---|---|---|
+| citation accuracy / number fidelity | 1.000 / 1.000 | 1.000 / 1.000 |
+| abstention accuracy | 0.923 | 0.923 |
+| answerable refused | 2/112 (q029, q093) | **0/112** |
+| gold values stated in the answer | 0.850 | 0.848 |
+| regenerations | - | 0/125 |
+| latency mean / p95 | 15.2s / 34.6s | 8.0s / 14.1s |
+
+Per question, every change is an improvement: q093 ("is there also a lab fee for it?") now
+answers Tk. 2,500 [p180]; q083 gold values 0.5 -> 1.0. **q029 is not a real gain**: p180 is
+retrieved and contains "B. Pharm. 6, 000/-", but Gemma writes "the bulletin does not provide
+the per-credit tuition for B.Pharm" -- the same table-reading miss, now phrased as a partial
+answer instead of the `NOT_IN_BULLETIN` sentinel, so the abstention metric counts it as
+delivered. That is also why gold values dipped 0.002: q029 moved into the denominator.
+**Latency is not attributable to this change** (it adds context); LM Studio state differed
+between runs.
+
+Live, verified: "minimum CGPA for admission to CSE" -> GPA 3.00 in SSC and HSC [p176], and
+says no CSE-specific figure is listed; "admission requirements for EEE" -> the full p176
+rules plus the EEE HSC-Math requirement; "how much does computer science cost per credit"
+(gate-refused before) -> 5,500 [p179].
+
+The Phase 4 `xfail` is now a passing, parametrised test (CSE x2, EEE) of what the pipeline
+hands the generator. `tests/test_scope.py` covers query generalisation, scope
+classification and the extras (another department's rule is never appended).
+
+### 3. Cleanup
+
+- `app/chat.py` is now the REPL itself (moved from `scripts/chat.py`, which is gone -- HANDOFF
+  said not to keep both). `trace` shows the university-wide step.
+- Deleted 4 empty files (`scripts/build_index.py`, `scripts/inspect_trace.py`,
+  `scripts/test_retrieval.py`, `tests/test_agents.py`) and 11 manual smoke/debug scripts in
+  `scripts/` superseded by pytest. `scripts/` now holds only the three index builders.
+- `scripts/test_trace_store.py` was TraceStore's only check, and it wrote a fake trace into
+  the real `data/traces/`; replaced by `tests/test_trace_store.py` on `tmp_path`.
+- `.env` untracked (it was committed despite `.gitignore`); local copy kept.
+- Stale `__pycache__` for the Phase 5-deleted modules removed.
+- README: layout, entry point, architecture step, `section_tree.json` name.
+
+Tests: 262 (1 xfail) -> **290 passed, 0 xfail.**
+
+### Open, in priority order
+
+1. README metrics table leads with the guardrail metrics (citation accuracy = cited page is
+   among those retrieved; number fidelity = number appears somewhere in the evidence) and
+   omits answer correctness (gold values 0.848; table 0.333) and NLI faithfulness 0.467.
+2. Tables: q029-style misses -- the value is in the retrieved evidence and the generator
+   does not read it. A generation problem, not retrieval.
+3. A "the bulletin does not provide X" answer escapes the abstention metric.
+4. No streaming: the user waits for the whole answer.
+5. The REPL's "Source pages" lists every retrieved page, not the cited ones.
+6. Not done, needs the owner's decision: the full bulletin PDF is committed to a PUBLIC repo;
+   `data/backup_phase1/` and `data/backup_phase2_chroma_minilm/` (62 MB, untracked) are
+   snapshots of the pre-rebuild index.

@@ -6,7 +6,7 @@ r"""Aggregate real usage from saved REPL traces -- not the eval set.
 125-question dataset. That answers "did this change help", but it cannot
 answer "what is actually happening when someone uses the chatbot" -- for
 that you need what people actually asked, which only exists once the REPL
-has been run. ``scripts/chat.py`` now saves every turn's trace via
+has been run. ``app/chat.py`` now saves every turn's trace via
 ``TraceStore`` (``settings.trace_persist_enabled``, default on); this script
 reads them back and reports the same shape of numbers
 (``run_generation_eval.report``'s COST section) over whatever traces exist.
@@ -42,7 +42,7 @@ def main() -> None:
 
     if not paths:
         print(f"No traces saved yet under {store.trace_dir}. "
-              f"Run scripts/chat.py with settings.trace_persist_enabled=True "
+              f"Run app/chat.py with settings.trace_persist_enabled=True "
               f"(the default) and ask it something.")
         return
 
