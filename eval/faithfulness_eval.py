@@ -242,7 +242,7 @@ def main() -> None:
     # This model judged two "neutral" and one "entailed", so a low rate here
     # is not evidence the answers are right. Only a human audit measures that.
     print("  (NLI contradiction only -- it does not catch a true number attached "
-          "to the wrong claim;\n   see eval/results/phase8_audit.json)")
+          "to the wrong claim;\n   see the latest eval/results/*_audit.json)")
 
     if contradictions:
         print(f"\n  CONTRADICTED (no candidate chunk entails it, and at "

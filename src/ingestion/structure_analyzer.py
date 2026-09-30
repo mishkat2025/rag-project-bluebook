@@ -134,6 +134,47 @@ def starts_with_title(candidate: str, prefix: str) -> bool:
     return candidate == prefix or candidate.startswith(prefix + " ")
 
 
+_SENTENCE_BREAK = re.compile(r"(?<=[.!?;])\s+(?=[A-Z(])")
+
+
+def lead_in(lines: list["TextLine"], max_chars: int = 400) -> str:
+    """The sentence that introduces a table, not just the line above it.
+
+    PDF lines break wherever the page is full, so the last line before the
+    scholarship table is "credits as mentioned in the table below in the last
+    three consecutive semesters:" -- the words "to be eligible for Merit
+    Scholarship" sit on the line before.
+
+    The last line is always kept whole, and is only EXTENDED backwards to the
+    start of the sentence it continues -- never shortened. Taking "the last
+    sentence" instead cut course-description captions down to "Mini
+    project." and split "M.J. Cooke" at the abbreviation.
+    """
+    texts = [line.text.strip() for line in lines if line.text.strip()]
+
+    if not texts:
+        return ""
+
+    continued: list[str] = []
+
+    for text in reversed(texts[:-1][-5:]):
+        if text.endswith((".", "!", "?", ";", ":")):
+            break  # that line ended a sentence; the last line starts one
+
+        continued.insert(0, text)
+
+    caption = texts[-1]
+
+    if continued:
+        start = _SENTENCE_BREAK.split(" ".join(continued))[-1]
+        caption = f"{start} {caption}"
+
+    if len(caption) > max_chars:
+        caption = caption[-max_chars:].split(" ", 1)[-1]
+
+    return caption
+
+
 def same_unit(first: str, second: str, min_words: int = 5) -> bool:
     """True when two normalized titles name the same section.
 
@@ -314,11 +355,26 @@ class StructureAnalyzer:
         reports the two halves as separate tables. The second half arrives with
         no header row and no introducing sentence, so nothing in it says
         "credits" or "scholarship" -- only the program names and the numbers.
+
+        The tuition table runs from page 179 onto 180 and loses a column in
+        the process (PyMuPDF reads the second half as 2 columns, the first as
+        4), so the column count cannot be required to match. When it differs,
+        the header is written as a plain "Columns:" line above the grid rather
+        than forced onto rows it does not fit.
+
+        A table is a continuation when it opens its page (no caption) and the
+        last thing before it was a table on the previous page. A heading in
+        between means a new table. Chains are followed, so a curriculum that
+        spans three pages carries the FIRST page's header, not the second
+        page's first row.
         """
         previous: ContentBlock | None = None
+        header: list[str] = []
+        columns = 0
 
         for item in stream:
             if not isinstance(item, ContentBlock):
+                previous = None  # a heading starts a new table
                 continue
 
             if item.kind != TABLE or item.table is None:
@@ -329,16 +385,23 @@ class StructureAnalyzer:
                 previous is not None
                 and previous.table is not None
                 and item.page == previous.page + 1
-                and item.table.column_count == previous.table.column_count
                 and not item.caption
+                and bool(header)
             )
 
             if is_continuation:
-                header = previous.table.rows[0]
                 item.caption = previous.caption
-                item.markdown_override = rows_to_markdown(
-                    [header] + item.table.rows
-                )
+
+                if item.table.column_count == columns:
+                    item.markdown_override = rows_to_markdown(
+                        [header] + item.table.rows
+                    )
+                else:
+                    names = " | ".join(cell for cell in header if cell.strip())
+                    item.caption = f"{item.caption}\nColumns: {names}".strip()
+            else:
+                header = item.table.rows[0] if item.table.rows else []
+                columns = item.table.column_count
 
             previous = item
 
@@ -515,7 +578,7 @@ class StructureAnalyzer:
             nonlocal last_text
 
             if pending:
-                last_text = pending[-1].text
+                last_text = lead_in(pending)
                 items.append(
                     ContentBlock(
                         kind=TEXT,

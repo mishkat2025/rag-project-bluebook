@@ -1181,7 +1181,7 @@ Tests: 262 (1 xfail) -> **290 passed, 0 xfail.**
 1. **DONE in part 2 below.** README metrics table leads with the guardrail metrics (citation accuracy = cited page is
    among those retrieved; number fidelity = number appears somewhere in the evidence) and
    omits answer correctness (gold values 0.848; table 0.333) and NLI faithfulness 0.467.
-2. Tables: q029-style misses -- the value is in the retrieved evidence and the generator
+2. **DONE in part 3 below (it was ingestion, not generation).** Tables: q029-style misses -- the value is in the retrieved evidence and the generator
    does not read it. A generation problem, not retrieval.
 3. A "the bulletin does not provide X" answer escapes the abstention metric.
 4. No streaming: the user waits for the whole answer.
@@ -1228,3 +1228,79 @@ the proxy and the contradiction rate, pointing at the audit.
 The audit is one reader's judgement ("correct" = answers the question asked with the
 bulletin's value; extra true detail allowed). It is a snapshot of one run: re-audit after
 any change to the prompt or the generator, or the 0.929 goes stale.
+
+## Session 11, part 3 -- tables split across a page break (#3); q047
+
+**The audit's "Gemma cannot read tables" failures were an ingestion bug.** For q029, q047 and
+q092 the rows holding the answer were never in the generator's evidence. Page-level metrics
+hid it: "p180 retrieved" counted as a hit when the p180 chunk was the lab-fee text, not the
+second half of the tuition table.
+
+PyMuPDF reports a table that runs over a page break as two tables. `_link_continuation_tables`
+(structure_analyzer.py) was meant to give the second half its header and caption, but:
+
+1. it required equal column counts -- the tuition table is 4 columns on p179 and 2 on p180,
+   so `| B. Pharm. | 6, 000/- |` was indexed with nothing saying it is a per-credit fee
+   (ranked 8th for "per-credit tuition for B.Pharm");
+2. the "caption" was the last PDF *line* before the table, which for the merit-scholarship
+   table is "credits as mentioned in the table below..." -- "To be eligible for Merit
+   Scholarship" sits on the line above;
+3. on a 3-page chain it used the second page's first data row as the third page's header;
+4. a heading between two tables did not end the chain.
+
+**Fix.** Continuations link regardless of column count; when the counts differ the header is a
+plain `Columns:` line above the grid. `lead_in()` extends the last line backwards to the start
+of its sentence -- never shortens it (a "last sentence" rule was tried first and cut captions to
+"Mini project." and split "M.J. Cooke"). Chains carry the first page's header; a heading resets.
+Dry run before rebuilding: 116 chunks changed, all tables, 0 captions shorter; chunk ids and
+count unchanged (2855). Index rebuilt (ingestion, Chroma, BM25); pre-fix snapshot kept in the
+session scratchpad.
+
+Simulated rerank rank of the answer chunk before rebuilding: tuition continuation 8 -> 1
+(0.196 -> 0.809); merit table for the CSE question 9 -> 1 (0.403 -> 0.900).
+
+**Retrieval (112 answerable):** context-recall 0.946 -> **0.955**; table 0.800 -> 0.867;
+table nDCG@10 0.688 -> 0.728. q029 gold page rank 5 -> 1, q046 now reaches the generator,
+q055 -> 1. Two ranking drops with the gold page still delivered: q065 (Sociology curriculum
+continuations now carry their header and compete with p76), q090 (the graduate half of the
+merit table now outranks the undergraduate half).
+
+**Generation, live Gemma 4 (`phase9_generation.json`), re-audited (`phase9_audit.json`):**
+all 41 answers whose text changed were re-read; unchanged answers keep their verdict.
+
+| | phase8 | **phase9** |
+|---|---|---|
+| correct / 112 | 104 | **110** |
+| table | 12/15 | **15/15** |
+| wrong | 7 | **1** (q100) |
+| partial | 1 | 1 (q071) |
+| citation / number / abstention | 1.000 / 1.000 / 0.923 | unchanged |
+| NLI entailment / contradiction | 0.434 / 0.000 | 0.473 / 0.000 |
+
+q029, q046, q047, q055, q090, q092 went wrong -> correct. q055 and q090 were the "real number,
+wrong rule" failures: with the whole introducing sentence in the chunk, Gemma now states the
+rule the number belongs to. Two changed answers verified against the PDF: q120's added
+"discontinued below 2.70" is the Medha Lalon rule (p224); q074 now cites p223 for the 2.00
+minimum -- true, but a sibling-benefit clause rather than the p25 graduation rule.
+
+**q047 specifically.** It answers correctly (39 credits, p221), but the table does not reach
+the top 5: five chunks repeating the B.Pharm boilerplate "12 credits in a semester for the
+students of B.Pharm" score ~0.98. It arrives through the university-wide step (Session 11
+part 1) -- the program-stripped question ranks the table at 0.990. Checked for nine programs
+(B.Pharm, CSE, EEE, BBA, LLB, English, Economics, Civil, Sociology): the merit table reaches
+the generator for all nine. Without a program in the question the table now ranks 1st-2nd
+on its own (caption fix).
+
+**Tried and reverted: near-duplicate skipping at the top-k cut.** p177 and p219 print the same
+scholarship clauses (86% word overlap), and 10/125 eval questions spend a top-5 slot on a
+near-copy. Skipping chunks with >= 0.8 word Jaccard to a better-ranked one changed
+context-recall by exactly 0 (0.955 both ways; no question changed) and only moved q047's table
+from 8th to 7th. No measured benefit, so it is not shipped. Revisit only with a question it
+provably fixes.
+
+Tests: 290 -> **296** (lead_in cases; the tuition continuation says what it is; both halves of
+the merit table carry the full sentence).
+
+**Open:** q100 (follow-up "What is the minimum for Pharmacy students?" answered with the
+programme total) -- a rewrite/grounding problem, not tables. Table rows from two-column-pair
+layouts are still interleaved in the Markdown.

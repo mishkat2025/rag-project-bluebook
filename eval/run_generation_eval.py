@@ -259,7 +259,7 @@ def report(records: list[dict], label: str) -> None:
     # every number in the row, so "A- carries 3.70" scores 0; and a right
     # number stated about the wrong rule scores 1. Session 11 read all 112
     # answers: 0.848 here, 0.929 actually correct (tables 0.333 vs 0.80).
-    print("  (numeric proxy, not correctness -- see eval/results/phase8_audit.json)")
+    print("  (numeric proxy, not correctness -- see the latest eval/results/*_audit.json)")
 
     print("\nABSTENTION")
     print(f"  unanswerable refused : {correct_abstain}/{len(unanswerable)}")

@@ -22,25 +22,26 @@ below as an upper bound until the chatbot is tested on questions from people
 who have not read the bulletin.
 
 **Is the answer right?** Every answer read by hand against the gold answer
-and the PDF (`eval/results/phase8_audit.json`):
+and the PDF (`eval/results/phase9_audit.json`):
 
 | | Result |
 |---|---|
-| answerable questions answered correctly | **104 / 112 (0.929)** |
-| partly correct | 1 |
-| wrong | 7 -- 4 say "the bulletin does not provide it" when the answer was in the evidence; 3 state something false |
+| answerable questions answered correctly | **110 / 112 (0.982)** |
+| partly correct | 1 -- a multi-hop question where one of the two pages was not retrieved |
+| wrong | 1 -- a follow-up ("what is the minimum for Pharmacy students?") answered with the programme total instead of the per-semester minimum |
 | unanswerable questions refused | 12 / 13 (the 13th declines inside its answer) |
 | answerable questions refused outright | 0 / 112 |
 
-By category: single fact 27/27, program-specific 15/15, adversarial near-miss
-10/10, exact number 14/15, multi-hop 9/10, comparison 9/10, follow-up 8/10,
-**table 12/15** (the weakest).
+By category: single fact 27/27, exact number 15/15, table 15/15,
+program-specific 15/15, comparison 10/10, adversarial near-miss 10/10,
+multi-hop 9/10, follow-up 9/10.
 
-The 3 false answers are the kind to watch for. Each one quotes a real number
-from the right page: the continuation rule given as the qualification rule,
-"35 credits" per semester instead of across three semesters, and a programme
-total given for a per-semester question. None of them was caught by the
-checks below.
+The failures to watch for are the ones the checks below cannot see. In the
+previous run, before tables split across a page break were fixed, 3 answers
+quoted a real number from the right page about the wrong rule -- a
+scholarship's continuation rule given as its qualification rule, "35
+credits" per semester instead of across three semesters. All 3 passed every
+check. The remaining wrong answer is of the same kind.
 
 **Guardrails.** These are deterministic checks run on every answer. A pass
 means the check found nothing to reject, not that the answer is right:
@@ -49,15 +50,15 @@ means the check found nothing to reject, not that the answer is right:
 |---|---|---|
 | citation validity | 1.000 | every cited page is one the model was given; not that the page supports the sentence |
 | number grounding | 1.000 | every number in the answer appears somewhere in the evidence; not that it is attached to the right fact |
-| NLI entailment (offline) | 0.434 | share of cited sentences an off-the-shelf NLI model judges entailed; it rates most correct numeric sentences "neutral", so it is too weak to gate on |
-| NLI contradiction (offline) | 0.000 | the same model found no contradictions, including among the 3 false answers above, one of which it judged entailed |
+| NLI entailment (offline) | 0.473 | share of cited sentences an off-the-shelf NLI model judges entailed; it rates most correct numeric sentences "neutral", so it is too weak to gate on |
+| NLI contradiction (offline) | 0.000 | the same model found no contradictions -- also in the previous run, where it rated the 3 false answers "neutral" or "entailed" |
 
 **Retrieval** (`eval/run_eval.py --rerank`): a gold page is among the chunks
-the model receives for 0.946 of answerable questions; page-recall@20 0.987;
-page-nDCG@10 0.882.
+the model receives for 0.955 of answerable questions; page-recall@20 0.987;
+page-nDCG@10 0.883.
 
 **Cost:** 1 LLM call for a typical question, 2 for follow-ups and multi-part
-questions, 0 when the gate refuses. Median latency 7.5 s, p95 14 s on an
+questions, 0 when the gate refuses. Median latency 7.6 s, p95 14 s on an
 RTX 4060 Ti.
 
 ## 2. Architecture
@@ -159,7 +160,7 @@ rag-project/
 ├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
-├── tests/              pytest suite (290 tests)
+├── tests/              pytest suite (296 tests)
 ├── .env
 └── requirements.txt
 ```
@@ -285,14 +286,17 @@ EWU has a football team.
 .\.venv\Scripts\python.exe eval\faithfulness_eval.py --label mylabel
 ```
 
-`pytest` runs the full test suite (290 tests).
+`pytest` runs the full test suite (296 tests).
 
 ## 10. Known limitations
 
-- Tables are the weakest category: 12/15 correct, retrieval nDCG@10 0.688.
-  Two of the three misses had the table in the evidence and the model still
-  said the value was not provided -- it reads the serialised fee and
-  scholarship tables less reliably than prose.
+- Tables still rank lowest in retrieval (nDCG@10 0.728). A table that runs
+  across a page break is detected as two tables; the continuation now carries
+  the first part's introducing sentence and header, but its rows are
+  sometimes misaligned in the Markdown (PyMuPDF reads a two-column-pair layout
+  as interleaved cells).
+- The evaluation set is small: one hand audit of 112 answers. The audit
+  must be redone after any change to the prompt or the model.
 - The evaluation questions reuse the bulletin's own wording. Rewritten the way
   a student would ask them, the share of questions whose gold page reaches
   the generator falls from 0.975 to 0.875 on a 40-question sample, and 17.5%
