@@ -140,8 +140,9 @@ def test_a_follow_up_costs_exactly_two_llm_calls():
     assert state.trace["llm_calls"] == 2
 
 
-def test_an_abstention_costs_zero_generation_calls():
-    """Nothing is worth generating from, so nothing is generated."""
+def test_an_abstention_costs_zero_generation_calls(monkeypatch):
+    """With a score gate set, nothing below it is generated from."""
+    monkeypatch.setattr(settings, "abstention_threshold", 0.02)
     parts, llm = build(scores=[0.01, 0.005])
     state = RAGState(original_query="Does EWU have a football team?")
 
@@ -251,7 +252,20 @@ def test_an_empty_retrieval_abstains_without_reranking():
     assert llm.calls == 0
 
 
-def test_an_abstention_produces_the_abstention_message():
+def test_with_the_shipped_gate_off_a_low_score_still_reaches_the_model():
+    """Session 11: "What's an A minus worth?" scored 0.001 and is answerable.
+    The generator reads the evidence and decides; it costs one call."""
+    parts, llm = build(scores=[0.003, 0.001])
+    state = RAGState(original_query="What's an A minus worth?")
+
+    pipeline.run(state, **parts)
+
+    assert llm.calls == 1
+    assert not state.evidence_status.get("abstained")
+
+
+def test_an_abstention_produces_the_abstention_message(monkeypatch):
+    monkeypatch.setattr(settings, "abstention_threshold", 0.02)
     parts, _ = build(scores=[0.003, 0.001])
     state = RAGState(original_query="Is there a swimming pool on campus?")
 
@@ -375,3 +389,98 @@ def test_the_trace_records_how_the_answer_was_produced():
     for key in ("query_rewrite", "retrieval", "reranking", "evidence_gate",
                 "llm_calls"):
         assert key in state.trace, key
+
+
+# ---------------------------------------------------------------------------
+# Conversation history reaches the generator only for follow-ups
+# ---------------------------------------------------------------------------
+
+CHAIR_HISTORY = [
+    ConversationTurn(
+        user="who is the chairperson of cse department",
+        assistant="Dr. Taskeed Jabid [Page 22].",
+    ),
+]
+
+
+def test_a_self_contained_question_is_answered_without_the_conversation():
+    """Two turns about the CSE chairperson made Gemma refuse the CSE
+    admission question 11 times in 12; without the history, 0 in 8."""
+    parts, _ = build()
+    state = RAGState(
+        original_query="What is the minimum CGPA for admission to CSE?",
+        conversation_history=list(CHAIR_HISTORY),
+    )
+
+    pipeline.run(state, **parts)
+
+    assert state.trace["query_rewrite"]["reason"] == "self_contained"
+    assert state.answer_with_history is False
+
+
+def test_a_follow_up_is_answered_with_the_conversation():
+    parts, _ = build()
+    state = RAGState(
+        original_query="tell me more about him",
+        conversation_history=list(CHAIR_HISTORY),
+    )
+
+    pipeline.run(state, **parts)
+
+    assert state.answer_with_history is True
+
+
+def test_the_answer_prompt_leaves_out_history_when_told_to():
+    from src.agents.answer_agent import AnswerAgent
+
+    class Recording:
+        def __init__(self):
+            self.prompt = ""
+
+        def generate(self, prompt, temperature=None, json_schema=None):
+            self.prompt = prompt
+            return "The fee is Tk. 15,000 [Page 176]."
+
+    for with_history, expected in ((True, True), (False, False)):
+        llm = Recording()
+        state = RAGState(
+            original_query="What is the fee?",
+            conversation_history=list(CHAIR_HISTORY),
+            answer_with_history=with_history,
+        )
+        state.evidence_status = {
+            "sufficient": True,
+            "supported_chunks": [{"chunk_id": "c", "text": "Tk. 15,000 fee.",
+                                  "metadata": {"page": 176}}],
+        }
+
+        AnswerAgent(llm).answer(state)
+
+        assert ("Taskeed Jabid" in llm.prompt) is expected
+
+
+def test_a_follow_up_is_answered_as_its_rewritten_question():
+    """'what about pharmacy?' is asked of the generator as the standalone
+    question the rewriter produced, not as the bare three words."""
+    parts, _ = build()
+    state = RAGState(
+        original_query="what about pharmacy?",
+        conversation_history=[ConversationTurn(
+            user="how much does it cost per credit for cse",
+            assistant="5,500 per credit [Page 179].",
+        )],
+    )
+
+    pipeline.run(state, **parts)
+
+    assert state.trace["query_rewrite"]["reason"] == "follow_up"
+    assert state.answer_query == "rewritten"
+
+
+def test_a_self_contained_question_is_answered_in_the_users_words():
+    parts, _ = build()
+    state = RAGState(original_query="What is the minimum CGPA for admission?")
+
+    pipeline.run(state, **parts)
+
+    assert state.answer_query == ""

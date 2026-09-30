@@ -93,6 +93,20 @@ _EXISTENTIAL_THERE = re.compile(
 )
 
 
+#: A bare superlative with no noun after it -- "What is the minimum for
+#: Pharmacy students?", "what's the maximum?" -- leaves out what it is the
+#: minimum OF; only the previous turn says. It has no pronoun and runs past
+#: the short-query heuristic, so q100 was retrieved literally and answered
+#: with the Pharmacy programme total (158 credits) instead of the per-semester
+#: minimum the conversation was about. "the minimum CGPA for ..." names its
+#: noun and does not match.
+_ELLIPTICAL_SUPERLATIVE = re.compile(
+    r"\bthe\s+(?:minimum|maximum|least|most|lowest|highest|limit)\b"
+    r"(?=\s*(?:for|in|at|with)\b|\s*[?.!,]|\s*$)",
+    re.IGNORECASE,
+)
+
+
 @dataclass
 class RewriteDecision:
     """Why the rewriter did or did not fire. Recorded in the trace."""
@@ -167,6 +181,9 @@ def needs_rewrite(
         referential.discard("there")
 
     if _BACKREFERENCE_WORDS.intersection(referential):
+        return RewriteDecision(True, "follow_up")
+
+    if _ELLIPTICAL_SUPERLATIVE.search(stripped):
         return RewriteDecision(True, "follow_up")
 
     # An existential question is complete on its own however short it is --

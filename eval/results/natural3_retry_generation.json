@@ -1,0 +1,66 @@
+[
+ {
+  "qid": "u032",
+  "category": "unanswerable_missing_policy",
+  "answerable": false,
+  "question": "Is there a dress code for students?",
+  "answer": "The provided bulletin does not state a dress code for students; however, it mentions \"dress code (Veil; and Hijab)\" as a topic within the course outline for SOC 218: Sociology of Gender [Page 507].",
+  "error": null,
+  "elapsed_s": 18.74,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": true,
+  "retrieved_pages": [
+   507,
+   182,
+   191,
+   185,
+   194
+  ],
+  "gate_top_score": 0.015893813222646713,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   507
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "218"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0
+ },
+ {
+  "qid": "u033",
+  "category": "unanswerable_missing_policy",
+  "answerable": false,
+  "question": "What is the application deadline for Fall 2026?",
+  "answer": "I could not find this in the EWU Undergraduate Bulletin. The bulletin does not appear to cover this topic.",
+  "error": null,
+  "elapsed_s": 18.62,
+  "llm_calls": 1,
+  "abstained": true,
+  "abstention_reason": "generator_not_in_bulletin",
+  "declined_in_text": false,
+  "retrieved_pages": [
+   228,
+   121,
+   350,
+   145,
+   93
+  ],
+  "gate_top_score": 0.017171131446957588,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [],
+  "invalid_pages": [],
+  "citation_accuracy": null,
+  "citation_density": null,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": null
+ }
+]

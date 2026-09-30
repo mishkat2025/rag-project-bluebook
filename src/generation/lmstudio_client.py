@@ -1,4 +1,5 @@
-from typing import Any
+import json
+from typing import Any, Callable
 
 import requests
 
@@ -37,10 +38,16 @@ class LMStudioClient:
         prompt: str,
         temperature: float | None = None,
         json_schema: dict[str, Any] | None = None,
+        on_token: Callable[[str], None] | None = None,
     ) -> str:
         """Return the model's reply. Raises LLMError on any failure.
 
         If json_schema is given, the server is asked to constrain output to it.
+
+        If on_token is given, the reply is streamed and each piece of
+        ``content`` is passed to it as it arrives; the full reply is still
+        returned. A failure after some pieces were delivered raises LLMError
+        like any other, so the caller must be ready to retract what it showed.
 
         Only ``message.content`` is returned. Gemma 4 also emits
         ``reasoning_content``, which is not part of the answer and must never
@@ -76,14 +83,17 @@ class LMStudioClient:
             }
 
         try:
-            response = requests.post(
-                f"{self.base_url}/chat/completions",
-                json=payload,
-                timeout=self.timeout,
-            )
-            response.raise_for_status()
-            data = response.json()
-            content = data["choices"][0]["message"]["content"]
+            if on_token is not None:
+                content = self._stream(payload, on_token)
+            else:
+                response = requests.post(
+                    f"{self.base_url}/chat/completions",
+                    json=payload,
+                    timeout=self.timeout,
+                )
+                response.raise_for_status()
+                data = response.json()
+                content = data["choices"][0]["message"]["content"]
         except requests.RequestException as exc:
             raise LLMError(f"LM Studio request failed: {exc}") from exc
         except (ValueError, KeyError, IndexError, TypeError) as exc:
@@ -95,6 +105,50 @@ class LMStudioClient:
             raise LLMError("LM Studio returned an empty completion.")
 
         return content.strip()
+
+    def _stream(
+        self,
+        payload: dict[str, Any],
+        on_token: Callable[[str], None],
+    ) -> str:
+        """Server-sent events: ``data: {chunk}`` lines, then ``data: [DONE]``.
+
+        Lines are decoded as UTF-8 here rather than by requests: LM Studio
+        sends ``text/event-stream`` with no charset, which requests would read
+        as ISO-8859-1 and turn the bulletin's curly quotes into mojibake.
+        Only ``delta.content`` is kept -- ``reasoning_content`` never reaches
+        the caller, streamed or not.
+        """
+        payload = dict(payload, stream=True)
+        pieces: list[str] = []
+
+        with requests.post(
+            f"{self.base_url}/chat/completions",
+            json=payload,
+            timeout=self.timeout,
+            stream=True,
+        ) as response:
+            response.raise_for_status()
+
+            for raw in response.iter_lines():
+                line = raw.decode("utf-8").strip() if raw else ""
+
+                if not line.startswith("data:"):
+                    continue
+
+                data = line[len("data:"):].strip()
+
+                if data == "[DONE]":
+                    break
+
+                chunk = json.loads(data)
+                piece = (chunk["choices"][0].get("delta") or {}).get("content")
+
+                if piece:
+                    pieces.append(piece)
+                    on_token(piece)
+
+        return "".join(pieces)
 
     def health_check(self) -> bool:
         """Check whether the LM Studio server is reachable."""

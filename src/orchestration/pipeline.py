@@ -45,13 +45,13 @@ took to read the evidence.
 """
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 from src.agents.answer_agent import AnswerAgent
 from src.config.settings import settings
 from src.generation import prompts
 from src.orchestration.state import RAGState
-from src.retrieval import evidence_gate
+from src.retrieval import evidence_gate, scope
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.retrieval.query_rewriter import QueryRewriter
 from src.retrieval.reranker import Reranker
@@ -85,6 +85,19 @@ def rewrite(state: RAGState, rewriter: QueryRewriter) -> int:
 
     state.rewritten_queries = result.queries
     state.subqueries = result.queries
+
+    # A self-contained question is answered without the conversation, just
+    # as it is retrieved without it (see RAGState.answer_with_history).
+    state.answer_with_history = bool(result.rewritten or result.fallback)
+
+    # A follow-up is answered as the standalone question it was rewritten
+    # into. A multi-part question keeps the user's wording: its rewrite is a
+    # list of retrieval queries, and the original states the whole need.
+    state.answer_query = (
+        result.rerank_query
+        if result.rewritten and result.reason == "follow_up"
+        else ""
+    )
     state.rerank_query = result.rerank_query
     state.information_needs = result.information_needs
 
@@ -153,8 +166,13 @@ def retrieve(
     return candidates
 
 
-def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
-    """Cross-encode the fused pool and cut it to ``settings.rerank_top_k``.
+def rerank(
+    state: RAGState,
+    reranker: Reranker,
+    retriever: HybridRetriever | None = None,
+) -> list[dict[str, Any]]:
+    """Cross-encode the fused pool, cut it to ``settings.rerank_top_k``, and
+    append the university-wide rules a program-specific question inherits.
 
     Scores every candidate exactly once, regardless of the cut: the
     cross-encoder scores the whole pool internally either way, so asking for
@@ -162,6 +180,9 @@ def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
     extra. The full ranking is kept on ``state.all_reranked_chunks`` so a
     verifier can see everything the reranker judged, not just the slice the
     generator reads -- see the field's docstring for why that matters.
+
+    The appended chunks come from :func:`src.retrieval.scope.
+    university_wide_extras` and never displace the top ``rerank_top_k``.
     """
     query = state.rerank_query.strip() or state.original_query
 
@@ -172,6 +193,19 @@ def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
     )
 
     reranked = full[: settings.rerank_top_k]
+
+    general, extras = None, []
+
+    if settings.university_scope_enabled:
+        general, extras = scope.university_wide_extras(
+            query,
+            pool=state.retrieved_chunks,
+            selected=reranked,
+            reranker=reranker,
+            retriever=retriever,
+        )
+
+    reranked = reranked + extras
 
     state.all_reranked_chunks = full
     state.reranked_chunks = reranked
@@ -185,6 +219,12 @@ def rerank(state: RAGState, reranker: Reranker) -> list[dict[str, Any]]:
         "output_candidate_count": len(reranked),
         "full_pool_size": len(full),
         "scores": [item.get("rerank_score") for item in reranked],
+        "university_scope": {
+            "general_query": general,
+            "added_pages": [
+                (item.get("metadata") or {}).get("page") for item in extras
+            ],
+        },
     }
 
     return reranked
@@ -194,7 +234,13 @@ def gate(state: RAGState) -> evidence_gate.GateResult:
     """Decide whether the bulletin actually answers this. No LLM."""
     query = state.rerank_query.strip() or state.original_query
 
-    result = evidence_gate.assess(query, state.reranked_chunks)
+    # Every chunk rerank() kept, including appended university-wide ones --
+    # the gate's default cut of rerank_top_k would silently drop them.
+    result = evidence_gate.assess(
+        query,
+        state.reranked_chunks,
+        max_chunks=len(state.reranked_chunks),
+    )
 
     state.evidence_status = result.to_evidence_status()
 
@@ -246,7 +292,11 @@ def expand_context(
     return expanded
 
 
-def generate(state: RAGState, generator: AnswerAgent) -> int:
+def generate(
+    state: RAGState,
+    generator: AnswerAgent,
+    on_token: Callable[[str], None] | None = None,
+) -> int:
     """Generate, validate deterministically, regenerate at most once.
 
     Returns the LLM calls actually spent -- 1 normally, 2 when the citation or
@@ -254,7 +304,10 @@ def generate(state: RAGState, generator: AnswerAgent) -> int:
     than the caller assuming it, so the trace's ``llm_calls`` stays true when
     a regeneration happens.
     """
-    generator.answer(state)
+    if on_token is None:
+        generator.answer(state)
+    else:
+        generator.answer(state, on_token=on_token)
 
     return int(state.trace.get("answer", {}).get("llm_calls", 1))
 
@@ -266,8 +319,12 @@ def run(
     rewriter: QueryRewriter,
     generator: AnswerAgent,
     verifier: Any | None = None,
+    on_token: Callable[[str], None] | None = None,
 ) -> RAGState:
     """Answer one query end to end.
+
+    ``on_token`` streams the answer as it is generated (see
+    ``AnswerAgent.answer``); ``state.draft_answer`` is still the final word.
 
     The whole control flow is this function. There is no router, no workflow
     list and no retry loop -- if a step needs to be skipped, it is an ``if``
@@ -291,7 +348,7 @@ def run(
         _record_calls(state, llm_calls)
         return state
 
-    rerank(state, reranker)
+    rerank(state, reranker, retriever)
 
     decision = gate(state)
 
@@ -302,7 +359,7 @@ def run(
 
     expand_context(state, retriever)
 
-    llm_calls += generate(state, generator)
+    llm_calls += generate(state, generator, on_token)
 
     if settings.llm_verification_enabled and verifier is not None:
         state.verification_result = verifier.verify(state)

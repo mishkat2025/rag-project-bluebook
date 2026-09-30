@@ -21,6 +21,7 @@ from src.ingestion.pdf_parser import PDFParser
 from src.ingestion.structure_analyzer import (
     StructureAnalyzer,
     align_outline,
+    lead_in,
     normalize_title,
     same_unit,
 )
@@ -208,6 +209,62 @@ def test_a_table_continued_across_a_page_keeps_its_header(chunked):
     assert "Undergraduate Programs" in continuation.body
     assert "Credits" in continuation.body
     assert "Computer Science" in continuation.body
+
+
+def test_a_table_caption_is_the_whole_introducing_sentence(chunked):
+    """The line above the scholarship table starts mid-sentence ("credits as
+    mentioned in the table below..."); "Merit Scholarship" is on the line
+    before it, and is what a question about eligibility is phrased in."""
+    chunks, _ = chunked
+
+    halves = [
+        chunk for chunk in chunks
+        if chunk.page in (220, 221) and chunk.content_type == "table"
+        and "Undergraduate Programs" in chunk.body
+    ]
+
+    assert len(halves) == 2
+    assert all(
+        "To be eligible for Merit Scholarship" in chunk.body for chunk in halves
+    )
+
+
+def test_a_continuation_with_different_columns_still_says_what_it_is(chunked):
+    """q029. The tuition table runs from p179 onto p180 and PyMuPDF reads the
+    second half with 2 columns instead of 4, so the header could not be
+    grafted on as a row. Without it, "| B. Pharm. | 6, 000/- |" never says
+    it is a per-credit tuition fee, and it ranked 8th for that question."""
+    chunks, _ = chunked
+
+    continuation = next(
+        chunk for chunk in chunks
+        if chunk.page == 180 and chunk.content_type == "table"
+        and "B. Pharm." in chunk.body
+    )
+
+    assert "Course Tuition Fees" in continuation.body
+    assert "Tuitions Fees per Credit" in continuation.body
+
+
+class _Line:
+    def __init__(self, text):
+        self.text = text
+
+
+@pytest.mark.parametrize("lines, expected", [
+    # A sentence wrapped across lines is rejoined from its start.
+    (["grades earned in the last three semesters. To be eligible a student",
+      "must earn credits as in the table below:"],
+     "To be eligible a student must earn credits as in the table below:"),
+    # A previous line that ended a sentence is not pulled in.
+    (["Lab exercises.", "Mini project."], "Mini project."),
+    # The last line is never shortened, abbreviations included.
+    (["Semiconductor Devices, M.J. Cooke, Prentice Hall."],
+     "Semiconductor Devices, M.J. Cooke, Prentice Hall."),
+    ([], ""),
+])
+def test_lead_in_extends_the_last_line_and_never_shortens_it(lines, expected):
+    assert lead_in([_Line(text) for text in lines]) == expected
 
 
 # ---------------------------------------------------------------------

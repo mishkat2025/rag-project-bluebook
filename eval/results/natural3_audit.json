@@ -1,0 +1,365 @@
+{
+ "source": "natural3_generation.json + natural3_retry_generation.json (shipped configuration)",
+ "method": "every changed answer re-read; u032/u033 re-run after an LM Studio stop",
+ "summary": {
+  "answerable_correct": "39/43",
+  "answerable_partial": 0,
+  "unanswerable_handled": "40/41",
+  "invented_answers": 0
+ },
+ "answers": {
+  "n001": {
+   "category": "natural_answerable",
+   "verdict": "correct",
+   "note": "refused by the 0.02 gate; answered correctly with the gate off"
+  },
+  "n002": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n003": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n004": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n005": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n006": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n007": {
+   "category": "natural_answerable",
+   "verdict": "correct",
+   "note": "refused by the 0.02 gate; answered correctly with the gate off"
+  },
+  "n008": {
+   "category": "natural_answerable",
+   "verdict": "wrong_not_provided",
+   "note": "delivered a false 'not provided'; p25 residency: at least 75% at EWU"
+  },
+  "n009": {
+   "category": "natural_answerable",
+   "verdict": "wrong_refusal",
+   "note": "refused by gate (0.001); p214: max 25% via credit transfer"
+  },
+  "n010": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n011": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n012": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n013": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n014": {
+   "category": "natural_answerable",
+   "verdict": "correct",
+   "note": "refused by the 0.02 gate; answered correctly with the gate off"
+  },
+  "n015": {
+   "category": "natural_answerable",
+   "verdict": "wrong_refusal",
+   "note": "refused by generator; p22 chairperson Dr. Taskeed Jabid ('head' vs 'chairperson')"
+  },
+  "n016": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n017": {
+   "category": "natural_answerable",
+   "verdict": "wrong_not_provided",
+   "note": "delivered a false 'not provided' ('attested' vs the bulletin's 'verification', Tk 50, p177)"
+  },
+  "n018": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n019": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n020": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n021": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n022": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n023": {
+   "category": "natural_answerable",
+   "verdict": "correct",
+   "note": "refused by the 0.02 gate; answered correctly with the gate off"
+  },
+  "n024": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n025": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n026": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n027": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n028": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n029": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n030": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n031": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n032": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n033": {
+   "category": "natural_answerable",
+   "verdict": "correct",
+   "note": "refused by the 0.02 gate; answered correctly with the gate off"
+  },
+  "n034": {
+   "category": "natural_answerable",
+   "verdict": "correct",
+   "note": "refused by the 0.02 gate; answered correctly with the gate off"
+  },
+  "n035": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n036": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n037": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n038": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n039": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n040": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n041": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "n042": {
+   "category": "natural_answerable",
+   "verdict": "correct"
+  },
+  "u001": {
+   "category": "unanswerable_absent_facility",
+   "verdict": "handled"
+  },
+  "u002": {
+   "category": "unanswerable_absent_facility",
+   "verdict": "handled"
+  },
+  "u003": {
+   "category": "unanswerable_absent_facility",
+   "verdict": "handled"
+  },
+  "u004": {
+   "category": "unanswerable_absent_facility",
+   "verdict": "handled"
+  },
+  "u005": {
+   "category": "unanswerable_absent_facility",
+   "verdict": "handled"
+  },
+  "u006": {
+   "category": "unanswerable_absent_facility",
+   "verdict": "handled"
+  },
+  "u007": {
+   "category": "unanswerable_absent_facility",
+   "verdict": "handled"
+  },
+  "u008": {
+   "category": "unanswerable_absent_facility",
+   "verdict": "handled"
+  },
+  "u009": {
+   "category": "unanswerable_detail_absent",
+   "verdict": "handled"
+  },
+  "u010": {
+   "category": "unanswerable_detail_absent",
+   "verdict": "handled"
+  },
+  "u011": {
+   "category": "unanswerable_detail_absent",
+   "verdict": "handled"
+  },
+  "u012": {
+   "category": "unanswerable_detail_absent",
+   "verdict": "handled",
+   "note": "correct: password not given; collect from EWU ICS (p211)"
+  },
+  "u013": {
+   "category": "unanswerable_detail_absent",
+   "verdict": "handled"
+  },
+  "u014": {
+   "category": "unanswerable_detail_absent",
+   "verdict": "handled"
+  },
+  "u015": {
+   "category": "unanswerable_detail_absent",
+   "verdict": "handled"
+  },
+  "u016": {
+   "category": "unanswerable_absent_program",
+   "verdict": "handled",
+   "note": "correct: no MBBS; lists the degrees offered"
+  },
+  "u017": {
+   "category": "unanswerable_absent_program",
+   "verdict": "handled"
+  },
+  "u018": {
+   "category": "unanswerable_absent_program",
+   "verdict": "handled"
+  },
+  "u019": {
+   "category": "unanswerable_absent_program",
+   "verdict": "handled"
+  },
+  "u020": {
+   "category": "unanswerable_absent_program",
+   "verdict": "handled"
+  },
+  "u021": {
+   "category": "unanswerable_absent_program",
+   "verdict": "handled"
+  },
+  "u022": {
+   "category": "unanswerable_false_premise",
+   "verdict": "handled_with_false_claim",
+   "note": "declined without inventing Group C, but falsely says the bulletin has no CSE minor (p26 has Groups A and B)"
+  },
+  "u023": {
+   "category": "unanswerable_false_premise",
+   "verdict": "handled"
+  },
+  "u024": {
+   "category": "unanswerable_false_premise",
+   "verdict": "handled"
+  },
+  "u025": {
+   "category": "unanswerable_false_premise",
+   "verdict": "handled"
+  },
+  "u026": {
+   "category": "unanswerable_false_premise",
+   "verdict": "handled",
+   "note": "refused"
+  },
+  "u027": {
+   "category": "unanswerable_false_premise",
+   "verdict": "handled"
+  },
+  "u028": {
+   "category": "unanswerable_missing_policy",
+   "verdict": "handled"
+  },
+  "u029": {
+   "category": "natural_answerable",
+   "verdict": "correct",
+   "note": "relabelled answerable: p181 'Students must pay semester fees in full'; gate-off answer says so"
+  },
+  "u030": {
+   "category": "unanswerable_missing_policy",
+   "verdict": "handled"
+  },
+  "u031": {
+   "category": "unanswerable_missing_policy",
+   "verdict": "handled"
+  },
+  "u032": {
+   "category": "unanswerable_missing_policy",
+   "verdict": "handled",
+   "note": "LLM error in natural3 (LM Studio server stopped); re-run declines correctly"
+  },
+  "u033": {
+   "category": "unanswerable_missing_policy",
+   "verdict": "handled",
+   "note": "LLM error in natural3 (LM Studio server stopped); re-run refuses"
+  },
+  "u034": {
+   "category": "unanswerable_missing_policy",
+   "verdict": "handled"
+  },
+  "u035": {
+   "category": "unanswerable_missing_policy",
+   "verdict": "handled"
+  },
+  "u036": {
+   "category": "unanswerable_missing_policy",
+   "verdict": "handled"
+  },
+  "u037": {
+   "category": "unanswerable_off_topic",
+   "verdict": "handled"
+  },
+  "u038": {
+   "category": "unanswerable_off_topic",
+   "verdict": "handled"
+  },
+  "u039": {
+   "category": "unanswerable_off_topic",
+   "verdict": "handled"
+  },
+  "u040": {
+   "category": "unanswerable_off_topic",
+   "verdict": "handled"
+  },
+  "u041": {
+   "category": "unanswerable_off_topic",
+   "verdict": "handled"
+  },
+  "u042": {
+   "category": "unanswerable_off_topic",
+   "verdict": "handled"
+  }
+ }
+}

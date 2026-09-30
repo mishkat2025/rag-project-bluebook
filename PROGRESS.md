@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 7 — Verification, terminal app, observability. DONE (Session 9).**
+**Current phase: 7 DONE (Session 9). Post-plan work: Session 11 parts 1-5 -- university-wide rules, cleanup, honest metrics, page-split tables, abstention (score gate off), streaming and conversation fixes. Remaining work: the "Known, not fixed" list at the end of part 5.**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -1069,3 +1069,390 @@ generation numbers above are unaffected by construction.
 - **Known gap, not fixed:** the REPL banner prints the LLM base URL and reachability but not
   `settings.llm_model`. Because LM Studio matches by prefix, you can swap models and the
   banner looks identical. `eval/run_generation_eval.py` prints it; `scripts/chat.py` does not.
+
+---
+
+## Session 11 -- university-wide rules for program questions; wording probe; cleanup
+
+### 1. The eval set's wording hides a real gap (measured, not fixed)
+
+40 answerable questions from `dataset.jsonl` were rewritten the way a student would type
+them ("How many classes can I skip before I get in trouble?" for q001), keeping the same
+gold pages. Shipped retrieval (hybrid -> rerank -> top 5), same session, GPU:
+
+| | dataset wording | natural wording |
+|---|---|---|
+| a gold page reaches the generator | 0.950 | **0.825** |
+| page-nDCG@10 | 0.874 | 0.774 |
+| gate abstains on an answerable question | 0.000 | **0.200** |
+| median top rerank score | 0.982 | **0.257** |
+
+This generalises Session 6's single grading-scale example: the headline retrieval numbers
+hold for questions phrased the way the bulletin is written. The phase-1 baseline already
+scored page-recall@20 0.964 while HANDOFF's diagnosis showed retrieval broken, for the same
+reason. **A held-out set written by people who have not read the PDF is the missing
+instrument.** The probe script is not committed (it lives in the session scratchpad); the 40
+paraphrases should become `eval/dataset_natural.jsonl` if this is pursued.
+
+### 2. "Admission requirements for CSE" -- the signature failure is closed
+
+**Cause, precisely.** CSE and EEE have no "Admission Requirements" section of their own
+(Law p90, Civil p157, GEB p150, ISLM p83 do). Their answer is the university-wide rule on
+p176-177. Retrieval found it; the cross-encoder then demoted it because it never says "CSE":
+
+| question | rank of p176 "Minimum GPA of 3.00 in both SSC and HSC" |
+|---|---|
+| admission requirements for undergraduate programs | 1 (0.999) |
+| admission requirements for CSE | 20 (0.027) |
+| minimum CGPA for admission to CSE | 7 (0.080) |
+| admission requirements for EEE | 24 (0.044) |
+
+**Fix: `src/retrieval/scope.py`, wired into `pipeline.rerank`.** When the query names a
+program, rerank *university-wide* chunks against the query with the program removed
+("What is the minimum CGPA for admission?") and **append** up to
+`university_scope_slots=2` scoring >= `university_scope_min_score=0.1` after the top 5.
+Nothing in the top 5 is displaced, so a department's own section still wins (Law is
+answered from p90). University-wide = section-tree root is not `Faculty of ...`,
+`List of Courses` or `EWU Academic Departments` -- so the general query cannot hand the
+generator another department's rule. The gate now reads every chunk rerank() kept. One
+prompt rule (6) says university-wide sections apply to every program unless a department
+section differs. No LLM call added; one extra cross-encoder pass on GPU.
+
+`run_eval.py --rerank` mirrors the pipeline and gains `context-recall` (a gold page is among
+the chunks the generator receives) and `--no-scope` for the ablation.
+
+**Retrieval, 112 answerable, same session:**
+
+| | no scope | **scope (shipped)** |
+|---|---|---|
+| context-recall | 0.920 | **0.946** |
+| page-recall@5 / @20 | 0.927 / 0.987 | 0.936 / 0.987 |
+| page-nDCG@10 | 0.880 | 0.882 |
+
+No category's context-recall fell. On the 40 natural-wording questions context-recall went
+0.825 -> **0.875** and false gate abstentions 0.200 -> 0.175.
+
+**Generation, 125 questions, live Gemma 4 (`phase8_generation.json` vs `phase7_generation.json`):**
+
+| | Phase 7 | **Session 11** |
+|---|---|---|
+| citation accuracy / number fidelity | 1.000 / 1.000 | 1.000 / 1.000 |
+| abstention accuracy | 0.923 | 0.923 |
+| answerable refused | 2/112 (q029, q093) | **0/112** |
+| gold values stated in the answer | 0.850 | 0.848 |
+| regenerations | - | 0/125 |
+| latency mean / p95 | 15.2s / 34.6s | 8.0s / 14.1s |
+
+Per question, every change is an improvement: q093 ("is there also a lab fee for it?") now
+answers Tk. 2,500 [p180]; q083 gold values 0.5 -> 1.0. **q029 is not a real gain**: p180 is
+retrieved and contains "B. Pharm. 6, 000/-", but Gemma writes "the bulletin does not provide
+the per-credit tuition for B.Pharm" -- the same table-reading miss, now phrased as a partial
+answer instead of the `NOT_IN_BULLETIN` sentinel, so the abstention metric counts it as
+delivered. That is also why gold values dipped 0.002: q029 moved into the denominator.
+**Latency is not attributable to this change** (it adds context); LM Studio state differed
+between runs.
+
+Live, verified: "minimum CGPA for admission to CSE" -> GPA 3.00 in SSC and HSC [p176], and
+says no CSE-specific figure is listed; "admission requirements for EEE" -> the full p176
+rules plus the EEE HSC-Math requirement; "how much does computer science cost per credit"
+(gate-refused before) -> 5,500 [p179].
+
+The Phase 4 `xfail` is now a passing, parametrised test (CSE x2, EEE) of what the pipeline
+hands the generator. `tests/test_scope.py` covers query generalisation, scope
+classification and the extras (another department's rule is never appended).
+
+### 3. Cleanup
+
+- `app/chat.py` is now the REPL itself (moved from `scripts/chat.py`, which is gone -- HANDOFF
+  said not to keep both). `trace` shows the university-wide step.
+- Deleted 4 empty files (`scripts/build_index.py`, `scripts/inspect_trace.py`,
+  `scripts/test_retrieval.py`, `tests/test_agents.py`) and 11 manual smoke/debug scripts in
+  `scripts/` superseded by pytest. `scripts/` now holds only the three index builders.
+- `scripts/test_trace_store.py` was TraceStore's only check, and it wrote a fake trace into
+  the real `data/traces/`; replaced by `tests/test_trace_store.py` on `tmp_path`.
+- `.env` untracked (it was committed despite `.gitignore`); local copy kept.
+- Stale `__pycache__` for the Phase 5-deleted modules removed.
+- README: layout, entry point, architecture step, `section_tree.json` name.
+
+Tests: 262 (1 xfail) -> **290 passed, 0 xfail.**
+
+### Open, in priority order
+
+1. **DONE in part 2 below.** README metrics table leads with the guardrail metrics (citation accuracy = cited page is
+   among those retrieved; number fidelity = number appears somewhere in the evidence) and
+   omits answer correctness (gold values 0.848; table 0.333) and NLI faithfulness 0.467.
+2. **DONE in part 3 below (it was ingestion, not generation).** Tables: q029-style misses -- the value is in the retrieved evidence and the generator
+   does not read it. A generation problem, not retrieval.
+3. A "the bulletin does not provide X" answer escapes the abstention metric.
+4. No streaming: the user waits for the whole answer.
+5. The REPL's "Source pages" lists every retrieved page, not the cited ones.
+6. Not done, needs the owner's decision: the full bulletin PDF is committed to a PUBLIC repo;
+   `data/backup_phase1/` and `data/backup_phase2_chroma_minilm/` (62 MB, untracked) are
+   snapshots of the pre-rebuild index.
+
+## Session 11, part 2 -- README metrics rewritten around a hand audit
+
+**Every one of the 112 answerable answers in `phase8_generation.json` was read against the
+gold answer and the PDF.** Saved as `eval/results/phase8_audit.json` (verdict + note per qid).
+
+| | numeric proxy (`gold_number_recall`) | hand audit |
+|---|---|---|
+| answerable, correct | 0.848 mean; 94 scored 1.0 | **104/112 = 0.929** (1 partial, 7 wrong) |
+| table | 0.333 | **12/15** |
+
+**The proxy was wrong in both directions.** Gold facts copied from table rows carry every
+number in the row ("87 - below 90 A- 3.70"), so "An A- carries 3.70 [Page 216]" scored 0:
+11 correct answers were scored below 1.0. And q090 scored 1.0 while stating "35 credits in
+EACH of the last three semesters" (p220: earned in the last three semesters, in total).
+The earlier "tables are right 33% of the time" -- in this project's README and in the
+Session 11 review -- came from the proxy and was wrong.
+
+**The 7 wrong answers all passed citation validation and number grounding.**
+- 4 say "the bulletin does not provide it" when it does: q029, q047, q092 had the table in
+  the evidence; q046's p221 was not retrieved. A table-reading problem in generation.
+- 3 state something false using a real number from the right page: q055 (continuation rule
+  given as the qualifying rule), q090 (per-semester vs total), q100 (a follow-up about the
+  per-semester minimum answered with the programme total, 158).
+
+**NLI re-run on this run (`phase8_faithfulness.json`): entailment 0.434, contradiction
+0.000.** It rated q055 and q090 "neutral" and q100 *entailed* (the sentence is true, it just
+answers a different question). "Hallucination rate 0.000" therefore says nothing about
+whether answers are right; the README no longer presents it as if it did.
+
+**README section 1 is restructured**: the wording caveat first; hand-audited correctness
+(overall, per category, failure modes); then the guardrails, each with what it does and
+does not verify; then retrieval and cost. The table limitation is corrected (12/15, and
+why). `run_generation_eval.py` and `faithfulness_eval.py` now print a one-line caveat under
+the proxy and the contradiction rate, pointing at the audit.
+
+The audit is one reader's judgement ("correct" = answers the question asked with the
+bulletin's value; extra true detail allowed). It is a snapshot of one run: re-audit after
+any change to the prompt or the generator, or the 0.929 goes stale.
+
+## Session 11, part 3 -- tables split across a page break (#3); q047
+
+**The audit's "Gemma cannot read tables" failures were an ingestion bug.** For q029, q047 and
+q092 the rows holding the answer were never in the generator's evidence. Page-level metrics
+hid it: "p180 retrieved" counted as a hit when the p180 chunk was the lab-fee text, not the
+second half of the tuition table.
+
+PyMuPDF reports a table that runs over a page break as two tables. `_link_continuation_tables`
+(structure_analyzer.py) was meant to give the second half its header and caption, but:
+
+1. it required equal column counts -- the tuition table is 4 columns on p179 and 2 on p180,
+   so `| B. Pharm. | 6, 000/- |` was indexed with nothing saying it is a per-credit fee
+   (ranked 8th for "per-credit tuition for B.Pharm");
+2. the "caption" was the last PDF *line* before the table, which for the merit-scholarship
+   table is "credits as mentioned in the table below..." -- "To be eligible for Merit
+   Scholarship" sits on the line above;
+3. on a 3-page chain it used the second page's first data row as the third page's header;
+4. a heading between two tables did not end the chain.
+
+**Fix.** Continuations link regardless of column count; when the counts differ the header is a
+plain `Columns:` line above the grid. `lead_in()` extends the last line backwards to the start
+of its sentence -- never shortens it (a "last sentence" rule was tried first and cut captions to
+"Mini project." and split "M.J. Cooke"). Chains carry the first page's header; a heading resets.
+Dry run before rebuilding: 116 chunks changed, all tables, 0 captions shorter; chunk ids and
+count unchanged (2855). Index rebuilt (ingestion, Chroma, BM25); pre-fix snapshot kept in the
+session scratchpad.
+
+Simulated rerank rank of the answer chunk before rebuilding: tuition continuation 8 -> 1
+(0.196 -> 0.809); merit table for the CSE question 9 -> 1 (0.403 -> 0.900).
+
+**Retrieval (112 answerable):** context-recall 0.946 -> **0.955**; table 0.800 -> 0.867;
+table nDCG@10 0.688 -> 0.728. q029 gold page rank 5 -> 1, q046 now reaches the generator,
+q055 -> 1. Two ranking drops with the gold page still delivered: q065 (Sociology curriculum
+continuations now carry their header and compete with p76), q090 (the graduate half of the
+merit table now outranks the undergraduate half).
+
+**Generation, live Gemma 4 (`phase9_generation.json`), re-audited (`phase9_audit.json`):**
+all 41 answers whose text changed were re-read; unchanged answers keep their verdict.
+
+| | phase8 | **phase9** |
+|---|---|---|
+| correct / 112 | 104 | **110** |
+| table | 12/15 | **15/15** |
+| wrong | 7 | **1** (q100) |
+| partial | 1 | 1 (q071) |
+| citation / number / abstention | 1.000 / 1.000 / 0.923 | unchanged |
+| NLI entailment / contradiction | 0.434 / 0.000 | 0.473 / 0.000 |
+
+q029, q046, q047, q055, q090, q092 went wrong -> correct. q055 and q090 were the "real number,
+wrong rule" failures: with the whole introducing sentence in the chunk, Gemma now states the
+rule the number belongs to. Two changed answers verified against the PDF: q120's added
+"discontinued below 2.70" is the Medha Lalon rule (p224); q074 now cites p223 for the 2.00
+minimum -- true, but a sibling-benefit clause rather than the p25 graduation rule.
+
+**q047 specifically.** It answers correctly (39 credits, p221), but the table does not reach
+the top 5: five chunks repeating the B.Pharm boilerplate "12 credits in a semester for the
+students of B.Pharm" score ~0.98. It arrives through the university-wide step (Session 11
+part 1) -- the program-stripped question ranks the table at 0.990. Checked for nine programs
+(B.Pharm, CSE, EEE, BBA, LLB, English, Economics, Civil, Sociology): the merit table reaches
+the generator for all nine. Without a program in the question the table now ranks 1st-2nd
+on its own (caption fix).
+
+**Tried and reverted: near-duplicate skipping at the top-k cut.** p177 and p219 print the same
+scholarship clauses (86% word overlap), and 10/125 eval questions spend a top-5 slot on a
+near-copy. Skipping chunks with >= 0.8 word Jaccard to a better-ranked one changed
+context-recall by exactly 0 (0.955 both ways; no question changed) and only moved q047's table
+from 8th to 7th. No measured benefit, so it is not shipped. Revisit only with a question it
+provably fixes.
+
+Tests: 290 -> **296** (lead_in cases; the tuition continuation says what it is; both halves of
+the merit table carry the full sentence).
+
+**Open:** q100 (follow-up "What is the minimum for Pharmacy students?" answered with the
+programme total) -- a rewrite/grounding problem, not tables. Table rows from two-column-pair
+layouts are still interleaved in the Markdown.
+
+## Session 11, part 4 -- abstention measured properly (#4); score gate turned OFF
+
+**The old measure.** Abstention accuracy 0.923 was 12 of 13 questions, on a set whose wording
+the reranker scores near 1.0, and it counted only outright refusals: an answer that declined
+inside its text ("the bulletin does not state...") was "delivered", which is also where the
+phase8 false "not provided" answers hid.
+
+**New instrument: `eval/dataset_natural.jsonl`** (84 questions, all student wording):
+- 43 answerable: the 40 paraphrases from part 1 (gold copied from their source qid), plus
+  "most courses in a semester" (p215: 5) and "how many students" (p15: 10,177) -- both
+  written as unanswerable candidates and found answerable by the absence check;
+- 41 unanswerable in six types (absent facility, detail absent, absent program, false
+  premise, missing policy, off-topic). Each row carries `absence_check`: the PDF search and
+  what its hits were. Every hit was read, not just counted -- the check also moved the
+  cafeteria / medical centre / WiFi / rankings / refund candidates out (they exist).
+
+**`run_generation_eval.py`**: `--dataset`; `declined_in_text` per record (regex, tested) and
+three report lines -- unanswerable declined inside an answer, unanswerable answered with no
+decline (read these), answerable delivered but saying "not in the bulletin" (read these).
+Replayed on phase8 it flags exactly q029/q046/q047/q092 (+ q062 premise correction, q071
+partial). `--rescore` recomputes it from the answer text.
+
+**Label corrections, both directions made visible.** q105 / u029 ("pay tuition in
+instalments?") were labelled unanswerable; p181 says "Students must pay semester fees in
+full." Relabelled answerable (gold p181, "No") in both datasets and in the saved runs
+(`relabeled` field). Found because the gate-off run answered it with the p181 quote.
+This correction makes the gate-on configuration look worse: it refused q105.
+
+**Gate on (0.02) vs gate off (0.0), live Gemma 4, every changed answer read:**
+
+| | gate 0.02 | gate off (shipped) |
+|---|---|---|
+| natural, answerable correct | 32/43 | **39/43** |
+| natural, answerable refused | 9 | **2** (n009 credit transfer, n015 "head of CSE") |
+| natural, answerable false "not provided" | 2 | 2 (n008 residency, n017 "attested") |
+| natural, unanswerable handled | 40/41 | 40/41 |
+| dataset, answerable correct | 110/113 | **111/113** |
+| dataset, unanswerable handled | 12/12 | 12/12 |
+| **unanswerable answered with an invented fact** | **0 / 53** | **0 / 53** |
+| strict "refused outright" accuracy (natural / dataset) | 0.902 / 0.917 | 0.878 / 0.833 |
+| mean latency (natural) | 5.7 s | 8.7 s |
+
+The strict number falls because q103/q108/u016/u026/u032 now get a delivered decline ("the
+bulletin does not state whether there is a gym") instead of a refusal -- each read, none
+invents anything. The one unanswerable miss is the same in both configs: u022 declines to
+name "Group C of the CSE minor" but claims the bulletin has no CSE minor (it has A and B).
+
+At 0.02 the gate refused, on score alone, "What's an A minus worth?" (top 0.001), "How many
+classes can I skip" (0.007), "extra time ... if something bad happens in my family" (0.010),
+remedial English fee, activity fee, name-correction fee (0.006) -- all answered correctly
+with it off. It caught nothing the generator did not also refuse. **Shipped:
+`abstention_threshold = 0.0`.** The mechanism stays (and `no_candidates` still abstains);
+tests pin it with an explicit threshold. Cost: off-topic refusals take one LLM call.
+
+The 24 dataset answers whose wording differed between the two runs (LLM nondeterminism) were
+all re-read: same verdicts. Audits: `natural1_audit.json`, `natural1_nogate_audit.json`,
+`phase9_nogate_audit.json`.
+
+**Also:** REPL banner prints the model name (Session 10's known gap) and "score gate off";
+a `no_candidates` refusal says "nothing in the bulletin matched" instead of "no passage
+scored above 0.00". `.env.example` updated. Retrieval unchanged (`phase10_retrieval`:
+context-recall 0.956 with q105 now scored).
+
+**Verified end to end in the real REPL** (`app/chat.py`, one conversation): greeting;
+"who is the chairperson of cse department" -> Dr. Taskeed Jabid; "tell me more about him" ->
+his rank and degrees (p122); "what about EEE?" -> EEE chairperson (p22, checked); CSE
+admission -> university-wide GPA 3.00; swimming pool and capital of France -> refused;
+`clear`; "how much is pharmacy per credit?" -> 6,000; "and the lab fee?" -> 3,750;
+"What's an A minus worth?" -> 3.70 (trace: top score 0.001 -- the old gate refused this).
+
+Tests: 296 -> **305**.
+
+**Open, in order:** retrieval under student vocabulary ("head" -> chairperson, "attested" ->
+verification; n009 credit transfer) is now the main failure mode; q100 follow-up; a question
+set written by students who have not read the PDF; streaming output.
+
+## Session 11, part 5 -- streaming, conversation fixes, final verification
+
+Every change below was driven by driving the real REPL (`app/chat.py`) through a realistic
+conversation, not by the eval set; each was then measured on both eval sets.
+
+**Streaming.** `LMStudioClient.generate(on_token=...)` streams SSE and decodes UTF-8 itself
+(LM Studio sends `text/event-stream` with no charset; requests would read it as Latin-1 and
+mangle the bulletin's curly quotes). `AnswerAgent` streams the first attempt only, through
+`_HoldBackSentinel`, which never lets `NOT_IN_BULLETIN` reach the screen. If the final answer
+differs from what streamed (a failed check was regenerated/withheld, or the model stopped),
+the REPL marks the streamed text withdrawn and prints the checked answer. The eval passes no
+callback, so it measures exactly what it did before. `tests/test_streaming.py` (15).
+
+**q100 -- elliptical follow-ups.** "What is the minimum for Pharmacy students?" has no pronoun
+and is too long for the short-query rule, so it was never rewritten and was answered with the
+programme total (158). `_ELLIPTICAL_SUPERLATIVE`: a bare "the minimum/maximum/least/most/
+lowest/highest/limit" followed by for/in/at/with or the end of the question is a follow-up;
+"the minimum CGPA for ..." names its noun and does not match. Now 12 credits/semester.
+
+**History distracted the generator on self-contained questions.** After two turns about the
+CSE chairperson, "What is the minimum CGPA for admission to CSE?" was refused 11 of 12 times
+(0 of 8 without that history). The rewriter had already judged it self-contained and
+retrieval ignored the history; the generator now does too (`RAGState.answer_with_history`,
+off unless the query was rewritten). A real follow-up ("What is his highest degree?") keeps it.
+
+**Follow-ups are answered as their rewritten question.** "what about pharmacy?" after a
+per-credit question was rewritten correctly ("What is the tuition fee per credit for ...
+Pharmacy?") but the generator was still asked the three bare words, and listed labs and
+fees without the tuition. `RAGState.answer_query` = the rewrite, for follow-ups only; the
+number check accepts numbers from either wording. Follow-up answers got tighter
+(`followup_answerquery`: 10/10 correct).
+
+**University-wide slots: a near-tie, fixed with the section tree, not a third slot.**
+"and for EEE?" was rewritten to "minimum CGPA **requirement** for admission to EEE"; for that
+wording p223 (a sibling-discount clause, 0.857) beat the admission rule on p176 (0.847) for
+the second slot, and the answer was refused or gave the graduation CGPA. A third slot fixed
+EEE but made "minimum CGPA for admission to CSE" refused **8 of 8** (the third extra was a
+p220 scholarship-GPA clause); evidence order (extras first vs last) changed nothing. Shipped:
+2 slots + `university_scope_heading_bonus = 0.1` for a chunk whose own heading contains a
+topic word of the question. All three phrasings answered 5/5 in a harness before shipping.
+The rejected 3-slot runs are kept (`phase11_*`, `natural2_*`).
+
+**Small talk in the REPL.** "thanks!" went through the pipeline and listed six pages; "bye" was
+answered "I could not find this in the bulletin". Greetings/thanks/acknowledgements/
+farewells are matched on the whole message, punctuation ignored, and answered directly.
+"Source pages" now lists the pages the answer cites, not everything retrieved.
+
+**Final measurement (shipped configuration, every changed answer re-read):**
+
+| | result | audit |
+|---|---|---|
+| dataset.jsonl answerable correct | **112/113** (q071 partial) | `phase12_audit.json` |
+| dataset.jsonl unanswerable handled | 12/12 | |
+| natural answerable correct | **39/43** | `natural3_audit.json` |
+| natural unanswerable handled | 40/41 (u022) | |
+| unanswerable answered with an invented fact | **0/53** | |
+| citation validity / number grounding | 1.000 / 1.000 | |
+| retrieval context-recall | 0.956 (`phase12_retrieval`) | |
+| latency (dataset) | mean 8.6 s, p95 14.8 s | |
+
+natural3's u032/u033 were LLM errors while the LM Studio server was stopped by the owner
+mid-run; re-run (`natural3_retry`), both handled. Tests: 305 -> **333**.
+
+Final REPL conversation (verbatim outcomes): greeting; CSE chairperson -> Dr. Taskeed Jabid;
+"tell me more about him" -> rank and degrees; CSE admission -> GPA 3.00 [p176]; "and for
+EEE?" -> GPA 3.00 [p176]; "thanks!" -> direct reply; CSE per credit -> 5,500; "what about
+pharmacy?" -> 6,000; "and the lab fee?" -> 3,750; gym -> declines, lists common rooms and
+Sports Club; A- -> 3.70; "bye" -> exits.
+
+**Known, not fixed:** 5/162 answers copy a section path into the text (cosmetic; stripping it
+after the fact conflicts with streaming, a prompt change needs a full re-audit). Student
+vocabulary ("head" for chairperson, "attested" for verification, credit transfer from
+"another uni") -- 4 natural-wording misses, deliberately not tuned against the 43 questions
+that measure it; needs questions from real students. The bulletin PDF is still committed to
+a public repository (owner's decision).

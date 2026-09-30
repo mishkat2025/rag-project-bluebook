@@ -319,3 +319,25 @@ def test_locative_there_is_still_a_follow_up():
 def test_short_fragments_are_still_follow_ups(query):
     """The length heuristic still fires on genuine fragments."""
     assert needs_rewrite(query, HISTORY).reason == "follow_up"
+
+
+@pytest.mark.parametrize("query", [
+    "What is the minimum for Pharmacy students?",  # q100
+    "what's the maximum?",
+    "And the highest for graduate students?",
+])
+def test_a_bare_superlative_leans_on_the_previous_turn(query):
+    """Minimum/maximum OF WHAT is only in the previous turn."""
+    assert needs_rewrite(query, HISTORY).reason == "follow_up"
+
+
+@pytest.mark.parametrize("query", [
+    "What is the minimum CGPA for admission?",
+    "What is the maximum time allowed to complete a degree?",
+])
+def test_a_superlative_that_names_its_noun_is_self_contained(query):
+    assert needs_rewrite(query, HISTORY).reason == "self_contained"
+
+
+def test_a_bare_superlative_without_history_is_not_a_follow_up():
+    assert needs_rewrite("What is the minimum for Pharmacy students?", []).reason == "self_contained"

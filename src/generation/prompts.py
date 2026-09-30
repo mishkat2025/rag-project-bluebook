@@ -70,16 +70,25 @@ RULES
 
 5. Answer every part of the question the evidence supports.
 
-6. If the evidence does not answer the question at all, reply with exactly
+6. Each passage begins with its section path. Passages under Undergraduate
+   Studies, Grades, Rules and Regulations, Course Registration, Credit
+   Transfer Policies, Graduation Requirements or Scholarships and Financial
+   Assistance state rules for EVERY program. If the question asks about one
+   program and the evidence gives only the university-wide rule, answer with
+   that rule and say it is the university-wide requirement. Where a
+   department's own section states something different, the department's
+   section applies to that department.
+
+7. If the evidence does not answer the question at all, reply with exactly
    this and nothing else:
 
    {NOT_IN_BULLETIN}
 
-7. If the evidence answers part of the question but not the rest, answer the
+8. If the evidence answers part of the question but not the rest, answer the
    part it supports and state plainly that the bulletin does not provide the
    rest. Do not add that note once the question is fully answered.
 
-8. Be concise. Do not mention evidence numbers, retrieval, pages "provided",
+9. Be concise. Do not mention evidence numbers, retrieval, pages "provided",
    or how this system works.
 
 Return only the answer text."""

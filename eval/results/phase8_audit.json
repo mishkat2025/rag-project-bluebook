@@ -1,0 +1,602 @@
+{
+ "source": "phase8_generation.json",
+ "method": "every answerable answer read by hand against dataset.jsonl gold and the PDF (Session 11); 'correct' = answers the question asked with the bulletin's value, extra true detail allowed",
+ "summary": {
+  "answerable": 112,
+  "correct": 104,
+  "partial": 1,
+  "wrong": 7,
+  "wrong_but_passed_citation_and_number_checks": 7
+ },
+ "by_category": {
+  "single_fact": "27/27",
+  "exact_number": "14/15",
+  "table": "12/15",
+  "program_specific": "15/15",
+  "multi_hop": "9/10",
+  "comparison": "9/10",
+  "follow_up": "8/10",
+  "adversarial": "10/10"
+ },
+ "answers": {
+  "q001": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q002": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q003": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q004": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q005": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q006": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q007": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q008": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q009": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q010": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q011": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q012": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q013": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q014": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q015": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q016": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q017": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q018": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q019": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q020": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q021": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q022": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q023": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q024": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q025": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q026": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q027": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q028": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q029": {
+   "category": "exact_number",
+   "verdict": "wrong",
+   "proxy_gold_values": 0.0,
+   "note": "says per-credit tuition is not provided; p180 (retrieved) lists B.Pharm 6,000/-"
+  },
+  "q030": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q031": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q032": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q033": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q034": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q035": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q036": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q037": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q038": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q039": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q040": {
+   "category": "exact_number",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q041": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q042": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q043": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q044": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q045": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q046": {
+   "category": "table",
+   "verdict": "wrong",
+   "proxy_gold_values": 0.0,
+   "note": "says the CSE merit-scholarship credit count is not provided; p221 table not retrieved"
+  },
+  "q047": {
+   "category": "table",
+   "verdict": "wrong",
+   "proxy_gold_values": 0.0,
+   "note": "says the table's credit counts are not provided; p221 (retrieved) lists B.Pharm 39"
+  },
+  "q048": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q049": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q050": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q051": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q052": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q053": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q054": {
+   "category": "table",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q055": {
+   "category": "table",
+   "verdict": "wrong",
+   "proxy_gold_values": 0.0,
+   "note": "gives the rule to CONTINUE a merit scholarship (6 credits/semester) as the rule to qualify (MBA 29 in 3 semesters)"
+  },
+  "q056": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q057": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q058": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q059": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q060": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q061": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q062": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q063": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q064": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q065": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q066": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q067": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q068": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q069": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q070": {
+   "category": "program_specific",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q071": {
+   "category": "multi_hop",
+   "verdict": "partial",
+   "proxy_gold_values": 0.5,
+   "note": "gold-medal half correct; says scholarship rule not provided (p219 not retrieved)"
+  },
+  "q072": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q073": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q074": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q075": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q076": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q077": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q078": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 0.5,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q079": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q080": {
+   "category": "multi_hop",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q081": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q082": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q083": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q084": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q085": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q086": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q087": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q088": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q089": {
+   "category": "comparison",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q090": {
+   "category": "comparison",
+   "verdict": "wrong",
+   "proxy_gold_values": 1.0,
+   "note": "says 35/33 credits 'in each of the last three semesters'; p220 says earned in the last three semesters, total"
+  },
+  "q091": {
+   "category": "follow_up",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q092": {
+   "category": "follow_up",
+   "verdict": "wrong",
+   "proxy_gold_values": 0.0,
+   "note": "follow-up: says B.Pharm tuition per credit is not provided; p180 (retrieved) lists 6,000/-"
+  },
+  "q093": {
+   "category": "follow_up",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q094": {
+   "category": "follow_up",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q095": {
+   "category": "follow_up",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q096": {
+   "category": "follow_up",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q097": {
+   "category": "follow_up",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q098": {
+   "category": "follow_up",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q099": {
+   "category": "follow_up",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q100": {
+   "category": "follow_up",
+   "verdict": "wrong",
+   "proxy_gold_values": 0.0,
+   "note": "follow-up about the per-semester minimum; answers the programme total (158 credits)"
+  },
+  "q102": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q106": {
+   "category": "single_fact",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q116": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q117": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q118": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q119": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q120": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q121": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q122": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q123": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 0.0,
+   "note": "correct; the numeric proxy scored it below 1.0"
+  },
+  "q124": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  },
+  "q125": {
+   "category": "adversarial",
+   "verdict": "correct",
+   "proxy_gold_values": 1.0
+  }
+ }
+}

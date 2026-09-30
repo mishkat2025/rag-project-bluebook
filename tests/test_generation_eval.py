@@ -7,11 +7,14 @@ deserves and it would be easy to quote the wrong number.
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from eval.run_generation_eval import (  # noqa: E402
     gold_facts_present,
+    declines_in_text,
     gold_numbers_present,
 )
 
@@ -68,3 +71,30 @@ def test_an_abstention_scores_zero_on_both():
 
 def test_a_question_with_no_gold_facts_is_not_penalised():
     assert gold_numbers_present("Any answer.", []) == 1.0
+
+
+# ---------------------------------------------------------------------------
+# declines_in_text: a delivered answer that says the bulletin lacks something
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("answer", [
+    # q029 in phase8 -- a wrong "not provided" that used to count as delivered.
+    "The bulletin does not provide the per-credit tuition for B.Pharm. [Page 179]",
+    # q103 -- the right response to an unanswerable question, inside an answer.
+    "The bulletin mentions a Sports Club [Page 213], but does not state whether EWU has a football team.",
+    "The cafeteria is listed [Page 212]; its opening hours are not mentioned in the bulletin.",
+    "There is no information about a dress code.",
+])
+def test_a_decline_inside_an_answer_is_detected(answer):
+
+    assert declines_in_text(answer)
+
+
+@pytest.mark.parametrize("answer", [
+    "The tuition fee per credit for B. Pharm. is 6,000/- [Page 180].",
+    "Students who do not register on time pay a late fee of Tk. 500 [Page 215].",
+    None,
+])
+def test_an_ordinary_answer_is_not_a_decline(answer):
+
+    assert not declines_in_text(answer)

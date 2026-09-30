@@ -11,24 +11,66 @@ that document, not as current official university information.
 
 ## 1. What this is
 
-Retrieval, reranking and grounding are all measured against a 125-question
-evaluation set with gold page numbers, not assumed. The current numbers (see
-`PROGRESS.md` for the full history and how each was obtained):
+Measured against live Gemma 4 on two question sets, every answer read by
+hand against the gold answer and the PDF. Full history and method in
+`PROGRESS.md`.
 
-| Metric | Value | Target |
+- `eval/dataset.jsonl` -- 125 questions written from the PDF (113 answerable,
+  12 not covered by the bulletin). They reuse the bulletin's wording, so they
+  are the easy case.
+- `eval/dataset_natural.jsonl` -- 84 questions worded the way a student
+  types (43 answerable, 41 not covered). Each unanswerable one records the
+  PDF search showing the bulletin does not cover it: absent facilities,
+  absent programs, false premises, missing policies, a detail the bulletin
+  omits (a cafeteria exists, its hours do not), and off-topic.
+
+**Is the answer right?**
+
+| | bulletin wording | natural wording |
 |---|---|---|
-| page-recall@20 | 0.986 | >= 0.90 |
-| page-recall@50 | 0.986 | >= 0.95 |
-| page-nDCG@10 | 0.878 | (reranker: +0.10 over no-rerank; got +0.071) |
-| citation accuracy | 1.000 | >= 0.95 |
-| number fidelity | 1.000 | = 1.00 |
-| abstention accuracy | 0.923 | >= 0.80 |
-| hallucination rate | 0.000 | <= 0.05 |
-| LLM calls / query | 1 typical, 2 common | 1-2 |
+| answerable, answered correctly | **112 / 113 (0.991)** | **39 / 43 (0.907)** |
+| answerable, refused | 0 | 2 |
+| answerable, wrongly says "the bulletin does not provide it" | 0 | 2 |
+| answerable, partly right | 1 | 0 |
+| unanswerable, refused or declined without inventing anything | 12 / 12 | 40 / 41 |
+| unanswerable, answered with an invented fact | **0** | **0** |
 
-A third LLM call is structurally possible (rewrite + generation + one
-regeneration) but was never reached across the 125-question set. An
-abstention costs zero calls.
+Audits: `eval/results/phase12_audit.json` and `natural3_audit.json` (every
+answer that changed between runs re-read), and PROGRESS Session 11. The one unanswerable miss in natural
+wording declined correctly but claimed the bulletin has no CSE minor (it has
+one, with groups A and B; the question asked for group C).
+
+By category (bulletin wording): single fact 28/28, exact number 15/15,
+table 15/15, program-specific 15/15, comparison 10/10, adversarial near-miss
+10/10, follow-up 10/10, multi-hop 9/10.
+
+**The chatbot errs by refusing, not by inventing.** The remaining failures
+on natural wording are "Who's the head of CSE?" (the bulletin says
+"chairperson") and three like it: the right page is not retrieved or not
+recognised under the student's word. The failures the checks below cannot
+see are a real number attached to the wrong rule: before page-split tables
+were fixed, 3 answers did that and passed every check. None is left in the
+audited runs; the one partly-right answer misses half of a two-part question
+because one of its pages is not retrieved.
+
+**Guardrails.** These are deterministic checks run on every answer. A pass
+means the check found nothing to reject, not that the answer is right:
+
+| Check | Result | What it verifies, and what it does not |
+|---|---|---|
+| citation validity | 1.000 | every cited page is one the model was given; not that the page supports the sentence |
+| number grounding | 1.000 | every number in the answer appears somewhere in the evidence; not that it is attached to the right fact |
+| NLI entailment (offline) | 0.473 | share of cited sentences an off-the-shelf NLI model judges entailed; it rates most correct numeric sentences "neutral", so it is too weak to gate on |
+| NLI contradiction (offline) | 0.000 | the same model found no contradictions -- also in the previous run, where it rated the 3 false answers "neutral" or "entailed" |
+
+**Retrieval** (`eval/run_eval.py --rerank`): a gold page is among the chunks
+the model receives for 0.956 of answerable questions; page-recall@20 0.987;
+page-nDCG@10 0.884.
+
+**Cost:** 1 LLM call for a typical question, 2 for follow-ups and multi-part
+questions. Median latency 8 s, p95 15 s on an RTX 4060 Ti. Every question,
+off-topic ones included, costs one call to refuse: there is no score gate
+(see Architecture).
 
 ## 2. Architecture
 
@@ -56,8 +98,15 @@ ONLINE (1 LLM call typical, 2 common)
     -> [LLM query rewrite, only if the query is a follow-up or multi-part]
     -> dense(30) || BM25(30) -> RRF(k=60) -> 50
     -> bge-reranker-v2-m3 -> top 5 (enforced cut)
-    -> deterministic evidence gate: top rerank score below a calibrated
-       threshold -> abstain, no LLM call spent
+    -> if the question names a program: + up to 2 university-wide rules
+       (admission, fees, grading...) ranked against the question with the
+       program removed -- the bulletin states most policy once, for everyone
+       (src/retrieval/scope.py)
+    -> no score gate: the reranker's score tracks wording as much as
+       relevance, and a 0.02 cut refused 7 of 43 naturally-worded answerable
+       questions ("What's an A minus worth?" scored 0.001). The generator
+       reads the evidence and refuses (NOT_IN_BULLETIN) when it does not
+       answer the question. settings.abstention_threshold > 0 turns it back on.
     -> [optional parent expansion: child chunk -> its section]
     -> generator: 1 LLM call, sentence-level [Page N] citations
     -> deterministic validation, no LLM:
@@ -106,26 +155,26 @@ separately; nothing in this repo affects it.
 rag-project/
 ├── data/
 │   ├── raw/ewu_bulletin.pdf
-│   ├── processed/{chunks.json, metadata.json, parents.json, tree.json}
+│   ├── processed/{chunks.json, metadata.json, parents.json, section_tree.json}
 │   └── indexes/{chroma/, bm25/}
 ├── src/
 │   ├── ingestion/       pdf_parser, structure_analyzer, chunker,
 │   │                    metadata_builder, validator
 │   ├── retrieval/       dense_retriever, bm25_retriever, hybrid_retriever,
 │   │                    fusion, reranker, query_expansion, query_rewriter,
-│   │                    evidence_gate, parent_store
+│   │                    evidence_gate, parent_store, scope
 │   ├── storage/         vector_store (ABC), chroma_store, trace_store
 │   ├── agents/          answer_agent, verification_agent (off by default)
 │   ├── orchestration/   pipeline (the control flow), state, workflow
 │   ├── generation/      lmstudio_client, prompts
 │   ├── validation/      citations, numbers, faithfulness (offline-only)
 │   └── config/          settings, device
-├── scripts/chat.py      the terminal REPL
-├── app/chat.py          documented entry point; delegates to scripts/chat.py
+├── app/chat.py          the terminal REPL
+├── scripts/             build_ingestion, build_chroma, build_bm25 (offline index build)
 ├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
-├── tests/              pytest suite (262 tests)
+├── tests/              pytest suite (333 tests)
 ├── .env
 └── requirements.txt
 ```
@@ -195,14 +244,26 @@ reasoning tokens and time out. This is already the shipped default.
 .\.venv\Scripts\python.exe app\chat.py
 ```
 
-(equivalently, `scripts\chat.py` -- both run the same REPL). The startup
-banner reports the resolved device and whether LM Studio is reachable, so a
-CPU regression or a stopped server is visible immediately:
+The startup banner reports the resolved device, the model, and whether LM
+Studio is reachable, so a CPU regression, a swapped model or a stopped server
+is visible immediately:
 
 ```
-embedder/reranker: cuda (NVIDIA GeForce RTX 4060 Ti) | LLM: LM Studio @ http://localhost:1234/v1 [ok]
-index: 2855 chunks | rerank top_k=5 | abstain below 0.02
+embedder/reranker: cuda (NVIDIA GeForce RTX 4060 Ti) | LLM: gemma-4-12b-it-qat @ http://localhost:1234/v1 [ok]
+index: 2855 chunks | rerank top_k=5 | score gate off (the model decides)
 ```
+
+Answers **stream** as the model writes them. The citation and number checks
+run on the finished answer; in the rare case the streamed draft fails them
+(about 1 answer in 125) it is marked as withdrawn and the checked answer is
+printed below it, so unchecked text is never left looking like the answer.
+"Source pages" lists the pages the answer cites.
+
+Greetings, "thanks", "ok" and "bye" are answered directly, without a model
+call. Follow-ups ("tell me more about him", "what about EEE?", "and the lab
+fee?") are rewritten into standalone questions using the conversation; a
+question that is already standalone is answered without the conversation, so
+an earlier topic cannot pull the answer off course.
 
 Commands inside the REPL:
 
@@ -210,31 +271,33 @@ Commands inside the REPL:
 |---|---|
 | `clear` | start a new conversation |
 | `trace` | show how the last answer was produced -- rewrite, retrieval, reranking, the gate, generation, validation |
-| `exit` / `quit` | end the chat |
+| `exit` / `quit` / `bye` | end the chat |
 
 Example:
 
 ```
-You: What is the minimum GPA required for admission?
+You: What is the minimum CGPA for admission to CSE?
 
 EWU RAG:
 ------------------------------------------------------------------------
-Candidates must have a minimum GPA of 3.00 in both SSC and HSC (or
-equivalent) examinations [Page 176]. ...
+The minimum qualifications for admission to undergraduate programs include a
+minimum GPA of 3.00 in both SSC and HSC Examinations [Page 176]. The bulletin
+does not provide a specific minimum CGPA requirement for admission to CSE.
 ------------------------------------------------------------------------
-Source pages: [176, 177]
+Source pages: [176]
 ```
 
-A question the bulletin does not cover is refused rather than answered from
-weak evidence, with a reason:
+A question the bulletin does not cover is refused, or declined with what the
+bulletin does say, rather than answered from weak evidence:
 
 ```
-You: Does EWU have a football team?
+You: is there a gym?
 
 EWU RAG:
 ------------------------------------------------------------------------
-The bulletin mentions a Sports Club [Page 213], but does not state whether
-EWU has a football team.
+The bulletin does not state whether there is a gym; however, it mentions that
+there are separate male and female common rooms with indoor game facilities
+and television [Page 212]. ...
 ------------------------------------------------------------------------
 ```
 
@@ -247,27 +310,32 @@ EWU has a football team.
 # full pipeline against live Gemma 4 -- tens of minutes, 125 questions
 .\.venv\Scripts\python.exe eval\run_generation_eval.py --label mylabel
 
+# the same on the natural-wording / abstention set (84 questions)
+.\.venv\Scripts\python.exe eval\run_generation_eval.py --dataset eval\dataset_natural.jsonl --label mynatural
+
 # offline faithfulness diagnostic against a saved generation run -- no LLM,
 # under a minute; see its module docstring for what it does and does not show
 .\.venv\Scripts\python.exe eval\faithfulness_eval.py --label mylabel
 ```
 
-`pytest` runs the full test suite (262 tests, one xfail documenting a known,
-narrow reranker regression on the "CGPA for admission to CSE" phrasing --
-see `tests/test_reranker.py`).
+`pytest` runs the full test suite (333 tests).
 
 ## 10. Known limitations
 
-- The `table` category is the weakest in retrieval (nDCG@10 0.687) and in
-  generation (gold values reach the answer 33% of the time) -- correct when
-  it answers, but still the hardest category to rank correctly among
-  near-identical bulletin pages.
-- A cross-encoder trained for query-relevance ranking can be strict about
-  qualifiers the corpus cannot satisfy: "minimum CGPA for admission **to
-  CSE**" drops the correct university-wide admission page out of the top 5,
-  even though the generator itself declines to invent an answer from the
-  wrong pages it is handed. See `tests/test_reranker.py` and PROGRESS.md
-  Session 5/7.
+- Tables still rank lowest in retrieval (nDCG@10 0.728). A table that runs
+  across a page break is detected as two tables; the continuation now carries
+  the first part's introducing sentence and header, but its rows are
+  sometimes misaligned in the Markdown (PyMuPDF reads a two-column-pair layout
+  as interleaved cells).
+- Both question sets were written by one author who had read the PDF,
+  including the natural-wording one. Correctness is 0.98 on bulletin wording
+  and 0.91 on natural wording; questions from students who have not read the
+  bulletin are the missing test. The hand audits must be redone after any
+  change to the prompt, the index or the model.
+- A student's word for something the bulletin names differently ("head" vs
+  "chairperson", "attested" vs "verification") can still lose the answer.
+- About 3% of answers copy a section path ("Grades, Rules and Regulations >
+  Grading System > ...") into the text. Cosmetic; the content is right.
 - Off-the-shelf sentence-level NLI (DeBERTa-v3-base-MNLI) is a weak
   instrument for this domain's numeric and tabular sentences -- it hedges to
   "neutral" on facts independently confirmed correct, so it is used only as

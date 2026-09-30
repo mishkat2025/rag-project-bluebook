@@ -11,6 +11,8 @@ tests. The control flow lives in ``pipeline.run``.
 """
 from __future__ import annotations
 
+from typing import Callable
+
 from src.agents.answer_agent import AnswerAgent
 from src.agents.verification_agent import VerificationAgent
 from src.config.settings import settings
@@ -46,7 +48,11 @@ class RAGWorkflow:
         else:
             self.verifier = None
 
-    def run(self, state: RAGState) -> RAGState:
+    def run(
+        self,
+        state: RAGState,
+        on_token: Callable[[str], None] | None = None,
+    ) -> RAGState:
         """Execute the pipeline and return the updated shared state."""
         return pipeline.run(
             state,
@@ -55,6 +61,7 @@ class RAGWorkflow:
             rewriter=self.rewriter,
             generator=self.generator,
             verifier=self.verifier,
+            on_token=on_token,
         )
 
     def warm_up(self) -> dict[str, str]:

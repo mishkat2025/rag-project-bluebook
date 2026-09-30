@@ -135,74 +135,47 @@ def test_the_coverage_check_is_off_by_default():
 # The calibrated threshold
 # ---------------------------------------------------------------------------
 
-def test_the_shipped_threshold_is_the_phrasing_robust_one():
-    """0.02, not the 0.40 that maximises accuracy on dataset.jsonl.
-
-    dataset.jsonl reuses the bulletin's vocabulary, so it overstates how
-    cleanly the cross-encoder separates covered from uncovered topics. See
-    eval/paraphrase_probe.py and the comment in settings.py.
+def test_the_score_gate_is_off_and_the_generator_decides():
+    """Session 11: at 0.02 the gate refused 7 of 43 naturally-worded
+    answerable questions ("What's an A minus worth?" scored 0.001) and caught
+    nothing the generator did not also refuse. See settings.py for the table.
     """
-    assert settings.abstention_threshold == pytest.approx(0.02)
+    assert settings.abstention_threshold == 0.0
+
+
+def test_with_the_gate_off_a_near_zero_score_still_reaches_the_generator():
+    result = assess("What's an A minus worth?", [chunk(0.001)])
+
+    assert result.sufficient is True
+
+
+def test_with_the_gate_off_no_candidates_still_abstains():
+    """The one refusal that needs no model: retrieval found nothing at all."""
+    result = assess("anything", [])
+
+    assert result.sufficient is False
+    assert result.reason == "no_candidates"
 
 
 @pytest.mark.skipif(
-    not (ROOT / "eval" / "results" / "phase5_gate.json").exists(),
-    reason="calibration run not present",
+    not (ROOT / "eval" / "results" / "natural1_generation.json").exists(),
+    reason="natural-wording run not present",
 )
-def test_the_threshold_refuses_no_answerable_question_on_the_eval_set():
-    """Replays the saved calibration run against the shipped threshold.
-
-    The guard is retention, not abstention recall. Abstention recall is 0.600
-    here, below the 0.80 Phase 6 criterion, and deliberately so -- reaching
-    0.80 costs 8 of 12 naturally-phrased answerable questions (see
-    test_the_threshold_survives_natural_phrasing). What must not regress is
-    that the gate refuses nothing the bulletin actually answers.
-    """
+def test_the_old_gate_refused_real_questions_in_natural_wording():
+    """Why the gate is off, replayed from the saved gate-on (0.02) run: it
+    refused 7 questions the bulletin answers, on score alone."""
     records = json.loads(
-        (ROOT / "eval" / "results" / "phase5_gate.json").read_text(encoding="utf-8")
-    )
-
-    answerable = [r for r in records if r["answerable"]]
-    unanswerable = [r for r in records if not r["answerable"]]
-
-    false_abstentions = [
-        r["qid"] for r in answerable
-        if r["top_score"] < settings.abstention_threshold
-    ]
-    caught = sum(
-        1 for r in unanswerable
-        if r["top_score"] < settings.abstention_threshold
-    )
-
-    assert false_abstentions == []
-    assert caught / len(unanswerable) >= 0.50
-
-
-@pytest.mark.skipif(
-    not (ROOT / "eval" / "results" / "paraphrase_probe.json").exists(),
-    reason="paraphrase probe not present",
-)
-def test_the_threshold_survives_natural_phrasing():
-    """The check dataset.jsonl cannot perform.
-
-    Its questions were written from the PDF and share its wording. These are
-    worded the way a student types, and the shipped threshold must keep
-    answering them -- a gate that refuses real questions is worse than no
-    gate at all.
-    """
-    probe = json.loads(
-        (ROOT / "eval" / "results" / "paraphrase_probe.json").read_text(
+        (ROOT / "eval" / "results" / "natural1_generation.json").read_text(
             encoding="utf-8"
         )
     )
 
-    kept = [q for q, s in probe["answerable"]
-            if s >= settings.abstention_threshold]
-    caught = [q for q, s in probe["unanswerable"]
-              if s < settings.abstention_threshold]
+    gate_refused_answerable = [
+        r["qid"] for r in records
+        if r["answerable"] and r["abstention_reason"] == "below_threshold"
+    ]
 
-    assert len(kept) / len(probe["answerable"]) >= 0.90
-    assert len(caught) / len(probe["unanswerable"]) >= 0.80
+    assert len(gate_refused_answerable) >= 5
 
 
 # ---------------------------------------------------------------------------

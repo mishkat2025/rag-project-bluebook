@@ -301,26 +301,30 @@ def test_the_admission_pages_survive_reranking(live):
     assert {176, 177} & set(pages[:10])
 
 
-@pytest.mark.xfail(
-    strict=False,
-    reason="KNOWN PHASE 4 REGRESSION, documented in PROGRESS.md. The "
-           "cross-encoder reads 'to CSE' as a hard qualifier that no passage "
-           "in this bulletin satisfies, so it demotes the university-wide "
-           "admission requirement (p176, fused rank 1) to rank 7 and fills "
-           "the top 5 with CSE curriculum pages. Scored without the "
-           "qualifier the same passage gets 0.95, so this is the model being "
-           "strict, not a defect in the passage. Revisit with the abstention "
-           "gate in Phase 5/6.",
-)
-def test_the_admission_pages_survive_the_top_k_cut(live):
-    """What the pipeline actually hands the generator: the top 5, enforced."""
+@pytest.mark.parametrize("query", [
+    FAILING_QUERY,
+    "What are the admission requirements for CSE?",
+    "What are the admission requirements for EEE?",
+])
+def test_the_university_admission_rule_reaches_the_generator(live, query):
+    """What the pipeline actually hands the generator.
+
+    The cross-encoder alone still demotes p176 out of the top 5: it reads
+    "to CSE" as a qualifier the university-wide passage does not satisfy. The
+    pipeline appends the university-wide rules a program question inherits
+    (src/retrieval/scope.py), so the passage reaches the generator anyway,
+    without displacing the top 5.
+    """
     retriever, reranker = live
 
-    results = reranker.rerank(FAILING_QUERY, retriever.search(FAILING_QUERY))
-    pages = [(r.get("metadata") or {}).get("page") for r in results]
+    state = RAGState(original_query=query)
+    state.retrieved_chunks = retriever.search(query)
 
-    assert len(results) == settings.rerank_top_k
-    assert {176, 177} & set(pages)
+    selected = pipeline.rerank(state, reranker, retriever)
+    pages = [(r.get("metadata") or {}).get("page") for r in selected]
+
+    assert len(selected) <= settings.rerank_top_k + settings.university_scope_slots
+    assert 176 in pages
 
 
 def test_the_department_list_page_is_rescued(live):

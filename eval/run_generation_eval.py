@@ -10,7 +10,7 @@ about the *answer*, so they need the whole pipeline and a live LLM:
     abstention accuracy >= 0.80    unanswerable questions are refused
 
 This runs all 125 questions -- including the 15 unanswerable ones the retrieval
-eval excludes -- through ``RAGWorkflow``, exactly as ``scripts/chat.py`` does,
+eval excludes -- through ``RAGWorkflow``, exactly as ``app/chat.py`` does,
 and reports what came back. LM Studio must be running with the model loaded.
 
 Two flags exist to keep the headline numbers honest rather than tautological:
@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import statistics
 import sys
 import time
@@ -46,11 +47,33 @@ DATASET = ROOT / "eval" / "dataset.jsonl"
 RESULTS = ROOT / "eval" / "results"
 
 
-def load_dataset(limit: int | None = None) -> list[dict]:
-    lines = DATASET.read_text(encoding="utf-8").splitlines()
+def load_dataset(limit: int | None = None, path: Path = DATASET) -> list[dict]:
+    lines = Path(path).read_text(encoding="utf-8").splitlines()
     rows = [json.loads(line) for line in lines if line.strip()]
 
     return rows[:limit] if limit else rows
+
+
+#: An answer that was delivered but says, somewhere in its text, that the
+#: bulletin does not cover (part of) the question. Such an answer is not an
+#: abstention -- it cites pages and states things -- so it used to be counted
+#: as delivered and nothing more. For an unanswerable question it is usually
+#: the right response ("the bulletin lists a cafeteria but not its hours");
+#: for an answerable one it is where q029's "the bulletin does not provide the
+#: per-credit tuition" hid. Reported separately so neither disappears.
+DECLINE = re.compile(
+    r"\b(?:bulletin|evidence|document)\s+(?:does\s+not|doesn['’]t)\s+"
+    r"(?:provide|state|specify|mention|contain|include|list|say|indicate|offer)"
+    r"|\b(?:does\s+not|doesn['’]t)\s+(?:state|specify|mention|say|indicate)\s+"
+    r"(?:whether|if|how|when|what|which|any)\b"
+    r"|\bnot\s+(?:mentioned|stated|specified|provided|listed|included)\s+in\s+the\s+bulletin"
+    r"|\bno\s+(?:information|mention|details?)\s+(?:about|of|on|regarding)\b",
+    re.IGNORECASE,
+)
+
+
+def declines_in_text(answer: str | None) -> bool:
+    return bool(DECLINE.search(answer or ""))
 
 
 def history_of(row: dict):
@@ -170,6 +193,9 @@ def run_question(workflow, row: dict) -> dict:
         "llm_calls": state.trace.get("llm_calls", 0),
         "abstained": bool(evidence.get("abstained")),
         "abstention_reason": evidence.get("abstention_reason"),
+        "declined_in_text": (
+            not evidence.get("abstained") and declines_in_text(state.draft_answer)
+        ),
         "retrieved_pages": evidence.get("source_pages") or [],
         "gate_top_score": (state.trace.get("evidence_gate") or {}).get("top_score"),
         "regenerated": answer_trace.get("regenerated", False),
@@ -255,6 +281,11 @@ def report(records: list[dict], label: str) -> None:
           f"{mean([r.get('gold_number_recall') for r in delivered_answerable]):.3f}"
           f"   (verbatim gold phrasing: "
           f"{mean([r.get('gold_fact_recall') for r in delivered_answerable]):.3f})")
+    # A proxy in both directions: gold facts copied from a table row carry
+    # every number in the row, so "A- carries 3.70" scores 0; and a right
+    # number stated about the wrong rule scores 1. Session 11 read all 112
+    # answers: 0.848 here, 0.929 actually correct (tables 0.333 vs 0.80).
+    print("  (numeric proxy, not correctness -- see the latest eval/results/*_audit.json)")
 
     print("\nABSTENTION")
     print(f"  unanswerable refused : {correct_abstain}/{len(unanswerable)}")
@@ -274,6 +305,21 @@ def report(records: list[dict], label: str) -> None:
     missed = [r["qid"] for r in unanswerable if not r["abstained"]]
     if missed:
         print(f"  unanswerable NOT refused: {missed}")
+
+    # Refusal is not the only right response to an unanswerable question, and
+    # not the only wrong one to an answerable question. Whether a delivered
+    # answer that declines in its text is right still needs reading.
+    declined_u = [r["qid"] for r in unanswerable if r.get("declined_in_text")]
+    answered_u = [r["qid"] for r in unanswerable
+                  if not r["abstained"] and not r.get("declined_in_text")]
+    declined_a = [r["qid"] for r in answerable if r.get("declined_in_text")]
+    if unanswerable:
+        print(f"  unanswerable, declined inside a delivered answer: "
+              f"{len(declined_u)}  {declined_u[:10]}")
+        print(f"  unanswerable, answered with no decline (read these): "
+              f"{len(answered_u)}  {answered_u[:10]}")
+    print(f"  answerable, delivered but says 'not in the bulletin' (read these): "
+          f"{len(declined_a)}  {declined_a[:10]}")
 
     print("\nCOST")
     calls = Counter(r["llm_calls"] for r in records)
@@ -312,6 +358,10 @@ def report(records: list[dict], label: str) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--label", default="phase6")
+    parser.add_argument("--dataset", type=Path, default=DATASET,
+                        help="question file (default eval/dataset.jsonl; "
+                             "eval/dataset_natural.jsonl is the natural-wording "
+                             "and abstention set)")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--category", action="append", default=None,
                         help="restrict to one or more dataset categories")
@@ -341,13 +391,20 @@ def main() -> None:
         # the measure can be applied without paying for the LLM again -- the
         # same trick run_eval.py's --rescore uses for rankings.
         gold = {row["qid"]: (row.get("gold_facts") or [])
-                for row in load_dataset()}
+                for row in load_dataset(path=args.dataset)}
 
         for record in records:
             if record.get("answerable") and "gold_number_recall" not in record:
                 record["gold_number_recall"] = gold_numbers_present(
                     record.get("answer", ""), gold.get(record["qid"], [])
                 )
+
+            # Derived from the answer text alone, so always recomputed: a run
+            # saved under an older pattern is re-read with the current one.
+            record["declined_in_text"] = (
+                not record.get("abstained")
+                and declines_in_text(record.get("answer"))
+            )
 
         report(records, args.rescore)
         return
@@ -360,7 +417,7 @@ def main() -> None:
     if args.no_abstain_on_failure:
         settings.abstain_on_failed_validation = False
 
-    rows = load_dataset(args.limit)
+    rows = load_dataset(args.limit, path=args.dataset)
 
     if args.category:
         wanted = set(args.category)

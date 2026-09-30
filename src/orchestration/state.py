@@ -22,6 +22,21 @@ class RAGState:
         default_factory=list
     )
 
+    #: Whether the generator is shown ``conversation_history``. The pipeline
+    #: turns it off when the rewriter judged the question self-contained:
+    #: retrieval already ignored the history then, and showing it anyway
+    #: made Gemma refuse "What is the minimum CGPA for admission to CSE?" in
+    #: 11 of 12 runs after two turns about the CSE chairperson (0 of 8
+    #: without that history).
+    answer_with_history: bool = True
+
+    #: The question the generator is asked, when it differs from the user's
+    #: words: for a follow-up, the rewriter's self-contained version. Asked
+    #: "what about pharmacy?" after a per-credit-cost question, Gemma listed
+    #: labs and fees and left out the tuition; the rewrite already said "What
+    #: is the tuition fee per credit for Pharmacy?". Empty = original_query.
+    answer_query: str = ""
+
     # ---------------------------------------------------------
     # Query planning
     # ---------------------------------------------------------
