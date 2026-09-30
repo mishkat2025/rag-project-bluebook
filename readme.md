@@ -11,37 +11,47 @@ that document, not as current official university information.
 
 ## 1. What this is
 
-Measured on a 125-question evaluation set (112 answerable, 13 not covered by
-the bulletin) against live Gemma 4. Full history and method in `PROGRESS.md`.
+Measured against live Gemma 4 on two question sets, every answer read by
+hand against the gold answer and the PDF. Full history and method in
+`PROGRESS.md`.
 
-**Read the caveat first.** The questions were written from the PDF and reuse
-its wording. Rewritten the way a student would ask them, the share of
-questions whose gold page reaches the model fell from 0.975 to 0.875 on a
-40-question sample, and the gate refused 17.5% of them. Treat everything
-below as an upper bound until the chatbot is tested on questions from people
-who have not read the bulletin.
+- `eval/dataset.jsonl` -- 125 questions written from the PDF (113 answerable,
+  12 not covered by the bulletin). They reuse the bulletin's wording, so they
+  are the easy case.
+- `eval/dataset_natural.jsonl` -- 84 questions worded the way a student
+  types (43 answerable, 41 not covered). Each unanswerable one records the
+  PDF search showing the bulletin does not cover it: absent facilities,
+  absent programs, false premises, missing policies, a detail the bulletin
+  omits (a cafeteria exists, its hours do not), and off-topic.
 
-**Is the answer right?** Every answer read by hand against the gold answer
-and the PDF (`eval/results/phase9_audit.json`):
+**Is the answer right?**
 
-| | Result |
-|---|---|
-| answerable questions answered correctly | **110 / 112 (0.982)** |
-| partly correct | 1 -- a multi-hop question where one of the two pages was not retrieved |
-| wrong | 1 -- a follow-up ("what is the minimum for Pharmacy students?") answered with the programme total instead of the per-semester minimum |
-| unanswerable questions refused | 12 / 13 (the 13th declines inside its answer) |
-| answerable questions refused outright | 0 / 112 |
+| | bulletin wording | natural wording |
+|---|---|---|
+| answerable, answered correctly | **111 / 113 (0.982)** | **39 / 43 (0.907)** |
+| answerable, refused | 0 | 2 |
+| answerable, wrongly says "the bulletin does not provide it" | 0 | 2 |
+| answerable, wrong or partly wrong | 2 | 0 |
+| unanswerable, refused or declined without inventing anything | 12 / 12 | 40 / 41 |
+| unanswerable, answered with an invented fact | **0** | **0** |
 
-By category: single fact 27/27, exact number 15/15, table 15/15,
-program-specific 15/15, comparison 10/10, adversarial near-miss 10/10,
-multi-hop 9/10, follow-up 9/10.
+Audits: `eval/results/phase9_audit.json`, `natural1_audit.json`, and PROGRESS
+Session 11 for the gate-off runs. The one unanswerable miss in natural
+wording declined correctly but claimed the bulletin has no CSE minor (it has
+one, with groups A and B; the question asked for group C).
 
-The failures to watch for are the ones the checks below cannot see. In the
-previous run, before tables split across a page break were fixed, 3 answers
-quoted a real number from the right page about the wrong rule -- a
-scholarship's continuation rule given as its qualification rule, "35
-credits" per semester instead of across three semesters. All 3 passed every
-check. The remaining wrong answer is of the same kind.
+By category (bulletin wording): single fact 28/28, exact number 15/15,
+table 15/15, program-specific 15/15, comparison 10/10, adversarial near-miss
+10/10, multi-hop 9/10, follow-up 9/10.
+
+**The chatbot errs by refusing, not by inventing.** The remaining failures
+on natural wording are "Who's the head of CSE?" (the bulletin says
+"chairperson") and three like it: the right page is not retrieved or not
+recognised under the student's word. The failures the checks below cannot
+see are a real number attached to the wrong rule: before page-split tables
+were fixed, 3 answers did that and passed every check. The one wrong answer
+left (a follow-up answered with the programme total instead of the
+per-semester minimum) is of that kind.
 
 **Guardrails.** These are deterministic checks run on every answer. A pass
 means the check found nothing to reject, not that the answer is right:
@@ -54,12 +64,13 @@ means the check found nothing to reject, not that the answer is right:
 | NLI contradiction (offline) | 0.000 | the same model found no contradictions -- also in the previous run, where it rated the 3 false answers "neutral" or "entailed" |
 
 **Retrieval** (`eval/run_eval.py --rerank`): a gold page is among the chunks
-the model receives for 0.955 of answerable questions; page-recall@20 0.987;
-page-nDCG@10 0.883.
+the model receives for 0.956 of answerable questions; page-recall@20 0.987;
+page-nDCG@10 0.884.
 
 **Cost:** 1 LLM call for a typical question, 2 for follow-ups and multi-part
-questions, 0 when the gate refuses. Median latency 7.6 s, p95 14 s on an
-RTX 4060 Ti.
+questions. Median latency 8 s, p95 15 s on an RTX 4060 Ti. Every question,
+off-topic ones included, costs one call to refuse: there is no score gate
+(see Architecture).
 
 ## 2. Architecture
 
@@ -91,8 +102,11 @@ ONLINE (1 LLM call typical, 2 common)
        (admission, fees, grading...) ranked against the question with the
        program removed -- the bulletin states most policy once, for everyone
        (src/retrieval/scope.py)
-    -> deterministic evidence gate: top rerank score below a calibrated
-       threshold -> abstain, no LLM call spent
+    -> no score gate: the reranker's score tracks wording as much as
+       relevance, and a 0.02 cut refused 7 of 43 naturally-worded answerable
+       questions ("What's an A minus worth?" scored 0.001). The generator
+       reads the evidence and refuses (NOT_IN_BULLETIN) when it does not
+       answer the question. settings.abstention_threshold > 0 turns it back on.
     -> [optional parent expansion: child chunk -> its section]
     -> generator: 1 LLM call, sentence-level [Page N] citations
     -> deterministic validation, no LLM:
@@ -160,7 +174,7 @@ rag-project/
 ├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
-├── tests/              pytest suite (296 tests)
+├── tests/              pytest suite (305 tests)
 ├── .env
 └── requirements.txt
 ```
@@ -235,7 +249,7 @@ CPU regression or a stopped server is visible immediately:
 
 ```
 embedder/reranker: cuda (NVIDIA GeForce RTX 4060 Ti) | LLM: LM Studio @ http://localhost:1234/v1 [ok]
-index: 2855 chunks | rerank top_k=5 | abstain below 0.02
+index: 2855 chunks | rerank top_k=5 | score gate off (the model decides)
 ```
 
 Commands inside the REPL:
@@ -281,12 +295,15 @@ EWU has a football team.
 # full pipeline against live Gemma 4 -- tens of minutes, 125 questions
 .\.venv\Scripts\python.exe eval\run_generation_eval.py --label mylabel
 
+# the same on the natural-wording / abstention set (84 questions)
+.\.venv\Scripts\python.exe eval\run_generation_eval.py --dataset eval\dataset_natural.jsonl --label mynatural
+
 # offline faithfulness diagnostic against a saved generation run -- no LLM,
 # under a minute; see its module docstring for what it does and does not show
 .\.venv\Scripts\python.exe eval\faithfulness_eval.py --label mylabel
 ```
 
-`pytest` runs the full test suite (296 tests).
+`pytest` runs the full test suite (305 tests).
 
 ## 10. Known limitations
 
@@ -295,13 +312,13 @@ EWU has a football team.
   the first part's introducing sentence and header, but its rows are
   sometimes misaligned in the Markdown (PyMuPDF reads a two-column-pair layout
   as interleaved cells).
-- The evaluation set is small: one hand audit of 112 answers. The audit
-  must be redone after any change to the prompt or the model.
-- The evaluation questions reuse the bulletin's own wording. Rewritten the way
-  a student would ask them, the share of questions whose gold page reaches
-  the generator falls from 0.975 to 0.875 on a 40-question sample, and 17.5%
-  are refused by the gate
-  (PROGRESS.md Session 11). Treat the numbers above as an upper bound.
+- Both question sets were written by one author who had read the PDF,
+  including the natural-wording one. Correctness is 0.98 on bulletin wording
+  and 0.91 on natural wording; questions from students who have not read the
+  bulletin are the missing test. The hand audits must be redone after any
+  change to the prompt, the index or the model.
+- A student's word for something the bulletin names differently ("head" vs
+  "chairperson", "attested" vs "verification") can still lose the answer.
 - Off-the-shelf sentence-level NLI (DeBERTa-v3-base-MNLI) is a weak
   instrument for this domain's numeric and tabular sentences -- it hedges to
   "neutral" on facts independently confirmed correct, so it is used only as

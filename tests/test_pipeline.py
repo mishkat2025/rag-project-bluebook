@@ -140,8 +140,9 @@ def test_a_follow_up_costs_exactly_two_llm_calls():
     assert state.trace["llm_calls"] == 2
 
 
-def test_an_abstention_costs_zero_generation_calls():
-    """Nothing is worth generating from, so nothing is generated."""
+def test_an_abstention_costs_zero_generation_calls(monkeypatch):
+    """With a score gate set, nothing below it is generated from."""
+    monkeypatch.setattr(settings, "abstention_threshold", 0.02)
     parts, llm = build(scores=[0.01, 0.005])
     state = RAGState(original_query="Does EWU have a football team?")
 
@@ -251,7 +252,20 @@ def test_an_empty_retrieval_abstains_without_reranking():
     assert llm.calls == 0
 
 
-def test_an_abstention_produces_the_abstention_message():
+def test_with_the_shipped_gate_off_a_low_score_still_reaches_the_model():
+    """Session 11: "What's an A minus worth?" scored 0.001 and is answerable.
+    The generator reads the evidence and decides; it costs one call."""
+    parts, llm = build(scores=[0.003, 0.001])
+    state = RAGState(original_query="What's an A minus worth?")
+
+    pipeline.run(state, **parts)
+
+    assert llm.calls == 1
+    assert not state.evidence_status.get("abstained")
+
+
+def test_an_abstention_produces_the_abstention_message(monkeypatch):
+    monkeypatch.setattr(settings, "abstention_threshold", 0.02)
     parts, _ = build(scores=[0.003, 0.001])
     state = RAGState(original_query="Is there a swimming pool on campus?")
 

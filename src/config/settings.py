@@ -150,42 +150,32 @@ class Settings(BaseSettings):
     # Abstention gate (replaces EvidenceAgent)
     # ---------------------------------------------------------
     #: Minimum top rerank score for the retrieved set to count as an answer.
-    #: Below this the chatbot says the bulletin does not cover the question
-    #: instead of generating from the five least-bad passages.
+    #: Below it the chatbot refuses without calling the LLM.
     #:
-    #: CALIBRATED on the eval set by eval/calibrate_abstention.py, not guessed.
-    #: Guessing would be unusually bad here: scores are not uniformly high on
-    #: answerable questions (the "minimum CGPA for admission to CSE" case
-    #: scores its correct top hit ~0.16, because the cross-encoder reads
-    #: "to CSE" as a qualifier no passage in this bulletin satisfies).
-    #: SHIPPED VALUE: 0.02. This is NOT the value that maximises abstention
-    #: accuracy on eval/dataset.jsonl -- 0.40 does, at 0.933 against the 0.80
-    #: target. It is the value that survives real phrasing.
+    #: SHIPPED VALUE: 0.0 -- the score gate is OFF; the generator decides,
+    #: by reading the evidence and emitting NOT_IN_BULLETIN. (An empty
+    #: candidate list still abstains, see evidence_gate.assess.)
     #:
-    #: The cross-encoder's absolute score is conditioned on wording, not just
-    #: on relevance. The same correct chunk (p216, Grading System) scores
-    #: 0.9913 for "grading system letter grades grade points" and 0.0652 for
-    #: "What is the grading scale?". dataset.jsonl was generated FROM the PDF,
-    #: so its questions share the bulletin's vocabulary and score near 1.0 --
-    #: which makes it a sound retrieval benchmark and a biased calibration set
-    #: for abstention.
+    #: The cross-encoder's absolute score depends on wording, not only on
+    #: relevance: the same p216 grading chunk scores 0.99 for "grading system
+    #: letter grades grade points" and 0.07 for "What is the grading scale?".
+    #: So no threshold separates covered from uncovered topics once questions
+    #: are phrased the way students phrase them. Session 11 measured it on
+    #: eval/dataset_natural.jsonl (43 answerable / 41 unanswerable, natural
+    #: wording) and eval/dataset.jsonl, every answer read by hand:
     #:
-    #: Measured on eval/paraphrase_probe.py (naturally-worded questions):
-    #:     threshold 0.02 -> keeps 11/12 answerable, catches 7/8 unanswerable
-    #:     threshold 0.40 -> keeps  2/12 answerable, catches 7/8 unanswerable
-    #: Everything above ~0.01 buys ZERO additional refusals and costs
-    #: answerable questions steeply. On dataset.jsonl, 0.02 still gives 0
-    #: false abstentions out of 110.
+    #:                               gate 0.02   gate off
+    #:   natural, answerable right     32/43       39/43
+    #:   dataset, answerable right    110/113     111/113
+    #:   unanswerable handled (53)      52          52
+    #:   unanswerable, invented answer   0           0
     #:
-    #: Consequence, recorded honestly: abstention accuracy is 0.600 (9/15) at
-    #: this threshold, below the >= 0.80 Phase 6 criterion. Reaching 0.80 by
-    #: raising the threshold would make the chatbot refuse most real
-    #: questions, so the gap belongs to Phase 6's grounding work, not to
-    #: threshold tuning. See PROGRESS.md.
-    #:
-    #: Re-run BOTH eval/calibrate_abstention.py and eval/paraphrase_probe.py
-    #: before changing this number.
-    abstention_threshold: float = 0.02
+    #: At 0.02 the gate refused "What's an A minus worth?" (top score 0.001)
+    #: and six other answerable questions, and caught nothing the generator
+    #: did not also refuse. The cost of turning it off is one LLM call
+    #: (~5-8 s) to refuse an off-topic question instead of ~1 s.
+    #: Re-measure with both datasets before setting it above 0 again.
+    abstention_threshold: float = 0.0
 
     #: Fraction of the query's content terms that must appear in the selected
     #: chunks. 0.0 disables the check. MEASURED, not assumed: no coverage

@@ -1,6 +1,6 @@
 # PROGRESS
 
-**Current phase: 7 DONE (Session 9). Post-plan fixes: Session 11 (university-wide rules for program questions, cleanup). See its "Open" list for what is next.**
+**Current phase: 7 DONE (Session 9). Post-plan work: Session 11 parts 1-4 (university-wide rules, cleanup, honest metrics, page-split tables, abstention + score gate OFF). Next steps: the "Open" list at the end of Session 11 part 4.**
 
 Read HANDOFF.md for the full plan before working.
 
@@ -1304,3 +1304,79 @@ the merit table carry the full sentence).
 **Open:** q100 (follow-up "What is the minimum for Pharmacy students?" answered with the
 programme total) -- a rewrite/grounding problem, not tables. Table rows from two-column-pair
 layouts are still interleaved in the Markdown.
+
+## Session 11, part 4 -- abstention measured properly (#4); score gate turned OFF
+
+**The old measure.** Abstention accuracy 0.923 was 12 of 13 questions, on a set whose wording
+the reranker scores near 1.0, and it counted only outright refusals: an answer that declined
+inside its text ("the bulletin does not state...") was "delivered", which is also where the
+phase8 false "not provided" answers hid.
+
+**New instrument: `eval/dataset_natural.jsonl`** (84 questions, all student wording):
+- 43 answerable: the 40 paraphrases from part 1 (gold copied from their source qid), plus
+  "most courses in a semester" (p215: 5) and "how many students" (p15: 10,177) -- both
+  written as unanswerable candidates and found answerable by the absence check;
+- 41 unanswerable in six types (absent facility, detail absent, absent program, false
+  premise, missing policy, off-topic). Each row carries `absence_check`: the PDF search and
+  what its hits were. Every hit was read, not just counted -- the check also moved the
+  cafeteria / medical centre / WiFi / rankings / refund candidates out (they exist).
+
+**`run_generation_eval.py`**: `--dataset`; `declined_in_text` per record (regex, tested) and
+three report lines -- unanswerable declined inside an answer, unanswerable answered with no
+decline (read these), answerable delivered but saying "not in the bulletin" (read these).
+Replayed on phase8 it flags exactly q029/q046/q047/q092 (+ q062 premise correction, q071
+partial). `--rescore` recomputes it from the answer text.
+
+**Label corrections, both directions made visible.** q105 / u029 ("pay tuition in
+instalments?") were labelled unanswerable; p181 says "Students must pay semester fees in
+full." Relabelled answerable (gold p181, "No") in both datasets and in the saved runs
+(`relabeled` field). Found because the gate-off run answered it with the p181 quote.
+This correction makes the gate-on configuration look worse: it refused q105.
+
+**Gate on (0.02) vs gate off (0.0), live Gemma 4, every changed answer read:**
+
+| | gate 0.02 | gate off (shipped) |
+|---|---|---|
+| natural, answerable correct | 32/43 | **39/43** |
+| natural, answerable refused | 9 | **2** (n009 credit transfer, n015 "head of CSE") |
+| natural, answerable false "not provided" | 2 | 2 (n008 residency, n017 "attested") |
+| natural, unanswerable handled | 40/41 | 40/41 |
+| dataset, answerable correct | 110/113 | **111/113** |
+| dataset, unanswerable handled | 12/12 | 12/12 |
+| **unanswerable answered with an invented fact** | **0 / 53** | **0 / 53** |
+| strict "refused outright" accuracy (natural / dataset) | 0.902 / 0.917 | 0.878 / 0.833 |
+| mean latency (natural) | 5.7 s | 8.7 s |
+
+The strict number falls because q103/q108/u016/u026/u032 now get a delivered decline ("the
+bulletin does not state whether there is a gym") instead of a refusal -- each read, none
+invents anything. The one unanswerable miss is the same in both configs: u022 declines to
+name "Group C of the CSE minor" but claims the bulletin has no CSE minor (it has A and B).
+
+At 0.02 the gate refused, on score alone, "What's an A minus worth?" (top 0.001), "How many
+classes can I skip" (0.007), "extra time ... if something bad happens in my family" (0.010),
+remedial English fee, activity fee, name-correction fee (0.006) -- all answered correctly
+with it off. It caught nothing the generator did not also refuse. **Shipped:
+`abstention_threshold = 0.0`.** The mechanism stays (and `no_candidates` still abstains);
+tests pin it with an explicit threshold. Cost: off-topic refusals take one LLM call.
+
+The 24 dataset answers whose wording differed between the two runs (LLM nondeterminism) were
+all re-read: same verdicts. Audits: `natural1_audit.json`, `natural1_nogate_audit.json`,
+`phase9_nogate_audit.json`.
+
+**Also:** REPL banner prints the model name (Session 10's known gap) and "score gate off";
+a `no_candidates` refusal says "nothing in the bulletin matched" instead of "no passage
+scored above 0.00". `.env.example` updated. Retrieval unchanged (`phase10_retrieval`:
+context-recall 0.956 with q105 now scored).
+
+**Verified end to end in the real REPL** (`app/chat.py`, one conversation): greeting;
+"who is the chairperson of cse department" -> Dr. Taskeed Jabid; "tell me more about him" ->
+his rank and degrees (p122); "what about EEE?" -> EEE chairperson (p22, checked); CSE
+admission -> university-wide GPA 3.00; swimming pool and capital of France -> refused;
+`clear`; "how much is pharmacy per credit?" -> 6,000; "and the lab fee?" -> 3,750;
+"What's an A minus worth?" -> 3.70 (trace: top score 0.001 -- the old gate refused this).
+
+Tests: 296 -> **305**.
+
+**Open, in order:** retrieval under student vocabulary ("head" -> chairperson, "attested" ->
+verification; n009 credit transfer) is now the main failure mode; q100 follow-up; a question
+set written by students who have not read the PDF; streaming output.

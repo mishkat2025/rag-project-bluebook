@@ -65,11 +65,15 @@ def print_banner(workflow: RAGWorkflow) -> None:
 
     print(
         f"embedder/reranker: {devices['reranker']} | "
-        f"LLM: LM Studio @ {settings.llm_base_url} [{llm_status()}]"
+        f"LLM: {settings.llm_model} @ {settings.llm_base_url} [{llm_status()}]"
+    )
+    gate = (
+        f"score gate {settings.abstention_threshold:.2f}"
+        if settings.abstention_threshold > 0
+        else "score gate off (the model decides)"
     )
     print(f"index: {workflow.retriever.dense_retriever.count()} chunks | "
-          f"rerank top_k={settings.rerank_top_k} | "
-          f"abstain below {settings.abstention_threshold:.2f}")
+          f"rerank top_k={settings.rerank_top_k} | {gate}")
     print("=" * 72)
     print(HELP)
     print("=" * 72)
@@ -229,6 +233,8 @@ def main() -> None:
             elif reason == "failed_validation":
                 print("(the draft answer could not be grounded in the "
                       "retrieved pages, so it was withheld)")
+            elif reason == "no_candidates":
+                print("(nothing in the bulletin matched this question)")
             else:
                 print(f"(no supporting passage scored above "
                       f"{evidence.get('threshold', 0):.2f}; "
