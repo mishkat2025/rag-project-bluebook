@@ -1,0 +1,218 @@
+[
+ {
+  "qid": "q008",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What share of courses must be completed at EWU under the residency requirement?",
+  "answer": "The residency requirement requires that at least 75% of courses must be completed at EWU [Page 25].",
+  "error": null,
+  "elapsed_s": 11.96,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   25,
+   214,
+   179,
+   220
+  ],
+  "gate_top_score": 0.9109757542610168,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   25
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "75"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   25
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q012",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "How many clubs does EWU have?",
+  "answer": "East West University (EWU) has 18 clubs [Page 212] [Page 213].",
+  "error": null,
+  "elapsed_s": 11.44,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   212,
+   213,
+   15
+  ],
+  "gate_top_score": 0.7160401344299316,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   212,
+   213
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "18"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   212
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q020",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "What is EWU's policy on cheating?",
+  "answer": "East West University has a policy of zero tolerance on cheating [Page 218]. Any form of cheating, such as copying any document or another person\u2019s work, seeking or providing help to other students during tests, or adopting any other form of unfair means during exams, will constitute grounds for disciplinary action [Page 218]. Instructors are expected to use reasonably practical means of preventing and detecting cheating [Page 218]. Any student found to be cheating will be reported to the Dean of concerned faculty by the relevant faculty member for disciplinary action [Page 218].\n\nAdditionally, the Disciplinary Code for Students (2011) prohibits several specific actions related to examinations, including:\n- Influencing or attempting to influence any person(s) involved with the examination to allow/give undue advantages or benefits to self or any other person(s) [Page 183].\n- Taking the examination through a proxy or becoming a proxy for any examinee [Page 183].\n- Collecting or attempting to collect from outside, any exam related materials [Page 183].\n- Any use of cell-phone or any other unauthorized electronic device(s) or code/sign/symbol etc. related to the examination, anytime during the examination [Page 183].\n- Intentionally or negligently assisting another student during the examination [Page 183].\n- The removal or attempted removal from an examination room of any examination book or writing paper supplied by the university for the purposes of answering an examination [Page 183].\n- The use of a false name, identity number or student number in an examination [Page 183].\n- Commissioning of any other fraudulent or dishonest practice whereby a student, whilst being examined by the university, seeks to mislead or deceive the examiner or the examination officer [Page 183].",
+  "error": null,
+  "elapsed_s": 66.58,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   218,
+   185,
+   206,
+   183
+  ],
+  "gate_top_score": 0.9526618719100952,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   218,
+   183
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [
+   "2011"
+  ],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   218
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q102",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "Does EWU offer a Bachelor of Nursing program?",
+  "answer": "EWU plans to offer a B.Sc. in Nursing degree [Page 17].",
+  "error": null,
+  "elapsed_s": 9.12,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   17
+  ],
+  "gate_top_score": 0.7597000598907471,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   17
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   17
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ },
+ {
+  "qid": "q103",
+  "category": "unanswerable",
+  "answerable": false,
+  "question": "Does EWU have a football team?",
+  "answer": "The bulletin mentions a Sports Club which is responsible for hosting sports events [Page 213]. However, it does not state whether East West University has a football team.",
+  "error": null,
+  "elapsed_s": 12.41,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": true,
+  "retrieved_pages": [
+   182,
+   213,
+   16,
+   22
+  ],
+  "gate_top_score": 0.017449170351028442,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   213
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0
+ },
+ {
+  "qid": "q106",
+  "category": "single_fact",
+  "answerable": true,
+  "question": "Does EWU have a student exchange program with a university in Europe?",
+  "answer": "East West University has formal collaboration agreements with the University of Luton, Bedfordshire, England, UK [Page 16]. Additionally, partnership and cooperation would be established with European universities to ensure academic excellence and distinction in the field of Sociology [Page 76].",
+  "error": null,
+  "elapsed_s": 16.03,
+  "llm_calls": 1,
+  "abstained": false,
+  "abstention_reason": null,
+  "declined_in_text": false,
+  "retrieved_pages": [
+   16,
+   177,
+   227,
+   76
+  ],
+  "gate_top_score": 0.007509287446737289,
+  "regenerated": false,
+  "generation_failed": null,
+  "cited_pages": [
+   16,
+   76
+  ],
+  "invalid_pages": [],
+  "citation_accuracy": 1.0,
+  "citation_density": 1.0,
+  "numbers": [],
+  "unsupported_numbers": [],
+  "number_fidelity": 1.0,
+  "gold_pages": [
+   16
+  ],
+  "gold_fact_recall": 1.0,
+  "gold_number_recall": 1.0
+ }
+]

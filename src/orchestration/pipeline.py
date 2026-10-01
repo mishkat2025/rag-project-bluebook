@@ -52,6 +52,7 @@ from src.config.settings import settings
 from src.generation import prompts
 from src.orchestration.state import RAGState
 from src.retrieval import evidence_gate, scope
+from src.retrieval.query_expansion import neutralize_university_name
 from src.retrieval.hybrid_retriever import HybridRetriever
 from src.retrieval.query_rewriter import QueryRewriter
 from src.retrieval.reranker import Reranker
@@ -84,7 +85,12 @@ def rewrite(state: RAGState, rewriter: QueryRewriter) -> int:
     )
 
     state.rewritten_queries = result.queries
-    state.subqueries = result.queries
+    # What is searched and reranked, without the university's own name (see
+    # query_expansion.neutralize_university_name). The generator still gets
+    # the user's words.
+    state.subqueries = [
+        neutralize_university_name(query) for query in result.queries
+    ]
 
     # A self-contained question is answered without the conversation, just
     # as it is retrieved without it (see RAGState.answer_with_history).
@@ -98,7 +104,9 @@ def rewrite(state: RAGState, rewriter: QueryRewriter) -> int:
         if result.rewritten and result.reason == "follow_up"
         else ""
     )
-    state.rerank_query = result.rerank_query
+    state.rerank_query = neutralize_university_name(
+        result.rerank_query or state.original_query
+    )
     state.information_needs = result.information_needs
 
     state.trace["query_rewrite"] = {

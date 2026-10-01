@@ -30,6 +30,7 @@ from eval.retrieval_metrics import (  # noqa: E402
     evaluate_ranking_by_page,
 )
 from src.config.settings import settings  # noqa: E402
+from src.retrieval.query_expansion import neutralize_university_name  # noqa: E402
 from src.retrieval.scope import university_wide_extras  # noqa: E402
 
 DATASET = ROOT / "eval" / "dataset.jsonl"
@@ -214,6 +215,11 @@ def main() -> None:
                 queries = rewritten.queries
                 rerank_query = rewritten.rerank_query
                 entry_queries = queries
+
+            # As pipeline.rewrite does: search and rerank without the
+            # university's own name.
+            queries = [neutralize_university_name(q) for q in queries]
+            rerank_query = neutralize_university_name(rerank_query)
 
             results = merge_search(retriever, queries, args.pool)
             context_pages = None

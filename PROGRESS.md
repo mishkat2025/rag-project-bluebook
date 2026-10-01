@@ -1456,3 +1456,30 @@ vocabulary ("head" for chairperson, "attested" for verification, credit transfer
 "another uni") -- 4 natural-wording misses, deliberately not tuned against the 43 questions
 that measure it; needs questions from real students. The bulletin PDF is still committed to
 a public repository (owner's decision).
+
+## Session 12 -- "admission requirements for EWU" missed the GPA rule
+
+**Reported by the owner from real use.** "tell me the admission requirment for ewu" listed the
+admission-test weighting, B.Pharm, GEB, ISLM and foreign-student rules, then said "the bulletin
+does not provide the specific minimum general admission criteria for EWU" -- false: p176 item 1,
+minimum GPA 3.00 in SSC and HSC, was never in the evidence.
+
+**Cause: the university's own name.** Rank of the p176 "Minimum qualifications" chunk:
+"What are the admission requirements?" 1; "... requirement for ewu" not in the fused top 50;
+"... requirment for ewu" (typo) 29. Every page is about EWU, but only some print "EWU", and the
+query was pulled toward those ("criteria for EWU" p150, "the EWU website" p178, "EWU has
+generous scholarships" p177). The p176 rule never says "EWU".
+
+**Fix.** `query_expansion.neutralize_university_name`: "EWU" / "East West University" (with
+"the" and possessive) -> "the university", in the search queries and the rerank query only
+(`pipeline.rewrite`; mirrored in `run_eval.py`). The generator still gets the user's words.
+Replaced, not deleted, so questions stay grammatical ("What is the university's policy on
+cheating?"). Measured before shipping: the three admission phrasings 29 / absent / absent -> 1;
+"clubs", "cheating", "nursing", "how many students" stayed at 1.
+
+**Measured.** Retrieval unchanged (context-recall 0.956). The 12 eval questions naming the
+university, live: 11 unchanged verdicts; **n008 ("How much of my degree actually has to be done
+at EWU?") fixed** -- it had said "not provided"; now 75% [p25]. u002 (gym) now declines with
+what the bulletin does list instead of a flat refusal (still handled). Natural wording
+answerable: 39/43 -> **40/43**. REPL: all three admission phrasings now open with the GPA 3.00
+rule [p176]. Tests 333 -> 340.
