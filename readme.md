@@ -175,6 +175,7 @@ rag-project/
 │                        run_eval.py, run_generation_eval.py,
 │                        faithfulness_eval.py, calibrate_abstention.py
 ├── tests/              pytest suite (340 tests)
+├── Dockerfile, compose.yaml, .dockerignore
 ├── .env
 └── requirements.txt
 ```
@@ -301,7 +302,48 @@ and television [Page 212]. ...
 ------------------------------------------------------------------------
 ```
 
-## 9. Evaluation
+## 9. Run it in Docker
+
+The image holds the Python side -- retrieval, reranking, the REPL -- with the
+bulletin and its prebuilt index baked in. It does **not** hold the LLM: an
+OpenAI-compatible server must be listening on the host at port 1234 (section
+6). The embedder and reranker weights (~7GB) download on first run into a
+named volume and are reused after that.
+
+**Prebuilt image** -- no clone, no Python, no index build (a 10GB pull):
+
+```powershell
+docker run -it --rm --gpus all -v ewu-models:/models ghcr.io/mishkat2025/ewu-rag-chatbot
+```
+
+Without an NVIDIA GPU, drop `--gpus all` and add `-e DEVICE=cpu`. On Linux add
+`--add-host host.docker.internal:host-gateway`, and the LLM server must listen
+on more than 127.0.0.1.
+
+**Build it yourself** from a checkout:
+
+```powershell
+docker compose build
+docker compose run --rm chat        # NVIDIA GPU
+docker compose run --rm chat-cpu    # no GPU: 30-50 s a question instead of ~6 s
+```
+
+Use `run`, not `up`: the chatbot reads the keyboard, and `up` does not attach
+it. `chat` keeps the fail-loud default and refuses to start without a GPU;
+`chat-cpu` sets `DEVICE=cpu` explicitly. Settings reach the container as
+environment variables -- `compose.yaml` passes `.env` through if it exists and
+overrides `LLM_BASE_URL` to `http://host.docker.internal:1234/v1`, because
+`localhost` inside a container is the container.
+
+`data/processed` and `data/indexes` are not in git, so the image is built
+from a checkout where section 7 has already been run. The retrieval eval runs
+inside the container and reproduces the host's numbers exactly:
+
+```powershell
+docker compose run --rm chat python eval/run_eval.py --rerank --label docker
+```
+
+## 10. Evaluation
 
 ```powershell
 # retrieval only -- no LLM, seconds
@@ -320,7 +362,7 @@ and television [Page 212]. ...
 
 `pytest` runs the full test suite (340 tests).
 
-## 10. Known limitations
+## 11. Known limitations
 
 - Tables still rank lowest in retrieval (nDCG@10 0.728). A table that runs
   across a page break is detected as two tables; the continuation now carries
