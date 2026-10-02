@@ -1483,3 +1483,37 @@ at EWU?") fixed** -- it had said "not provided"; now 75% [p25]. u002 (gym) now d
 what the bulletin does list instead of a flat refusal (still handled). Natural wording
 answerable: 39/43 -> **40/43**. REPL: all three admission phrasings now open with the GPA 3.00
 rule [p176]. Tests 333 -> 340.
+
+## Session 13 -- Docker image (packaging only; no pipeline change)
+
+**Added:** `Dockerfile`, `compose.yaml`, `.dockerignore`, readme section 9. No file under
+`src/`, `app/`, `scripts/` or `eval/` changed.
+
+**Shape.** One image (`python:3.14-slim`, the cu130 torch wheel, 10.2GB) holding the code, the
+PDF and the prebuilt `data/processed` + `data/indexes`. Not in it: the LLM (reached at
+`LLM_BASE_URL=http://host.docker.internal:1234/v1`, LM Studio on the host) and the BGE-M3 /
+reranker weights (6.9GB, downloaded on first run into the `models` volume via `HF_HOME=/models`).
+Two compose services: `chat` (GPU reservation, keeps `device=cuda` + `require_gpu`, so no GPU
+is a refusal to start) and `chat-cpu` (`DEVICE=cpu`, chosen explicitly). Started with
+`docker compose run --rm chat` -- `up` does not attach stdin and the REPL uses `input()`.
+
+**Measured (Docker 29.8.1, WSL 2 engine, RTX 4060 Ti, live Gemma 4 in LM Studio on the host).**
+
+- `torch.cuda.is_available()` True in the container; banner: `cuda (NVIDIA GeForce RTX 4060 Ti)`,
+  LLM `[ok]`, `index: 2855 chunks`. The Windows-built Chroma index and BM25 pickle load on
+  Linux unchanged (container Python 3.14.8, host 3.14.3).
+- `eval/run_eval.py --rerank` in the container is **identical** to the host run of the same
+  session: page-recall@5 0.941, @10 0.984, @20 0.987, @50 0.987, page-nDCG@10 0.884,
+  page-MRR@10 0.863, context-recall 0.956, zero-recall q034 only, adversarial top-1 on a
+  distractor 0/10. Wall time 291 s in the container vs 353 s on the host (both with Gemma
+  loaded on the same card).
+- REPL, "What is the minimum CGPA for admission to CSE?": GPA 3.00 [Page 176], validation
+  passed, 1 LLM call -- the readme's example answer.
+- Two questions end to end, GPU: 5.8 s and 5.6 s, startup 26 s. `chat-cpu`: 51.9 s and 28.3 s,
+  startup 19 s, same answers.
+- Plain `docker run -it --rm --gpus all -v <volume>:/models ewu-rag-chatbot` also works.
+
+**Not done.** The generation eval was not re-run in the container (the pipeline is unchanged
+and the retrieval eval's metrics are identical). Linux hosts are untested. The image is not
+published to a registry. A fresh clone cannot build a working image until the three index
+scripts have been run, because `data/processed` and `data/indexes` are not in git.

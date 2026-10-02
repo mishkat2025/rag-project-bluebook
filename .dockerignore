@@ -1,0 +1,25 @@
+# Everything here is kept out of the build context -- the files Docker is
+# allowed to see. Without this the multi-GB .venv is sent to every build.
+
+# Windows virtualenv: useless inside a Linux image, which installs its own.
+.venv/
+venv/
+env/
+
+.git/
+.claude/
+.pytest_cache/
+.vscode/
+.idea/
+**/__pycache__/
+*.py[cod]
+*.log
+
+# Settings reach the container as environment variables (see compose.yaml),
+# never as a file baked into an image other people can pull.
+.env
+
+# Old index snapshots and per-machine runtime output.
+data/backup_*/
+data/traces/
+eval/results/
