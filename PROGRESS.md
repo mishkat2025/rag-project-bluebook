@@ -1521,3 +1521,25 @@ cannot build a working image until the three index scripts have been run, becaus
 **Published** (by the owner): `ghcr.io/mishkat2025/ewu-rag-chatbot:latest`, public, digest
 `sha256:6dfa52d7f86d...`, the same image tested above. Verified that the registry serves the
 manifest to an anonymous client. Readme section 9 now leads with the one-line `docker run`.
+
+## Session 13, part 2 -- a fresh clone builds with Docker alone; readme quick start
+
+**Closes the gap noted above** ("a fresh clone cannot build a working image"). No code change:
+the index scripts run inside the container with the checkout's `data/` mounted over the
+image's, so they write `data/processed` and `data/indexes` to the host, and a second
+`docker compose build` bakes them in.
+
+**Measured from a clean clone of `main` (1784e64), no Python on the host path, Gemma loaded on
+the same card.** `build_ingestion.py` 44 s, 2855 chunks kept (same count as the Windows build);
+`build_chroma.py` 485 s, 2855 records; `build_bm25.py` 2 s. Rebuilt image: banner
+`index: 2855 chunks`; `run_eval.py --rerank` **identical** to the host and to the published
+image -- page-recall@5 0.941, @10 0.984, @20 0.987, @50 0.987, page-nDCG@10 0.884, page-MRR@10
+0.863, context-recall 0.956, zero-recall q034 only, adversarial 0/10. The live question about
+CSE admission answered from p176.
+
+**Readme.** Structure and section numbers unchanged. Added: an unnumbered Quick start above
+section 1 (the one-line `docker run`); in section 9, what you need, the fresh-clone build
+steps, and a table of the four start-up failures with their fixes (the two error messages
+quoted there were reproduced, not guessed); in section 5, the clone command.
+
+**Still not tested:** Linux and macOS hosts, and the CPU-only index build.

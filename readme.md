@@ -9,6 +9,38 @@ other information, and that the publication is not a contract or guarantee.
 Because the indexed bulletin is from 2019, treat every answer as grounded in
 that document, not as current official university information.
 
+## Quick start
+
+The fastest way to run it needs only Docker and LM Studio -- no clone, no
+Python, no index build.
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+   and [LM Studio](https://lmstudio.ai/) (both free). In LM Studio download
+   **Gemma 4 12B Instruct (QAT)**, then start its server and load the model
+   (section 6).
+2. Run the published image:
+
+   ```
+   docker run -it --rm --gpus all -v ewu-models:/models ghcr.io/mishkat2025/ewu-rag-chatbot
+   ```
+
+   No NVIDIA GPU? Use this instead (30-50 s a question instead of ~6 s):
+
+   ```
+   docker run -it --rm -e DEVICE=cpu -v ewu-models:/models ghcr.io/mishkat2025/ewu-rag-chatbot
+   ```
+
+3. Ask a question at the `You:` prompt. `exit` quits.
+
+The first run downloads about 17GB (a 10GB image, then 7GB of model weights);
+after that it starts in about half a minute.
+
+| To ... | Read |
+|---|---|
+| fix a container that will not start, or build the image yourself | section 9 |
+| run from source with Python | sections 5-8 |
+| see how it works and how well | sections 1-3 |
+
 ## 1. What this is
 
 Measured against live Gemma 4 on two question sets, every answer read by
@@ -182,7 +214,12 @@ rag-project/
 
 ## 5. Setup
 
+To run from source (Python 3.14, tested on Windows with an NVIDIA GPU). For
+the Docker route, skip to section 9.
+
 ```bash
+git clone https://github.com/mishkat2025/rag-project-bluebook.git
+cd rag-project-bluebook
 python -m venv .venv
 ```
 
@@ -310,6 +347,19 @@ OpenAI-compatible server must be listening on the host at port 1234 (section
 6). The embedder and reranker weights (~7GB) download on first run into a
 named volume and are reused after that.
 
+What you need:
+
+- Docker Desktop (Windows, macOS) or Docker Engine (Linux).
+- An LLM server on the host at port 1234: LM Studio with Gemma 4 loaded
+  (section 6).
+- About 25GB of disk: the image (10GB), the embedder and reranker weights
+  (7GB) and Gemma (7GB).
+- Optional: an NVIDIA GPU with a current driver (on Linux, also the NVIDIA
+  Container Toolkit). Without one it runs on the CPU, more slowly.
+
+Tested on Windows 11 with Docker Desktop (WSL 2 engine) and a 16GB RTX 4060
+Ti. Linux and macOS are untested.
+
 **Prebuilt image** -- no clone, no Python, no index build (a 10GB pull):
 
 ```powershell
@@ -320,13 +370,26 @@ Without an NVIDIA GPU, drop `--gpus all` and add `-e DEVICE=cpu`. On Linux add
 `--add-host host.docker.internal:host-gateway`, and the LLM server must listen
 on more than 127.0.0.1.
 
-**Build it yourself** from a checkout:
+**Build it yourself** from a clone -- Docker only, no Python on the host:
 
 ```powershell
+git clone https://github.com/mishkat2025/rag-project-bluebook.git
+cd rag-project-bluebook
 docker compose build
+
+# One-off: build the index into ./data (it is not in git). About 9 minutes
+# on the GPU. Skip this if section 7 has already been run in this checkout.
+docker compose run --rm -v ./data:/app/data chat python scripts/build_ingestion.py
+docker compose run --rm -v ./data:/app/data chat python scripts/build_chroma.py
+docker compose run --rm -v ./data:/app/data chat python scripts/build_bm25.py
+
+docker compose build                # again: bakes the index into the image
 docker compose run --rm chat        # NVIDIA GPU
 docker compose run --rm chat-cpu    # no GPU: 30-50 s a question instead of ~6 s
 ```
+
+Without a GPU, use `chat-cpu` in the three index commands too; the embedding
+step will be much slower (not measured).
 
 Use `run`, not `up`: the chatbot reads the keyboard, and `up` does not attach
 it. `chat` keeps the fail-loud default and refuses to start without a GPU;
@@ -335,13 +398,27 @@ environment variables -- `compose.yaml` passes `.env` through if it exists and
 overrides `LLM_BASE_URL` to `http://host.docker.internal:1234/v1`, because
 `localhost` inside a container is the container.
 
-`data/processed` and `data/indexes` are not in git, so the image is built
-from a checkout where section 7 has already been run. The retrieval eval runs
-inside the container and reproduces the host's numbers exactly:
+The retrieval eval runs inside the container and reproduces the host's
+numbers exactly, with the published index and with one rebuilt from a fresh
+clone by the steps above:
 
 ```powershell
 docker compose run --rm chat python eval/run_eval.py --rerank --label docker
 ```
+
+If it does not start:
+
+| You see | Cause | Fix |
+|---|---|---|
+| `[UNREACHABLE - start LM Studio and load the model]` in the banner | nothing is answering on the host's port 1234 | start the server and load the model (section 6); on Linux it must listen on more than 127.0.0.1 |
+| `DeviceUnavailableError: settings.device='cuda' but torch reports no CUDA device` | the container was started without a GPU | add `--gpus all` (or use the `chat` service), or choose the CPU with `-e DEVICE=cpu` (the `chat-cpu` service). Ignore the pip advice in that message; it is for a source install |
+| Docker itself refuses `--gpus all` | Docker cannot reach an NVIDIA GPU | update the NVIDIA driver; on Linux install the NVIDIA Container Toolkit; or run on the CPU |
+| `FileNotFoundError: Metadata file not found: /app/data/processed/metadata.json` | the image was built before the index | run the three index commands above, then `docker compose build` again |
+
+To use a different model or server, pass `-e LLM_MODEL=...` and
+`-e LLM_BASE_URL=...`; for a model other than Gemma also pass
+`-e LLM_REASONING_EFFORT=default`. The numbers in section 1 were measured
+with Gemma 4 only.
 
 ## 10. Evaluation
 
