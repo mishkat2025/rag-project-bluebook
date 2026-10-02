@@ -45,4 +45,7 @@ COPY data/ data/
 # resolves this name to the host; on Linux compose.yaml maps it.
 ENV LLM_BASE_URL=http://host.docker.internal:1234/v1
 
+# Ties the published image to its repository on GitHub's registry.
+LABEL org.opencontainers.image.source=https://github.com/mishkat2025/rag-project-bluebook
+
 CMD ["python", "app/chat.py"]

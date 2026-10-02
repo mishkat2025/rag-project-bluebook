@@ -1514,6 +1514,10 @@ is a refusal to start) and `chat-cpu` (`DEVICE=cpu`, chosen explicitly). Started
 - Plain `docker run -it --rm --gpus all -v <volume>:/models ewu-rag-chatbot` also works.
 
 **Not done.** The generation eval was not re-run in the container (the pipeline is unchanged
-and the retrieval eval's metrics are identical). Linux hosts are untested. The image is not
-published to a registry. A fresh clone cannot build a working image until the three index
-scripts have been run, because `data/processed` and `data/indexes` are not in git.
+and the retrieval eval's metrics are identical). Linux hosts are untested. A fresh clone
+cannot build a working image until the three index scripts have been run, because
+`data/processed` and `data/indexes` are not in git -- the published image is the way around that.
+
+**Published** (by the owner): `ghcr.io/mishkat2025/ewu-rag-chatbot:latest`, public, digest
+`sha256:6dfa52d7f86d...`, the same image tested above. Verified that the registry serves the
+manifest to an anonymous client. Readme section 9 now leads with the one-line `docker run`.

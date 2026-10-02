@@ -310,6 +310,18 @@ OpenAI-compatible server must be listening on the host at port 1234 (section
 6). The embedder and reranker weights (~7GB) download on first run into a
 named volume and are reused after that.
 
+**Prebuilt image** -- no clone, no Python, no index build (a 10GB pull):
+
+```powershell
+docker run -it --rm --gpus all -v ewu-models:/models ghcr.io/mishkat2025/ewu-rag-chatbot
+```
+
+Without an NVIDIA GPU, drop `--gpus all` and add `-e DEVICE=cpu`. On Linux add
+`--add-host host.docker.internal:host-gateway`, and the LLM server must listen
+on more than 127.0.0.1.
+
+**Build it yourself** from a checkout:
+
 ```powershell
 docker compose build
 docker compose run --rm chat        # NVIDIA GPU
@@ -322,15 +334,6 @@ it. `chat` keeps the fail-loud default and refuses to start without a GPU;
 environment variables -- `compose.yaml` passes `.env` through if it exists and
 overrides `LLM_BASE_URL` to `http://host.docker.internal:1234/v1`, because
 `localhost` inside a container is the container.
-
-Without compose:
-
-```powershell
-docker run -it --rm --gpus all -v ewu-models:/models ewu-rag-chatbot
-```
-
-(On Linux add `--add-host host.docker.internal:host-gateway`, and the LLM
-server must listen on more than 127.0.0.1.)
 
 `data/processed` and `data/indexes` are not in git, so the image is built
 from a checkout where section 7 has already been run. The retrieval eval runs
