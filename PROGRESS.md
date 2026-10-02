@@ -1565,3 +1565,15 @@ trace persistence on the last line; a "where it runs" block (chatbot process in 
 venv, LLM server on the host, both on the GPU). Stack table: a packaging row. Layout: the eval
 files that were missing. Everything else in sections 1-4 matched: 340 tests collected, 125 and
 84 questions, pool sizes, top_k, scope slots, gate off, one regeneration.
+
+## Session 13, part 4 -- Docker setup is GPU only (owner's decision)
+
+`chat-cpu` removed from `compose.yaml`; one service, `chat`, with the GPU reservation and the
+fail-loud default. The CPU paragraph is gone from readme section 9 and the CPU line from the
+Dockerfile's comments. Verified: `docker compose config` lists only `chat`; it starts on
+`cuda (NVIDIA GeForce RTX 4060 Ti)`, `index: 2855 chunks`, LLM `[ok]`.
+
+Not changed: `src/config/device.py` and its tests still accept `device="cpu"` -- that is the
+application's own setting, not part of the Docker setup -- so `-e DEVICE=cpu` on the published
+image would still work. It is no longer documented or offered. The published image is
+unchanged (only a Dockerfile comment differs).

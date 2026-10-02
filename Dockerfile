@@ -23,7 +23,6 @@ WORKDIR /app
 #
 # No nvidia/cuda base image is needed -- the cu130 torch wheel carries its own
 # CUDA libraries, and the host's driver is passed in at run time (--gpus all).
-# The same wheel runs on the CPU when DEVICE=cpu.
 COPY requirements.txt .
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install \

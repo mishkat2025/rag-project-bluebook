@@ -433,12 +433,8 @@ If it does not start:
 | Docker itself refuses `--gpus all` | Docker cannot reach an NVIDIA GPU | update the NVIDIA driver; on Linux install the NVIDIA Container Toolkit |
 | `FileNotFoundError: Metadata file not found: /app/data/processed/metadata.json` | the image was built before the index | run the three index commands above, then `docker compose build` again |
 
-**A machine with no NVIDIA GPU.** Nothing above runs on the CPU, and nothing
-falls back to it silently. The CPU has to be chosen explicitly: add
-`-e DEVICE=cpu` and drop `--gpus all` for the published image, or use the
-`chat-cpu` service in place of `chat` with compose. A question then takes
-30-50 s instead of about 6 s. It is a fallback for trying the chatbot on a
-laptop, not how the project is built, measured or meant to be run.
+The Docker setup is GPU only: there is no CPU service, and nothing falls back
+to the CPU silently.
 
 To use a different model or server, pass `-e LLM_MODEL=...` and
 `-e LLM_BASE_URL=...`; for a model other than Gemma also pass

@@ -1,33 +1,32 @@
 # The chatbot reads the keyboard, so start it with `run`, not `up`:
 #
-#   docker compose run --rm chat        NVIDIA GPU
-#   docker compose run --rm chat-cpu    no GPU (30-50s a question instead of ~6s)
+#   docker compose run --rm chat
+#
+# Needs an NVIDIA GPU: the embedder and reranker run on it, and the container
+# refuses to start without one rather than running slowly on the CPU.
 #
 # An OpenAI-compatible LLM server must be listening on the host, port 1234
 # (LM Studio with the model loaded -- see readme.md section 6).
 
-x-chat: &chat
-  build: .
-  image: ewu-rag-chatbot
-  stdin_open: true
-  tty: true
-  # Optional overrides (LLM_MODEL, ...). `environment` below wins over it.
-  env_file:
-    - path: .env
-      required: false
-  # Docker Desktop provides this name itself; plain Linux Docker needs the map.
-  extra_hosts:
-    - host.docker.internal:host-gateway
-  volumes:
-    # Model weights: downloaded once, kept across runs and image rebuilds.
-    - models:/models
-    - ./data/traces:/app/data/traces
-
 services:
   chat:
-    <<: *chat
+    build: .
+    image: ewu-rag-chatbot
+    stdin_open: true
+    tty: true
+    # Optional overrides (LLM_MODEL, ...). `environment` below wins over it.
+    env_file:
+      - path: .env
+        required: false
     environment:
       LLM_BASE_URL: http://host.docker.internal:1234/v1
+    # Docker Desktop provides this name itself; plain Linux Docker needs the map.
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      # Model weights: downloaded once, kept across runs and image rebuilds.
+      - models:/models
+      - ./data/traces:/app/data/traces
     deploy:
       resources:
         reservations:
@@ -35,14 +34,6 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-
-  # The CPU is chosen here, explicitly. Left at the default (cuda, fail-loud)
-  # a machine with no GPU refuses to start rather than running slowly.
-  chat-cpu:
-    <<: *chat
-    environment:
-      LLM_BASE_URL: http://host.docker.internal:1234/v1
-      DEVICE: cpu
 
 volumes:
   models:
