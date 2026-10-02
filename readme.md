@@ -11,8 +11,9 @@ that document, not as current official university information.
 
 ## Quick start
 
-The fastest way to run it needs only Docker and LM Studio -- no clone, no
-Python, no index build.
+The fastest way to run it needs only Docker, LM Studio and an NVIDIA GPU --
+no clone, no Python, no index build. Everything runs on the GPU: the embedder
+and reranker inside the container, Gemma in LM Studio.
 
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
    and [LM Studio](https://lmstudio.ai/) (both free). In LM Studio download
@@ -24,11 +25,8 @@ Python, no index build.
    docker run -it --rm --gpus all -v ewu-models:/models ghcr.io/mishkat2025/ewu-rag-chatbot
    ```
 
-   No NVIDIA GPU? Use this instead (30-50 s a question instead of ~6 s):
-
-   ```
-   docker run -it --rm -e DEVICE=cpu -v ewu-models:/models ghcr.io/mishkat2025/ewu-rag-chatbot
-   ```
+   It refuses to start if it cannot see the GPU, rather than running slowly
+   on the CPU.
 
 3. Ask a question at the `You:` prompt. `exit` quits.
 
@@ -125,10 +123,16 @@ OFFLINE (one-time, deterministic)
 ONLINE (1 LLM call typical, 2 common)
 
   user query
-    -> deterministic acronym expansion (CSE <-> Computer Science and
-       Engineering, CGPA <-> GPA, ...)
+    -> greetings, "thanks", "ok", "bye": answered directly, no retrieval and
+       no model call (app/chat.py)
     -> [LLM query rewrite, only if the query is a follow-up or multi-part]
+    -> the university's own name ("EWU", "East West University") becomes
+       "the university" in the search and rerank queries: the name is printed
+       on only some pages and pulled retrieval toward them. The generator
+       still gets the user's words. (src/retrieval/query_expansion.py)
     -> dense(30) || BM25(30) -> RRF(k=60) -> 50
+       BM25 side only: deterministic acronym expansion (CSE <-> Computer
+       Science and Engineering, CGPA <-> GPA, ...)
     -> bge-reranker-v2-m3 -> top 5 (enforced cut)
     -> if the question names a program: + up to 2 university-wide rules
        (admission, fees, grading...) ranked against the question with the
@@ -145,7 +149,23 @@ ONLINE (1 LLM call typical, 2 common)
          every cited page is in the retrieved set  (src/validation/citations.py)
          every number in the answer is in the evidence  (src/validation/numbers.py)
     -> on failure: one regeneration, with the specific violation in the prompt
-    -> answer + citations + trace
+    -> answer (streamed) + cited pages + trace (saved to data/traces)
+
+WHERE IT RUNS (two processes, both on the GPU)
+
+  chatbot process                            LLM server, on the host
+  Docker container (section 9)               LM Studio
+  or a Python venv (sections 5-8)
+  -------------------------------------      -----------------------
+  app/chat.py REPL + the pipeline above      Gemma 4 12B
+  BGE-M3 embedder, bge-reranker-v2-m3        OpenAI-compatible API
+  ChromaDB + BM25 + parent store             port 1234
+  ~2.2GB VRAM                                ~9GB VRAM
+
+              ------ HTTP: /chat/completions ------>
+
+  In the container the bulletin and the index are baked into the image and
+  the model weights live in a named volume. The LLM is never in the image.
 ```
 
 `src/orchestration/pipeline.py` is the whole control flow -- one file, plain
@@ -172,6 +192,7 @@ measurement behind that decision.
 | PDF parsing | PyMuPDF (`get_text("dict")` + `find_tables()`) |
 | Orchestration | Plain Python functions over a `RAGState` dataclass -- no LangChain, LlamaIndex, or LangGraph |
 | Offline faithfulness diagnostic | `cross-encoder/nli-deberta-v3-base`, run only by `eval/faithfulness_eval.py`, never online |
+| Packaging | Docker image `ghcr.io/mishkat2025/ewu-rag-chatbot`: code, bulletin and prebuilt index. The LLM stays on the host |
 | Hardware | RTX 4060 Ti 16GB. LM Studio ~9GB + BGE-M3 + reranker ~2.2GB fits with headroom; loading the faithfulness model concurrently does not |
 
 GPU usage for the embedder and reranker is resolved explicitly and fails
@@ -203,9 +224,11 @@ rag-project/
 │   └── config/          settings, device
 ├── app/chat.py          the terminal REPL
 ├── scripts/             build_ingestion, build_chroma, build_bm25 (offline index build)
-├── eval/                dataset.jsonl (125 questions), retrieval_metrics.py,
+├── eval/                dataset.jsonl (125 questions), dataset_natural.jsonl
+│                        (84), build_dataset.py, retrieval_metrics.py,
 │                        run_eval.py, run_generation_eval.py,
-│                        faithfulness_eval.py, calibrate_abstention.py
+│                        faithfulness_eval.py, calibrate_abstention.py,
+│                        paraphrase_probe.py, trace_metrics.py, results/
 ├── tests/              pytest suite (340 tests)
 ├── Dockerfile, compose.yaml, .dockerignore
 ├── .env
@@ -354,8 +377,9 @@ What you need:
   (section 6).
 - About 25GB of disk: the image (10GB), the embedder and reranker weights
   (7GB) and Gemma (7GB).
-- Optional: an NVIDIA GPU with a current driver (on Linux, also the NVIDIA
-  Container Toolkit). Without one it runs on the CPU, more slowly.
+- An NVIDIA GPU with a current driver (on Linux, also the NVIDIA Container
+  Toolkit). Every command below runs on the GPU, and the container refuses to
+  start if it cannot see one.
 
 Tested on Windows 11 with Docker Desktop (WSL 2 engine) and a 16GB RTX 4060
 Ti. Linux and macOS are untested.
@@ -366,9 +390,8 @@ Ti. Linux and macOS are untested.
 docker run -it --rm --gpus all -v ewu-models:/models ghcr.io/mishkat2025/ewu-rag-chatbot
 ```
 
-Without an NVIDIA GPU, drop `--gpus all` and add `-e DEVICE=cpu`. On Linux add
-`--add-host host.docker.internal:host-gateway`, and the LLM server must listen
-on more than 127.0.0.1.
+On Linux add `--add-host host.docker.internal:host-gateway`, and the LLM
+server must listen on more than 127.0.0.1.
 
 **Build it yourself** from a clone -- Docker only, no Python on the host:
 
@@ -384,16 +407,11 @@ docker compose run --rm -v ./data:/app/data chat python scripts/build_chroma.py
 docker compose run --rm -v ./data:/app/data chat python scripts/build_bm25.py
 
 docker compose build                # again: bakes the index into the image
-docker compose run --rm chat        # NVIDIA GPU
-docker compose run --rm chat-cpu    # no GPU: 30-50 s a question instead of ~6 s
+docker compose run --rm chat
 ```
 
-Without a GPU, use `chat-cpu` in the three index commands too; the embedding
-step will be much slower (not measured).
-
 Use `run`, not `up`: the chatbot reads the keyboard, and `up` does not attach
-it. `chat` keeps the fail-loud default and refuses to start without a GPU;
-`chat-cpu` sets `DEVICE=cpu` explicitly. Settings reach the container as
+it. Settings reach the container as
 environment variables -- `compose.yaml` passes `.env` through if it exists and
 overrides `LLM_BASE_URL` to `http://host.docker.internal:1234/v1`, because
 `localhost` inside a container is the container.
@@ -411,9 +429,16 @@ If it does not start:
 | You see | Cause | Fix |
 |---|---|---|
 | `[UNREACHABLE - start LM Studio and load the model]` in the banner | nothing is answering on the host's port 1234 | start the server and load the model (section 6); on Linux it must listen on more than 127.0.0.1 |
-| `DeviceUnavailableError: settings.device='cuda' but torch reports no CUDA device` | the container was started without a GPU | add `--gpus all` (or use the `chat` service), or choose the CPU with `-e DEVICE=cpu` (the `chat-cpu` service). Ignore the pip advice in that message; it is for a source install |
-| Docker itself refuses `--gpus all` | Docker cannot reach an NVIDIA GPU | update the NVIDIA driver; on Linux install the NVIDIA Container Toolkit; or run on the CPU |
+| `DeviceUnavailableError: settings.device='cuda' but torch reports no CUDA device` | the container was started without a GPU | add `--gpus all` (or use the `chat` service). Ignore the pip advice in that message; it is for a source install |
+| Docker itself refuses `--gpus all` | Docker cannot reach an NVIDIA GPU | update the NVIDIA driver; on Linux install the NVIDIA Container Toolkit |
 | `FileNotFoundError: Metadata file not found: /app/data/processed/metadata.json` | the image was built before the index | run the three index commands above, then `docker compose build` again |
+
+**A machine with no NVIDIA GPU.** Nothing above runs on the CPU, and nothing
+falls back to it silently. The CPU has to be chosen explicitly: add
+`-e DEVICE=cpu` and drop `--gpus all` for the published image, or use the
+`chat-cpu` service in place of `chat` with compose. A question then takes
+30-50 s instead of about 6 s. It is a fallback for trying the chatbot on a
+laptop, not how the project is built, measured or meant to be run.
 
 To use a different model or server, pass `-e LLM_MODEL=...` and
 `-e LLM_BASE_URL=...`; for a model other than Gemma also pass
