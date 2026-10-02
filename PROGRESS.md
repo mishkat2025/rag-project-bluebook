@@ -1543,3 +1543,25 @@ steps, and a table of the four start-up failures with their fixes (the two error
 quoted there were reproduced, not guessed); in section 5, the clone command.
 
 **Still not tested:** Linux and macOS hosts, and the CPU-only index build.
+
+## Session 13, part 3 -- readme: GPU-first wording, architecture brought up to date
+
+**Owner's correction: everything runs on the GPU.** It did -- every build, eval and chat run
+in Session 13 reported `cuda (NVIDIA GeForce RTX 4060 Ti)`, the fresh-clone index build
+included. The single exception was a deliberate two-question timing of the `chat-cpu` fallback
+(51.9 s, 28.3 s). The readme had put that fallback beside the GPU commands, in the quick start
+and three places in section 9, which read as if the CPU were a normal way to run it.
+
+**Readme, no code change.** The quick start and section 9's commands are GPU only and say the
+container refuses to start without one. The CPU fallback is one labelled paragraph at the end
+of section 9: opt-in, never silent, not how the project is built or measured. `chat-cpu`
+itself is unchanged in `compose.yaml`.
+
+**Architecture section checked against the code** (`pipeline.py`, `hybrid_retriever.py`,
+`settings.py`, the ingestion modules). Corrected: the rewrite runs before expansion, not
+after; acronym expansion is on the BM25 side only. Added: small talk answered without a model
+call; the university-name step from Session 12, which the diagram never gained; streaming and
+trace persistence on the last line; a "where it runs" block (chatbot process in a container or
+venv, LLM server on the host, both on the GPU). Stack table: a packaging row. Layout: the eval
+files that were missing. Everything else in sections 1-4 matched: 340 tests collected, 125 and
+84 questions, pool sizes, top_k, scope slots, gate off, one regeneration.
